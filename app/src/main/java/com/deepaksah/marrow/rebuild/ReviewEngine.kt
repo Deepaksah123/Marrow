@@ -1,10 +1,5 @@
 package com.deepaksah.marrow.rebuild
 
-enum class ReviewFilter {
-    ALL, BOOKMARKED, CHANGED_BY_YOU, CORRECT, GUESS_CORRECT, GUESS_WRONG,
-    SCHEMA_MCQS, NEW_REVISED, SILLY_MISTAKES, SKIPPED, WRONG
-}
-
 object ReviewEngine {
     fun filter(ids: List<String>, answers: Map<String, McqAnswerState>, filter: ReviewFilter): List<String> =
         ids.filter { id ->
