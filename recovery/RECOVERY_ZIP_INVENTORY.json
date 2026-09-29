@@ -1,0 +1,59 @@
+{
+  "source_archive": "base_apk_recovered_source.zip",
+  "source_apk": "base.apk",
+  "source_apk_sha256": "e03a582c20eec102510509918315be53e45bb9fe90647207b2c956a0f55316a3",
+  "archive_entries": 5146,
+  "original_apk_entries": 5128,
+  "integrity": {
+    "unreadable_zip_members": 0,
+    "exact_apk_members": 5128
+  },
+  "layers": {
+    "apk_exact": {
+      "entries": 5128,
+      "purpose": "byte-for-byte APK members; authoritative source layer"
+    },
+    "native_code": {
+      "entries": 15,
+      "purpose": "recovered/native-code inspection layer; not a replacement for apk_exact",
+      "contains": {
+        "dex": 5,
+        "reports_or_indexes": 10
+      }
+    },
+    "recovery_metadata": {
+      "purpose": "generated manifest/index/readme material; not APK source"
+    }
+  },
+  "apk_exact_file_types": {
+    "no_extension": 2769,
+    "xml": 2012,
+    "version": 119,
+    "properties": 55,
+    "json": 27,
+    "jsa": 23,
+    "ttf": 22,
+    "so": 20,
+    "proto": 14,
+    "html": 10,
+    "css": 10,
+    "kotlin_builtins": 8,
+    "dex": 5,
+    "txt": 9,
+    "ogg": 2
+  },
+  "dex": {
+    "classes.dex": {"bytes": 11815996, "marrow_classes_indexed": 240},
+    "classes2.dex": {"bytes": 9311104, "marrow_classes_indexed": 0},
+    "classes3.dex": {"bytes": 13516816, "marrow_classes_indexed": 988},
+    "classes4.dex": {"bytes": 11442620, "marrow_classes_indexed": 920},
+    "classes5.dex": {"bytes": 6234216, "marrow_classes_indexed": 20}
+  },
+  "policy": [
+    "Never overwrite exact APK members with decompiler output.",
+    "Treat recovered/decompiled files as an evidence layer and verify before implementation.",
+    "Do not infer a missing runtime API payload from static client code.",
+    "Keep actual QBank content in its own content layer.",
+    "Keep unresolved mappings unresolved instead of guessing."
+  ]
+}
