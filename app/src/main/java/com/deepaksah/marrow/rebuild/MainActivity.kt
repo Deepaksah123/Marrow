@@ -223,7 +223,7 @@ class MainActivity : Activity() {
             textSize = 22f
             setTypeface(typeface, Typeface.BOLD)
         })
-        val ids = state.session.mcqIds.filter { state.session.answers[it]?.isStarred == true }
+        val ids = BookmarkNavigationModel.ids(state)
         if (ids.isEmpty()) {
             box.addView(TextView(this).apply {
                 text = "No bookmarked questions in the current session."
@@ -424,7 +424,8 @@ class MainActivity : Activity() {
     private fun showScore() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_score, content, false)
         replace(v)
-        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        val score = QBankScoreModel.from(state.session.mcqIds, state.session.answers)
+        val metrics = score.metrics
         v.findViewById<TextView>(R.id.scoreSummary).text =
             "Total: " + metrics.total + "   Attempted: " + metrics.attempted + "\n" +
             "Correct: " + metrics.correct + "   Wrong: " + metrics.wrong + "\n" +
@@ -505,13 +506,14 @@ class MainActivity : Activity() {
             setPadding(24,24,24,24)
         }
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        val reviewSummary = QBankReviewSummary.from(state.session.mcqIds, state.session.answers)
         box.addView(TextView(this).apply {
             text = "Analytics"
             textSize = 22f
             setTypeface(typeface, Typeface.BOLD)
         })
         box.addView(TextView(this).apply {
-            text = "Total: ${metrics.total}\nAttempted: ${metrics.attempted}\nCorrect: ${metrics.correct}\nWrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}\nBookmarked: ${metrics.bookmarked}\nAccuracy: ${String.format("%.1f", metrics.accuracy)}%"
+            text = "Total: ${metrics.total}\nAttempted: ${metrics.attempted}\nCorrect: ${metrics.correct}\nWrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}\nBookmarked: ${metrics.bookmarked}\nAccuracy: ${String.format("%.1f", metrics.accuracy)}%\n\nReview filters\nChanged: ${reviewSummary.changedByYou}\nGuess correct: ${reviewSummary.guessedCorrect}\nGuess wrong: ${reviewSummary.guessedWrong}\nSilly mistakes: ${reviewSummary.sillyMistakes}"
             textSize = 16f
             setPadding(4,18,4,18)
         })
