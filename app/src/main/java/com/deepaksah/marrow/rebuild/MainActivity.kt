@@ -414,6 +414,7 @@ class MainActivity : Activity() {
                             qbank.openQuestion(state.session.currentMcqIndex + 1)
                             showPlayer()
                         } else {
+                            state.completeQBank()
                             qbank.openScore()
                             showScore()
                         }
@@ -480,6 +481,7 @@ class MainActivity : Activity() {
             visibility = if (navigationStatus == NavigationButtonStatus.COMPLETE) View.VISIBLE else View.GONE
             text = if (navigationStatus == NavigationButtonStatus.COMPLETE) "COMPLETE" else "COMPLETE"
             setOnClickListener {
+                state.completeQBank()
                 qbank.openScore()
                 showScore()
             }
@@ -497,6 +499,7 @@ class MainActivity : Activity() {
                     qbank.openQuestion(state.session.currentMcqIndex + 1)
                     showPlayer()
                 } else {
+                    state.completeQBank()
                     qbank.openScore()
                     showScore()
                 }
