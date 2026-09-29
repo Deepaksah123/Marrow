@@ -21,13 +21,18 @@ git sparse-checkout set \
   "frontend/srcx/platforms/marrow"
 
 cd "$ROOT"
-mkdir -p "$DEST/Brain/Marrow" "$DEST/quizx/marrow" "$DEST/1234xxx/marrow6" "$DEST/1234xxx/marrow" "$DEST/datax/marrow" "$DEST/srcx/platforms/marrow"
+mkdir -p "$DEST/Brain/Marrow" "$DEST/quizx/marrow" "$DEST/1234xxx/marrow" "$DEST/datax/marrow" "$DEST/srcx/platforms/marrow"
 cp -a "$TMP_DIR/repo/frontend/quizx/Brain/Marrow/." "$DEST/Brain/Marrow/"
 cp -a "$TMP_DIR/repo/frontend/quizx/marrow/." "$DEST/quizx/marrow/"
-cp -a "$TMP_DIR/repo/frontend/1234xxx/marrow6/." "$DEST/1234xxx/marrow6/"
 cp -a "$TMP_DIR/repo/frontend/1234xxx/marrow/." "$DEST/1234xxx/marrow/"
 cp -a "$TMP_DIR/repo/frontend/datax/marrow/." "$DEST/datax/marrow/"
 cp -a "$TMP_DIR/repo/frontend/srcx/platforms/marrow/." "$DEST/srcx/platforms/marrow/"
+
+cat > "$DEST/README.md" <<\x27EOF\x27
+# Marrow Content
+
+This folder contains only Marrow educational content materialized from WEBREPLITX5. Edition 8 QBank is the active QBank source. Legacy/duplicate Marrow6 content is intentionally excluded.
+EOF
 
 echo "Marrow source synced into $DEST"
 find "$DEST" -type f | wc -l
