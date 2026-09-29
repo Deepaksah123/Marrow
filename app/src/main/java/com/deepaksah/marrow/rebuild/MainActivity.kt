@@ -91,10 +91,28 @@ class MainActivity : Activity() {
         replace(v)
         v.findViewById<TextView>(R.id.playPosition).text =
             "QBank · " + (state.session.currentMcqIndex + 1) + " / " + state.session.qbank.totalMcq
-        v.findViewById<TextView>(R.id.playQuestion).text =
-            "Player is connected to the canonical MCQ contract. Actual question text/options are loaded only when supplied by the content payload."
+        val question = currentQuestion()
+        val questionView = v.findViewById<TextView>(R.id.playQuestion)
+        val optionContainer = v.findViewById<LinearLayout>(R.id.optionContainer)
+        optionContainer.removeAllViews()
+        if (question == null) {
+            questionView.text = "No supplied MCQ payload is loaded for this module."
+        } else {
+            questionView.text = question.text
+            val existing = state.session.answers[question.id]
+            question.choices.forEach { choice ->
+                optionContainer.addView(Button(this).apply {
+                    text = choice.text
+                    isEnabled = existing?.locked != true
+                    setOnClickListener { QBankSession(state).answer(question.id, choice.id, question.correctChoiceId); showPlayer() }
+                })
+            }
+            if (existing?.locked == true && question.solution.isNotBlank()) {
+                optionContainer.addView(TextView(this).apply { text = "Explanation\\n\\n" + question.solution; setPadding(16,20,16,20) })
+            }
+        }
         v.findViewById<LinearLayout>(R.id.optionContainer).removeAllViews()
-        v.findViewById<TextView>(R.id.playBookmark).setOnClickListener { }
+        v.findViewById<TextView>(R.id.playBookmark).setOnClickListener { question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() } }
         v.findViewById<Button>(R.id.playNext).setOnClickListener {
             if (state.session.qbank.totalMcq > 0 && state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
                 state.moveQuestion(state.session.currentMcqIndex + 1); showPlayer()
@@ -105,7 +123,8 @@ class MainActivity : Activity() {
     private fun showScore() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_score, content, false)
         replace(v)
-        v.findViewById<TextView>(R.id.scoreSummary).text = "Score is calculated from persisted MCQ answer state."
+        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        v.findViewById<TextView>(R.id.scoreSummary).text = "Total: " + metrics.total + "   Attempted: " + metrics.attempted + "\\nCorrect: " + metrics.correct + "   Wrong: " + metrics.wrong + "\\nSkipped: " + metrics.skipped + "   Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
         v.findViewById<Button>(R.id.reviewButton).setOnClickListener { qbank.openReview(); showReview() }
         v.findViewById<Button>(R.id.reviewLessonButton).setOnClickListener {
             state.navigate(MarrowRoute.QBANK_MODULE); showLessons(state.session.subjectId ?: "")
