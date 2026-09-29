@@ -1,0 +1,24 @@
+name: Marrow Edition 8 Content Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync canonical source
+        run: bash scripts/sync_marrow_source.sh
+      - name: Run exact Edition 8 audit
+        run: python3 scripts/audit_edition8.py
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-edition8-audit
+          path: edition8_audit_result.txt
