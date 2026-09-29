@@ -33,12 +33,11 @@
             android:paddingTop="4dp"
             android:paddingBottom="8dp"
             android:text="Timer"/>
-        <TextView
+        <WebView
             android:id="@+id/playQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:overScrollMode="never"
             android:paddingTop="14dp"
             android:paddingBottom="18dp"/>
         <LinearLayout
@@ -46,13 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
-        <TextView
+        <WebView
             android:id="@+id/explanation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:visibility="gone"
-            android:padding="12dp"/>
+            android:overScrollMode="never"/>
         <LinearLayout
             android:id="@+id/qbankJumpRow"
             android:layout_width="match_parent"
