@@ -19,6 +19,11 @@ class MainActivity : Activity() {
     private val tests by lazy { TestNavigator(state) }
     private val custom by lazy { CustomModuleNavigator(state) }
     private var selectedSchemaTitle: String = ""
+    private var selectedVideoSubject: String = ""
+    private var customStage: Int = 0
+    private var customSubject: String = ""
+    private var customTopic: String = ""
+    private var customTags: String = ""
     private val subjects = listOf("Anatomy","Anaesthesia","Biochemistry","Community Medicine","Dermatology","ENT","Forensic Medicine","Medicine","Microbiology","Obstetrics & Gynaecology","Ophthalmology","Orthopaedics","Paediatrics","Pathology","Pharmacology","Physiology","Psychiatry","Radiology","Surgery")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +75,9 @@ class MainActivity : Activity() {
             MarrowRoute.SCHEMA -> showSchemaList()
             MarrowRoute.SCHEMA_DETAIL -> showSchemaDetail()
             MarrowRoute.SCHEMA_REVIEW -> showSchemaReview()
-            MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME -> showUnresolvedSurface(state.session.route)
+            MarrowRoute.PROFILE -> showProfile()
+            MarrowRoute.SETTINGS -> showSettings()
+            MarrowRoute.THEME -> showTheme()
             MarrowRoute.CUSTOM_MODULE, MarrowRoute.CUSTOM_INTRO, MarrowRoute.CUSTOM_CREATION, MarrowRoute.CUSTOM_MODE,
             MarrowRoute.CUSTOM_SUBJECTS, MarrowRoute.CUSTOM_TOPICS, MarrowRoute.CUSTOM_TAGS, MarrowRoute.CUSTOM_ADDONS,
             MarrowRoute.CUSTOM_JOIN, MarrowRoute.CUSTOM_PLAY, MarrowRoute.CUSTOM_SCORE -> showCustom()
@@ -1084,17 +1091,123 @@ class MainActivity : Activity() {
     }
 
     private fun showVideos() {
-        replace(LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false))
+        when (state.session.route) {
+            MarrowRoute.VIDEO_SUBJECT -> showVideoLessons()
+            MarrowRoute.VIDEO_PLAYER -> showVideoPlayer()
+            else -> {
+                val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+                root.addView(TextView(this).apply { text = "Videos"; textSize = 26f; setTypeface(typeface, Typeface.BOLD) })
+                root.addView(TextView(this).apply { text = "Recovered native video landing. Remote lesson/video payload is not fabricated."; setPadding(4,12,4,18) })
+                listOf("VIDEO LESSONS","REVISION VIDEOS","SAMPLE VIDEOS","DOWNLOADED VIDEOS","VIDEO NOTES").forEachIndexed { i, title ->
+                    root.addView(Button(this).apply {
+                        text = title
+                        setOnClickListener {
+                            when (i) {
+                                0 -> { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() }
+                                1 -> showVideoInfo("Revision Videos", "Recovered revision flow supports subject tabs, index filtering, expandable subjects and lesson-video navigation. Live payload is unavailable locally.")
+                                2 -> showVideoInfo("Sample Videos", "Recovered sample-video surface exists. Live sample payload is unavailable locally.")
+                                3 -> showVideoInfo("Downloaded Videos", "Recovered downloaded-video state exists. No downloaded video payload is bundled in this reconstruction.")
+                                else -> showVideoInfo("Video Notes", "Recovered video-notes flow exists. Remote note payload is unavailable locally.")
+                            }
+                        }
+                    })
+                }
+                root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
+                replace(ScrollView(this).apply { addView(root) })
+            }
+        }
+    }
+
+    private fun showVideoLessons() {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text="Video Lessons"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text="Select subject"; setPadding(4,12,4,18) })
+        subjects.forEach { subject ->
+            root.addView(Button(this).apply {
+                text=subject
+                setOnClickListener { selectedVideoSubject=subject; state.navigate(MarrowRoute.VIDEO_PLAYER); showVideoPlayer() }
+            })
+        }
+        root.addView(Button(this).apply { text="BACK"; setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showVideoPlayer() {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text="Video Player"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text="Subject: $selectedVideoSubject"; setPadding(4,12,4,18) })
+        root.addView(TextView(this).apply { text="No verified local stream/file is bundled, so playback is not faked."; setPadding(4,8,4,18) })
+        val speed=TextView(this).apply { text="Playback speed: 1.0×"; setPadding(4,12,4,8) }; root.addView(speed)
+        val speedRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
+        listOf("0.75×","1.0×","1.25×","1.5×","2.0×").forEach { s -> speedRow.addView(Button(this).apply { text=s; setOnClickListener { speed.text="Playback speed: $s" } }, LinearLayout.LayoutParams(0,-2,1f)) }
+        root.addView(speedRow)
+        root.addView(TextView(this).apply { text="Brightness"; setPadding(4,18,4,4) })
+        root.addView(SeekBar(this).apply { max=100; progress=50 })
+        root.addView(TextView(this).apply { text="Volume"; setPadding(4,12,4,4) })
+        root.addView(SeekBar(this).apply { max=100; progress=50 })
+        root.addView(Button(this).apply { text="DOWNLOAD"; setOnClickListener { Toast.makeText(this@MainActivity,"No verified video file available.",Toast.LENGTH_SHORT).show() } })
+        root.addView(Button(this).apply { text="NOTES"; setOnClickListener { showVideoInfo("Video Notes","Native notes flow recovered; remote note content is unavailable locally.") } })
+        root.addView(Button(this).apply { text="BACK TO LESSONS"; setOnClickListener { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showVideoInfo(title:String,message:String) {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text=title; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text=message; setPadding(4,18,4,20) })
+        root.addView(Button(this).apply { text="BACK TO VIDEOS"; setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() } })
+        replace(ScrollView(this).apply { addView(root) })
     }
 
     private fun showCustom() {
-        val v = LayoutInflater.from(this).inflate(R.layout.screen_custom, content, false)
-        replace(v)
-        v.findViewById<Button>(R.id.customNext).setOnClickListener {
-            custom.mode()
-            v.findViewById<TextView>(R.id.customFlow).text =
-                "Mode → Subjects → Topics → Tags → Add-ons → Join by Code → Generated Module → Play → Score/Review"
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        val stages=listOf("Mode","Subjects","Topics","Tags","Add-ons","Join by Code","Play","Score")
+        root.addView(TextView(this).apply { text="Custom Module"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text="Step " + (customStage+1) + "/" + stages.size + ": " + stages[customStage]; setPadding(4,14,4,14) })
+        when(customStage) {
+            0 -> root.addView(Button(this).apply { text="QBank mode"; setOnClickListener { customStage=1; showCustom() } })
+            1 -> subjects.forEach { s -> root.addView(Button(this).apply { text=s; setOnClickListener { customSubject=s; customStage=2; showCustom() } }) }
+            2 -> {
+                val modules=state.contentRegistry.modules().filter { it.title.contains(customSubject,true) }
+                if(modules.isEmpty()) root.addView(TextView(this).apply { text="No verified local topic payload for " + customSubject + "."; setPadding(4,12,4,12) })
+                modules.take(30).forEach { m -> root.addView(Button(this).apply { text=m.title; setOnClickListener { customTopic=m.id; customStage=3; showCustom() } }) }
+            }
+            3 -> { val input=EditText(this).apply { hint="Tags (optional)" }; root.addView(input); root.addView(Button(this).apply { text="CONTINUE"; setOnClickListener { customTags=input.text.toString(); customStage=4; showCustom() } }) }
+            4 -> root.addView(Button(this).apply { text="USE DEFAULT ADD-ONS"; setOnClickListener { customStage=5; showCustom() } })
+            5 -> { val code=EditText(this).apply { hint="Join code" }; root.addView(code); root.addView(Button(this).apply { text="JOIN"; setOnClickListener { Toast.makeText(this@MainActivity,"Join-by-code requires original server endpoint; not fabricated.",Toast.LENGTH_SHORT).show() } }); root.addView(Button(this).apply { text="SKIP"; setOnClickListener { customStage=6; showCustom() } }) }
+            6 -> { root.addView(TextView(this).apply { text="Generated module payload is server-backed. Local verified QBank content remains available."; setPadding(4,12,4,12) }); root.addView(Button(this).apply { text="OPEN QBANK"; setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() } }); root.addView(Button(this).apply { text="SCORE"; setOnClickListener { customStage=7; showCustom() } }) }
+            else -> { root.addView(TextView(this).apply { text="Score uses only locally loaded QBank answers."; setPadding(4,12,4,12) }); root.addView(Button(this).apply { text="RESET"; setOnClickListener { customStage=0; customSubject=""; customTopic=""; customTags=""; showCustom() } }) }
         }
+        root.addView(Button(this).apply { text="BACK"; setOnClickListener { if(customStage>0){customStage--;showCustom()}else{state.navigate(MarrowRoute.QBANK);showQBank()} } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showProfile() {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text="Profile"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text="Recovered profile surface. Account identity is not fabricated locally."; setPadding(4,18,4,20) })
+        root.addView(Button(this).apply { text="SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
+        root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showSettings() {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text="Settings"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(Button(this).apply { text="THEME"; setOnClickListener { state.navigate(MarrowRoute.THEME); showTheme() } })
+        root.addView(Button(this).apply { text="PROFILE"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
+        root.addView(Button(this).apply { text="BACK"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showTheme() {
+        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text="Theme"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply { text="Theme selection is local; no account or paid-plan state is used."; setPadding(4,18,4,18) })
+        root.addView(Button(this).apply { text="LIGHT"; setOnClickListener { window.decorView.systemUiVisibility=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR; Toast.makeText(this@MainActivity,"Light theme selected",Toast.LENGTH_SHORT).show() } })
+        root.addView(Button(this).apply { text="DARK"; setOnClickListener { window.decorView.systemUiVisibility=0; Toast.makeText(this@MainActivity,"Dark theme selected",Toast.LENGTH_SHORT).show() } })
+        root.addView(Button(this).apply { text="BACK SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
+        replace(ScrollView(this).apply { addView(root) })
     }
 
     private fun addDivider(c: LinearLayout) {
