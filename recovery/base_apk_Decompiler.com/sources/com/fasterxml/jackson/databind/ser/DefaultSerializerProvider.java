@@ -1,0 +1,314 @@
+package com.fasterxml.jackson.databind.ser;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.impl.WritableObjectId;
+import com.fasterxml.jackson.databind.util.ClassUtil;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
+
+/* JADX INFO: loaded from: classes2.dex */
+public abstract class DefaultSerializerProvider extends SerializerProvider implements Serializable {
+    protected transient JsonGenerator _generator;
+    protected transient ArrayList<ObjectIdGenerator<?>> _objectIdGenerators;
+    protected transient Map<Object, WritableObjectId> _seenObjectIds;
+
+    public abstract DefaultSerializerProvider createInstance(SerializationConfig serializationConfig, SerializerFactory serializerFactory);
+
+    protected DefaultSerializerProvider() {
+    }
+
+    protected DefaultSerializerProvider(SerializerProvider serializerProvider, SerializationConfig serializationConfig, SerializerFactory serializerFactory) {
+        super(serializerProvider, serializationConfig, serializerFactory);
+    }
+
+    @Override // com.fasterxml.jackson.databind.SerializerProvider
+    public JsonSerializer<Object> serializerInstance(Annotated annotated, Object obj) throws JsonMappingException {
+        JsonSerializer<?> jsonSerializer;
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof JsonSerializer) {
+            jsonSerializer = (JsonSerializer) obj;
+        } else {
+            if (!(obj instanceof Class)) {
+                JavaType type = annotated.getType();
+                StringBuilder sb = new StringBuilder("AnnotationIntrospector returned serializer definition of type ");
+                sb.append(obj.getClass().getName());
+                sb.append("; expected type JsonSerializer or Class<JsonSerializer> instead");
+                reportBadDefinition(type, sb.toString());
+            }
+            Class<?> cls = (Class) obj;
+            if (cls == JsonSerializer.None.class || ClassUtil.isBogusClass(cls)) {
+                return null;
+            }
+            if (!JsonSerializer.class.isAssignableFrom(cls)) {
+                JavaType type2 = annotated.getType();
+                StringBuilder sb2 = new StringBuilder("AnnotationIntrospector returned Class ");
+                sb2.append(cls.getName());
+                sb2.append("; expected Class<JsonSerializer>");
+                reportBadDefinition(type2, sb2.toString());
+            }
+            HandlerInstantiator handlerInstantiator = this._config.getHandlerInstantiator();
+            JsonSerializer<?> jsonSerializerSerializerInstance = handlerInstantiator != null ? handlerInstantiator.serializerInstance(this._config, annotated, cls) : null;
+            jsonSerializer = jsonSerializerSerializerInstance == null ? (JsonSerializer) ClassUtil.createInstance(cls, this._config.canOverrideAccessModifiers()) : jsonSerializerSerializerInstance;
+        }
+        return _handleResolvable(jsonSerializer);
+    }
+
+    @Override // com.fasterxml.jackson.databind.SerializerProvider
+    public Object includeFilterInstance(BeanPropertyDefinition beanPropertyDefinition, Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
+        HandlerInstantiator handlerInstantiator = this._config.getHandlerInstantiator();
+        Object objIncludeFilterInstance = handlerInstantiator != null ? handlerInstantiator.includeFilterInstance(this._config, beanPropertyDefinition, cls) : null;
+        return objIncludeFilterInstance == null ? ClassUtil.createInstance(cls, this._config.canOverrideAccessModifiers()) : objIncludeFilterInstance;
+    }
+
+    @Override // com.fasterxml.jackson.databind.SerializerProvider
+    public boolean includeFilterSuppressNulls(Object obj) throws JsonMappingException {
+        if (obj == null) {
+            return true;
+        }
+        try {
+            return obj.equals(null);
+        } catch (Exception e) {
+            this.reportBadDefinition(obj.getClass(), String.format("Problem determining whether filter of type '%s' should filter out `null` values: (%s) %s", obj.getClass().getName(), e.getClass().getName(), ClassUtil.exceptionMessage(e)), e);
+            return false;
+        }
+    }
+
+    @Override // com.fasterxml.jackson.databind.SerializerProvider
+    public WritableObjectId findObjectId(Object obj, ObjectIdGenerator<?> objectIdGenerator) {
+        ObjectIdGenerator<?> objectIdGeneratorNewForSerialization;
+        Map<Object, WritableObjectId> map = this._seenObjectIds;
+        if (map == null) {
+            this._seenObjectIds = _createObjectIdMap();
+        } else {
+            WritableObjectId writableObjectId = map.get(obj);
+            if (writableObjectId != null) {
+                return writableObjectId;
+            }
+        }
+        ArrayList<ObjectIdGenerator<?>> arrayList = this._objectIdGenerators;
+        if (arrayList == null) {
+            this._objectIdGenerators = new ArrayList<>(8);
+        } else {
+            int size = arrayList.size();
+            for (int i = 0; i < size; i++) {
+                objectIdGeneratorNewForSerialization = this._objectIdGenerators.get(i);
+                if (objectIdGeneratorNewForSerialization.canUseFor(objectIdGenerator)) {
+                    break;
+                }
+            }
+        }
+        objectIdGeneratorNewForSerialization = null;
+        if (objectIdGeneratorNewForSerialization == null) {
+            objectIdGeneratorNewForSerialization = objectIdGenerator.newForSerialization(this);
+            this._objectIdGenerators.add(objectIdGeneratorNewForSerialization);
+        }
+        WritableObjectId writableObjectId2 = new WritableObjectId(objectIdGeneratorNewForSerialization);
+        this._seenObjectIds.put(obj, writableObjectId2);
+        return writableObjectId2;
+    }
+
+    protected Map<Object, WritableObjectId> _createObjectIdMap() {
+        if (isEnabled(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID)) {
+            return new HashMap();
+        }
+        return new IdentityHashMap();
+    }
+
+    @Override // com.fasterxml.jackson.databind.SerializerProvider
+    public JsonGenerator getGenerator() {
+        return this._generator;
+    }
+
+    public void serializeValue(JsonGenerator jsonGenerator, Object obj) throws IOException {
+        this._generator = jsonGenerator;
+        if (obj == null) {
+            _serializeNull(jsonGenerator);
+            return;
+        }
+        Class<?> cls = obj.getClass();
+        JsonSerializer<Object> jsonSerializerFindTypedValueSerializer = findTypedValueSerializer(cls, true, (BeanProperty) null);
+        PropertyName fullRootName = this._config.getFullRootName();
+        if (fullRootName == null) {
+            if (this._config.isEnabled(SerializationFeature.WRAP_ROOT_VALUE)) {
+                _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer, this._config.findRootName(cls));
+                return;
+            }
+        } else if (!fullRootName.isEmpty()) {
+            _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer, fullRootName);
+            return;
+        }
+        _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer);
+    }
+
+    public void serializeValue(JsonGenerator jsonGenerator, Object obj, JavaType javaType) throws IOException {
+        this._generator = jsonGenerator;
+        if (obj == null) {
+            _serializeNull(jsonGenerator);
+            return;
+        }
+        if (!javaType.getRawClass().isAssignableFrom(obj.getClass())) {
+            _reportIncompatibleRootType(obj, javaType);
+        }
+        JsonSerializer<Object> jsonSerializerFindTypedValueSerializer = findTypedValueSerializer(javaType, true, (BeanProperty) null);
+        PropertyName fullRootName = this._config.getFullRootName();
+        if (fullRootName == null) {
+            if (this._config.isEnabled(SerializationFeature.WRAP_ROOT_VALUE)) {
+                _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer, this._config.findRootName(javaType));
+                return;
+            }
+        } else if (!fullRootName.isEmpty()) {
+            _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer, fullRootName);
+            return;
+        }
+        _serialize(jsonGenerator, obj, jsonSerializerFindTypedValueSerializer);
+    }
+
+    public void serializeValue(JsonGenerator jsonGenerator, Object obj, JavaType javaType, JsonSerializer<Object> jsonSerializer) throws IOException {
+        PropertyName propertyNameFindRootName;
+        this._generator = jsonGenerator;
+        if (obj == null) {
+            _serializeNull(jsonGenerator);
+            return;
+        }
+        if (javaType != null && !javaType.getRawClass().isAssignableFrom(obj.getClass())) {
+            _reportIncompatibleRootType(obj, javaType);
+        }
+        if (jsonSerializer == null) {
+            jsonSerializer = findTypedValueSerializer(javaType, true, (BeanProperty) null);
+        }
+        PropertyName fullRootName = this._config.getFullRootName();
+        if (fullRootName == null) {
+            if (this._config.isEnabled(SerializationFeature.WRAP_ROOT_VALUE)) {
+                if (javaType == null) {
+                    propertyNameFindRootName = this._config.findRootName(obj.getClass());
+                } else {
+                    propertyNameFindRootName = this._config.findRootName(javaType);
+                }
+                _serialize(jsonGenerator, obj, jsonSerializer, propertyNameFindRootName);
+                return;
+            }
+        } else if (!fullRootName.isEmpty()) {
+            _serialize(jsonGenerator, obj, jsonSerializer, fullRootName);
+            return;
+        }
+        _serialize(jsonGenerator, obj, jsonSerializer);
+    }
+
+    public void serializePolymorphic(JsonGenerator jsonGenerator, Object obj, JavaType javaType, JsonSerializer<Object> jsonSerializer, TypeSerializer typeSerializer) throws IOException {
+        boolean zIsEnabled;
+        this._generator = jsonGenerator;
+        if (obj == null) {
+            _serializeNull(jsonGenerator);
+            return;
+        }
+        if (javaType != null && !javaType.getRawClass().isAssignableFrom(obj.getClass())) {
+            _reportIncompatibleRootType(obj, javaType);
+        }
+        if (jsonSerializer == null) {
+            if (javaType != null && javaType.isContainerType()) {
+                jsonSerializer = findValueSerializer(javaType, (BeanProperty) null);
+            } else {
+                jsonSerializer = findValueSerializer(obj.getClass(), (BeanProperty) null);
+            }
+        }
+        PropertyName fullRootName = this._config.getFullRootName();
+        if (fullRootName == null) {
+            zIsEnabled = this._config.isEnabled(SerializationFeature.WRAP_ROOT_VALUE);
+            if (zIsEnabled) {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeFieldName(this._config.findRootName(obj.getClass()).simpleAsEncoded(this._config));
+            }
+        } else if (fullRootName.isEmpty()) {
+            zIsEnabled = false;
+        } else {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeFieldName(fullRootName.getSimpleName());
+            zIsEnabled = true;
+        }
+        try {
+            jsonSerializer.serializeWithType(obj, jsonGenerator, this, typeSerializer);
+            if (zIsEnabled) {
+                jsonGenerator.writeEndObject();
+            }
+        } catch (Exception e) {
+            throw _wrapAsIOE(jsonGenerator, e);
+        }
+    }
+
+    private final void _serialize(JsonGenerator jsonGenerator, Object obj, JsonSerializer<Object> jsonSerializer, PropertyName propertyName) throws IOException {
+        try {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeFieldName(propertyName.simpleAsEncoded(this._config));
+            jsonSerializer.serialize(obj, jsonGenerator, this);
+            jsonGenerator.writeEndObject();
+        } catch (Exception e) {
+            throw _wrapAsIOE(jsonGenerator, e);
+        }
+    }
+
+    private final void _serialize(JsonGenerator jsonGenerator, Object obj, JsonSerializer<Object> jsonSerializer) throws IOException {
+        try {
+            jsonSerializer.serialize(obj, jsonGenerator, this);
+        } catch (Exception e) {
+            throw _wrapAsIOE(jsonGenerator, e);
+        }
+    }
+
+    protected void _serializeNull(JsonGenerator jsonGenerator) throws IOException {
+        try {
+            getDefaultNullValueSerializer().serialize(null, jsonGenerator, this);
+        } catch (Exception e) {
+            throw _wrapAsIOE(jsonGenerator, e);
+        }
+    }
+
+    private IOException _wrapAsIOE(JsonGenerator jsonGenerator, Exception exc) {
+        if (exc instanceof IOException) {
+            return (IOException) exc;
+        }
+        String strExceptionMessage = ClassUtil.exceptionMessage(exc);
+        if (strExceptionMessage == null) {
+            StringBuilder sb = new StringBuilder("[no message for ");
+            sb.append(exc.getClass().getName());
+            sb.append("]");
+            strExceptionMessage = sb.toString();
+        }
+        return new JsonMappingException(jsonGenerator, strExceptionMessage, exc);
+    }
+
+    public static final class Impl extends DefaultSerializerProvider {
+        public Impl() {
+        }
+
+        protected Impl(SerializerProvider serializerProvider, SerializationConfig serializationConfig, SerializerFactory serializerFactory) {
+            super(serializerProvider, serializationConfig, serializerFactory);
+        }
+
+        @Override // com.fasterxml.jackson.databind.ser.DefaultSerializerProvider
+        public final Impl createInstance(SerializationConfig serializationConfig, SerializerFactory serializerFactory) {
+            return new Impl(this, serializationConfig, serializerFactory);
+        }
+    }
+}

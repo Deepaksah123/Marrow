@@ -1,0 +1,14 @@
+###### Class com.fasterxml.jackson.databind.deser.ResolvableDeserializer (com.fasterxml.jackson.databind.deser.ResolvableDeserializer)
+.class public interface abstract Lcom/fasterxml/jackson/databind/deser/ResolvableDeserializer;
+.super Ljava/lang/Object;
+.source "SourceFile"
+
+
+# virtual methods
+.method public abstract resolve(Lcom/fasterxml/jackson/databind/DeserializationContext;)V
+    .annotation system Ldalvik/annotation/Throws;
+        value = {
+            Lcom/fasterxml/jackson/databind/JsonMappingException;
+        }
+    .end annotation
+.end method
