@@ -5,6 +5,7 @@ class QBankSession(private val state: MarrowStateStore) {
         val old = state.session.answers[mcqId]
         val right = correct != null && selected == correct
         state.clearQBankTimer()
+        state.recordQBankAnswerPosition(mcqId, state.session.currentMcqIndex)
         state.setAnswer(McqAnswerState(
             mcqId = mcqId, selectedAnswer = selected,
             firstAnswer = old?.firstAnswer ?: selected,
@@ -24,6 +25,7 @@ class QBankSession(private val state: MarrowStateStore) {
 
     fun timeout(mcqId: String) {
         state.clearQBankTimer(expired = true)
+        state.recordQBankAnswerPosition(mcqId, -1)
         val old = state.session.answers[mcqId] ?: McqAnswerState(mcqId)
         state.setAnswer(old.copy(isRight = false, skipped = false, locked = true))
     }
