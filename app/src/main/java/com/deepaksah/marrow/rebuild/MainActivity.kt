@@ -670,10 +670,11 @@ class MainActivity : Activity() {
     }
 
     private fun showTestAnalytics() {
-        val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
+        val analytics = TestAnalyticsModel.from(state.test)
+        val metrics = analytics.metrics
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
         box.addView(TextView(this).apply { text = "Test Analytics"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "Total ${metrics.total}\nAttempted ${metrics.attempted}\nCorrect ${metrics.correct}\nWrong ${metrics.wrong}\nSkipped ${metrics.skipped}\nAccuracy ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        box.addView(TextView(this).apply { text = "Completion ${String.format("%.1f", analytics.completionPercent)}%\nTotal ${metrics.total}\nAttempted ${metrics.attempted}\nCorrect ${metrics.correct}\nWrong ${metrics.wrong}\nSkipped ${metrics.skipped}\nAccuracy ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
         replace(ScrollView(this).apply { addView(box) })
     }
 
