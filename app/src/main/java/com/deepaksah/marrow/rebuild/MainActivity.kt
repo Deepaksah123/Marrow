@@ -286,38 +286,27 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
     private fun showBookmarks() {
-        val box = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20,20,20,20)
-        }
-        box.addView(TextView(this).apply {
-            text = "Bookmarks"
-            textSize = 22f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        val ids = BookmarkNavigationModel.ids(state)
-        if (ids.isEmpty()) {
-            box.addView(TextView(this).apply {
-                text = "No bookmarked questions in the current session."
-                setPadding(4,20,4,20)
-            })
-        } else {
+        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text = "Bookmarks"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }; root.addView(list)
+        fun render(allContent: Boolean) {
+            list.removeAllViews()
+            val ids = if (allContent) state.contentRegistry.allQuestions().keys.filter { state.session.answers[it]?.isStarred == true } else BookmarkNavigationModel.ids(state)
+            list.addView(TextView(this).apply { text = if (allContent) "All loaded QBank bookmarks · " + ids.size else "Current module bookmarks · " + ids.size; setPadding(4,10,4,12) })
+            if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No bookmarked questions."; setPadding(4,20,4,20) }); return }
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
-                box.addView(Button(this).apply {
-                    text = q?.text?.let { "${index + 1}. $it" } ?: "Question ${index + 1}"
-                    setOnClickListener {
-                        val questionIndex = state.session.mcqIds.indexOf(id)
-                        if (questionIndex >= 0) {
-                            state.moveQuestion(questionIndex)
-                            state.navigate(MarrowRoute.QBANK_PLAY)
-                            showPlayer()
-                        }
-                    }
-                })
+                val row = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,8,4,8) }
+                row.addView(TextView(this@MainActivity).apply { text = (index + 1).toString() + ". " + (q?.text ?: "Question " + (index + 1)); textSize = 16f })
+                row.addView(Button(this@MainActivity).apply { text = "OPEN"; setOnClickListener { val module = state.contentRegistry.findModuleForQuestion(id); if (module != null) { val idsForModule = state.contentRegistry.questionIds(module); state.selectModule(module, idsForModule); state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0)); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } } })
+                row.addView(Button(this@MainActivity).apply { text = "REMOVE BOOKMARK"; setOnClickListener { QBankSession(state).toggleBookmark(id); render(allContent) } })
+                list.addView(row); addDivider(list)
             }
         }
-        replace(ScrollView(this).apply { addView(box) })
+        root.addView(Button(this).apply { text = "ALL LOADED BOOKMARKS"; setOnClickListener { render(true) } })
+        root.addView(Button(this).apply { text = "CURRENT MODULE"; setOnClickListener { render(false) } })
+        render(true)
+        replace(ScrollView(this).apply { addView(root) })
     }
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
