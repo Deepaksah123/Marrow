@@ -12,6 +12,7 @@ data class McqContent(
     val correctChoiceId: String? = null,
     val solution: String = "",
     val questionDescription: String? = null,
+    val answerDescriptions: List<String> = emptyList(),
     val imageUrl: String? = null,
     val imageUrlV2: String? = null,
     val displayId: String? = null,
