@@ -1,0 +1,65 @@
+name: Bulk recover decompiler source
+
+on:
+  push:
+    paths:
+      - ".github/workflows/bulk-recover-source.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Marrow
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download the three exact archive parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/marrow-recovery
+          curl -fL --retry 5 --retry-all-errors -o /tmp/marrow-recovery/part01 \
+            https://raw.githubusercontent.com/Deepaksah123/prepleadr-xi/main/base.apk_Decompiler.com.part01
+          curl -fL --retry 5 --retry-all-errors -o /tmp/marrow-recovery/part02 \
+            https://raw.githubusercontent.com/Deepaksah123/prepleadr-xi/main/base.apk_Decompiler.com.part02
+          curl -fL --retry 5 --retry-all-errors -o /tmp/marrow-recovery/part03 \
+            https://raw.githubusercontent.com/Deepaksah123/prepleadr-xi/main/base.apk_Decompiler.com.part03
+          test "$(stat -c%s /tmp/marrow-recovery/part01)" = "25165824"
+          test "$(stat -c%s /tmp/marrow-recovery/part02)" = "25165824"
+          test "$(stat -c%s /tmp/marrow-recovery/part03)" = "21700155"
+
+      - name: Reconstruct and validate the exact ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat /tmp/marrow-recovery/part01 \
+              /tmp/marrow-recovery/part02 \
+              /tmp/marrow-recovery/part03 > /tmp/marrow-recovery/base.apk_Decompiler.com.zip
+          test "$(stat -c%s /tmp/marrow-recovery/base.apk_Decompiler.com.zip)" = "722031803"
+          unzip -t /tmp/marrow-recovery/base.apk_Decompiler.com.zip
+
+      - name: Extract into the recovery source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf recovery/base_apk_Decompiler.com
+          mkdir -p recovery/base_apk_Decompiler.com
+          unzip -q /tmp/marrow-recovery/base.apk_Decompiler.com.zip -d recovery/base_apk_Decompiler.com
+          test "$(find recovery/base_apk_Decompiler.com -type f | wc -l)" -gt 20000
+
+      - name: Commit the recovered source as one bulk commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add recovery/base_apk_Decompiler.com
+          git diff --cached --stat
+          git diff --cached --name-only | head -20
+          git commit -m "Bulk import exact decompiler source archive"
+          git push origin HEAD:main
