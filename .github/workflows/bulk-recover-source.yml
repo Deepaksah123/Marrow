@@ -76,10 +76,10 @@ jobs:
             if [ "$count" -ge 3000 ]; then
               batch=$((batch + 1))
               echo "Preparing batch $batch ($count files)"
-              git -C ../.. add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
-              git -C ../.. diff --cached --quiet && { : > /tmp/current-batch; count=0; continue; }
-              git -C ../.. commit -m "Bulk import recovered source batch $batch"
-              git -C ../.. push origin HEAD:main
+              git add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
+              git diff --cached --quiet && { : > /tmp/current-batch; count=0; continue; }
+              git commit -m "Bulk import recovered source batch $batch"
+              git push origin HEAD:main
               : > /tmp/current-batch
               count=0
             fi
@@ -88,7 +88,7 @@ jobs:
           if [ "$count" -gt 0 ]; then
             batch=$((batch + 1))
             echo "Preparing final batch $batch ($count files)"
-            git -C ../.. add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
-            git -C ../.. diff --cached --quiet || git -C ../.. commit -m "Bulk import recovered source batch $batch"
-            git -C ../.. push origin HEAD:main
+            git add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
+            git diff --cached --quiet || git commit -m "Bulk import recovered source batch $batch"
+            git push origin HEAD:main
           fi
