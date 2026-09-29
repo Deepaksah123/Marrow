@@ -75,9 +75,29 @@ class MainActivity : Activity() {
         v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
+        v.findViewById<View>(R.id.homePearlsCard).setOnClickListener {
+            state.navigate(MarrowRoute.PEARLS)
+            showPearls()
+        }
         v.findViewById<Button>(R.id.homeShare).setOnClickListener { Toast.makeText(this, "Share Marrow", Toast.LENGTH_SHORT).show() }
     }
 
+    private fun showPearls() {
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20,20,20,20)
+        }
+        box.addView(TextView(this).apply {
+            text = "Pearls"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "No verified Pearls content is attached to the current C content layer."
+            setPadding(4,20,4,20)
+        })
+        replace(ScrollView(this).apply { addView(box) })
+    }
     private fun showBookmarks() {
         val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
