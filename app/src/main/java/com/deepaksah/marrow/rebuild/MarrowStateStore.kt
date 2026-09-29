@@ -36,7 +36,17 @@ class MarrowStateStore {
     }
     fun selectTest(id: String, mcqIds: List<String>) {
         test = test.copy(testId = id, mcqIds = mcqIds, currentIndex = 0)
-        session = session.copy(selectedTestId = id, testMcqIds = mcqIds, currentTestIndex = 0)
+        session = session.copy(
+            selectedTestId = id,
+            testMcqIds = mcqIds,
+            currentTestIndex = 0,
+            answers = if (session.selectedTestId == id) session.answers else emptyMap()
+        )
+    }
+    fun moveTestQuestion(index: Int) {
+        val safe = index.coerceIn(0, (test.mcqIds.size - 1).coerceAtLeast(0))
+        test = test.copy(currentIndex = safe)
+        session = session.copy(currentTestIndex = safe)
     }
     fun setTestState(value: TestState) { test = value }
     fun setTestEndTime(endTimeMs: Long?) {
