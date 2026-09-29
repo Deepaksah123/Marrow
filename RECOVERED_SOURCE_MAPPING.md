@@ -24,7 +24,7 @@ The recovered APK tree under `recovery/base_apk_Decompiler.com/` is the authorit
 | QBank lesson list | `ui/qbank/lesson_list/QBankLessonListViewModel.java` | `showLessons()` | Partial |
 | QBank play | `ui/qbank/play/QBankPlayViewModel.java`, `QBankMcqViewModel.java` | `showPlayer()` | Partial |
 | QBank score | `ui/qbank/score/QbankScoreViewModel.java` | `showScore()`, `QBankScoreModel.kt` | Partial |
-| QBank tracker | `ui/qbank/tracker/QbankTrackerViewModel.java` | `showQBankTracker()`, `QBankTrackerRows.kt` | Partial |
+| QBank tracker | `ui/qbank/tracker/QbankTrackerViewModel.java` | `showQBankTracker()` | Partial |
 | Tests landing | `ui/test/landing/HomeTestViewModel.java` | `showTests()` | Partial |
 | Test introduction | `ui/test/introduction/TestIntroductionViewModel.java` | `showTestIntro()` | Partial |
 | Test play | `ui/test/testplay/TestPlayViewModel.java`, `TestMcqViewModel.java` | `showTestPlay()` | Partial |
