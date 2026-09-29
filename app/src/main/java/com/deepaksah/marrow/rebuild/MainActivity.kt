@@ -120,13 +120,24 @@ class MainActivity : Activity() {
     }
 
     private fun showTests() {
-        replace(TextView(this).apply {
-            text = "Tests / GT\n\nIntroduction → Instructions → Test Groups → Test Player → Mark/Review/Timer → Submit → Score → Review → Analytics"
-            textSize = 18f; setPadding(24,24,24,24)
-        })
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
+        replace(v)
+        v.findViewById<Button>(R.id.testStart).setOnClickListener {
+            tests.openIntro("source-test")
+            showTests()
+        }
+        v.findViewById<Button>(R.id.testReview).setOnClickListener {
+            tests.openAnalytics()
+            showTests()
+        }
     }
 
     private fun showVideos() {
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false)
+        replace(v)
+    }
+
+    private fun addDivider(c: LinearLayout) {
         replace(TextView(this).apply {
             text = "Videos\n\nVideo landing → subject → lesson → player. Live playback/download URLs are not fabricated."
             textSize = 18f; setPadding(24,24,24,24)
