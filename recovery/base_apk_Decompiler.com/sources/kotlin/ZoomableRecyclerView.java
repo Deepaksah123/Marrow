@@ -1,0 +1,61 @@
+package kotlin;
+
+import java.io.IOException;
+
+/* JADX INFO: loaded from: classes4.dex */
+public abstract class ZoomableRecyclerView extends setMsDelay {
+    private byte[] write;
+
+    static {
+        new setScaleType(ZoomableRecyclerView.class) { // from class: o.ZoomableRecyclerView.4
+            @Override // kotlin.setScaleType
+            final setMsDelay read(EmptyBody emptyBody) {
+                return ZoomableRecyclerView.read(emptyBody.read());
+            }
+        };
+    }
+
+    @Override // kotlin.setMsDelay
+    final boolean write() {
+        return false;
+    }
+
+    ZoomableRecyclerView(byte[] bArr, boolean z) {
+        this.write = bArr;
+    }
+
+    static ZoomableRecyclerView read(byte[] bArr) {
+        return new getUseCase(bArr);
+    }
+
+    @Override // kotlin.setMsDelay
+    final boolean IconCompatParcelizer(setMsDelay setmsdelay) {
+        if (setmsdelay instanceof ZoomableRecyclerView) {
+            return SampleVideosRSModel.write(this.write, ((ZoomableRecyclerView) setmsdelay).write);
+        }
+        return false;
+    }
+
+    @Override // kotlin.setMsDelay
+    final void RemoteActionCompatParcelizer(setMinimumWidthMargin setminimumwidthmargin, boolean z) throws IOException {
+        setminimumwidthmargin.read(z, 12, this.write);
+    }
+
+    @Override // kotlin.setMsDelay
+    final int write(boolean z) {
+        return setMinimumWidthMargin.RemoteActionCompatParcelizer(z, this.write.length);
+    }
+
+    private String AudioAttributesCompatParcelizer() {
+        return ShareCopyRSModel.read(this.write);
+    }
+
+    @Override // kotlin.setBlinkerTexts
+    public final int hashCode() {
+        return SampleVideosRSModel.write(this.write);
+    }
+
+    public String toString() {
+        return AudioAttributesCompatParcelizer();
+    }
+}

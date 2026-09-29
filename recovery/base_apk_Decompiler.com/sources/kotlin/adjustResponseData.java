@@ -1,0 +1,17 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class adjustResponseData extends MagicModuleUseCase implements getCreatedOnDateMs {
+    private /* synthetic */ reportTrackChangeEvent RemoteActionCompatParcelizer;
+
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public adjustResponseData(reportTrackChangeEvent reporttrackchangeevent) {
+        super(0);
+        this.RemoteActionCompatParcelizer = reporttrackchangeevent;
+    }
+
+    @Override // kotlin.getCreatedOnDateMs
+    public final Object invoke() {
+        return reportTrackChangeEvent.AudioAttributesCompatParcelizer();
+    }
+}

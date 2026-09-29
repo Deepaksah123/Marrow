@@ -1,0 +1,15 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class acceptTimestamp extends MagicModuleUseCase implements getAnswerMap {
+    public static final acceptTimestamp RemoteActionCompatParcelizer = new acceptTimestamp();
+
+    public acceptTimestamp() {
+        super(1);
+    }
+
+    @Override // kotlin.getAnswerMap
+    public final Object invoke(Object obj) {
+        return Boolean.valueOf(((String) obj).length() == 0);
+    }
+}

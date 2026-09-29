@@ -1,0 +1,36 @@
+package kotlin;
+
+import kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes3.dex */
+@Metadata(d1 = {"\u0000\n\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\bf\u0018\u0000 \u00022\u00020\u0001:\u0001\u0002À\u0006\u0003"}, d2 = {"Lo/buildMediaPresentationDescription;", "", "IconCompatParcelizer"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public interface buildMediaPresentationDescription {
+
+    /* JADX INFO: renamed from: IconCompatParcelizer, reason: from kotlin metadata */
+    public static final Companion INSTANCE = Companion.IconCompatParcelizer;
+
+    /* JADX INFO: renamed from: o.buildMediaPresentationDescription$IconCompatParcelizer, reason: from kotlin metadata */
+    public static final class Companion {
+        static final /* synthetic */ Companion IconCompatParcelizer = new Companion();
+        private static final String[] write = {"Irrelevant", "Too hard", "Too easy", "Too many questions", "Not useful", "Others"};
+        private static final String[] RemoteActionCompatParcelizer = {"Too much content", "Too little content", "Too hard", "Too easy", "Need more images", "Explanations are not clear", "Lacks concepts", "Poorly organized", "Others"};
+
+        private Companion() {
+        }
+
+        public static String AudioAttributesCompatParcelizer(int i) {
+            if (i == 2 || i == 6 || i == 7 || i == 8) {
+                return "\n            {\n    \"supported_bottom_tabs\": [\n        \"video\"\n    ],\n    \"default_bottom_tab\": \"video\",\n    \"nav_drawer_items\": {\n        \"top_section\": [\n            \"your_course\",\n            \"my_plan\"\n        ],\n        \"middle_section\": [\n            \"buy_now\"\n        ],\n        \"bottom_section\": [\n            \"know_more\",\n            \"contact_us\",\n            \"about_us\",\n            \"rate_us\",\n            \"tnc\",\n            \"share\",\n            \"report_piracy\"\n        ]\n    },\n    \"settings_items\": {\n        \"app_settings\": [\n            \"vibration\"\n        ],\n        \"account_settings\": [\n            \"change_password\",\n            \"change_phone_no\",\n            \"kyc_verification\"\n        ]\n    },\n    \"video_page_tabs\": [\n        \"overview\"\n    ],\n    \"search_items\": [\n        \"video\"\n    ],\n    \"support_items\": [\n        \"get_call\",\n        \"support_mail\",\n        \"privacy_policy\"\n    ],\n    \"deeplinks\": [\n        \"video\",\n        \"subject_video\",\n        \"theme\",\n        \"rate_us\",\n        \"invite\",\n        \"about_us\",\n        \"user\",\n        \"profile_edit\",\n        \"logout\",\n        \"edition_switch\",\n        \"knowmore\",\n        \"subscribe\",\n        \"ext_link\",\n        \"clear_data\",\n        \"subscribe\",\n        \"plan_id\"\n    ],\n    \"home_items\": [],\n    \"is_bookmark_on_test_toolbar\": false,\n    \"is_test_intro_footer_enabled\": false,\n    \"is_import_bundle_enabled\": false,\n    \"show_go_pro_button\": false,\n    \"default_plan_banner_design\":true,\n    \"copy_text\": {\n      \"qbank_header_title\": \"\",\n      \"test_header_title\": \"\",\n      \"video_header_title\": \"Video\",\n      \"search_desc\": \"Search topics from Videos\",\n      \"search_hint\": \"Try Head\",\n      \"video_page_notes_title\": \"Notes\"\n    }\n}\n        ";
+            }
+            return "\n            {\n    \"supported_bottom_tabs\": [\n      \"home\",\n      \"qbank\",\n      \"test\",\n      \"video\"\n    ],\n    \"default_bottom_tab\": \"home\",\n    \"nav_drawer_items\": {\n      \"top_section\": [\n        \"your_course\",\n        \"my_plan\"\n      ],\n      \"middle_section\": [\n        \"buy_now\",\n        \"add_video\",\n        \"marrow_notes\",\n        \"free_extension\"\n      ],\n      \"bottom_section\": [\n        \"know_more\",\n        \"faq\",\n        \"contact_us\",\n        \"about_us\",\n        \"rate_us\",\n        \"tnc\",\n        \"share\",\n        \"report_piracy\"\n      ]\n    },\n    \"settings_items\": {\n      \"main_settings\": [\n        \"plan_page\",\n        \"plan_upgrade\"\n      ],\n      \"app_settings\": [\n        \"theme\",\n        \"vibration\"\n      ],\n      \"account_settings\": [\n        \"reset\",\n        \"change_password\",\n        \"change_phone_no\",\n        \"kyc_verification\"\n      ]\n    },\n    \"qbank_items\": [\n      \"woq\",\n      \"qbank_manifesto\",\n      \"custom_module\"\n    ],\n    \"test_items\": [\n      \"gta\",\n      \"state_rank\"\n    ],\n    \"video_items\": [\n      \"sample_videos\",\n      \"go_pro\"\n    ],\n    \"video_page_tabs\": [\n      \"overview\",\n      \"notes\",\n      \"related_module\"\n    ],\n    \"search_items\": [\n      \"qbank\",\n      \"video\",\n      \"test\",\n      \"pearl\",\n      \"mcq\"\n    ],\n    \"support_items\": [\n      \"faq\",\n      \"get_call\",\n      \"support_mail\",\n      \"privacy_policy\",\n      \"cancel_policy\"\n    ],\n    \"test_tab_items\": [\n      \"200mcq\",\n      \"grand\",\n      \"all\",\n      \"mini\",\n      \"subject\"\n    ],\n    \"deeplinks\": [\n      \"editor_list\", \n      \"rate_us\", \n      \"subscribe\", \n      \"knowmore\", \n      \"invite\", \n      \"about_us\", \n      \"updates\", \n      \"news\", \n      \"test\", \n      \"lesson\", \n      \"qbank\", \n      \"video\", \n      \"subject_qbank\", \n      \"subject_video\", \n      \"pearl\", \n      \"user\", \n      \"profile_edit\", \n      \"int_link\", \n      \"ext_link\", \n      \"ext_video\", \n      \"custom_module\", \n      \"mcq_play\", \n      \"search\", \n      \"mcq\", \n      \"theme\", \n      \"referral\", \n      \"analytics_gt\", \n      \"home\", \n      \"new_feature\", \n      \"free_video\", \n      \"edition_switch\", \n      \"logout\", \n      \"world_of_qbank\", \n      \"join_custom_module\", \n      \"recent_updates\",\n      \"clear_data\",\n      \"settings\",\n      \"discount_coupon\",\n      \"plan_id\",\n      \"upgrade\"\n    ],\n    \"home_items\": [\n      \"featured_card\", \n      \"suggested_test\", \n      \"suggested_qbank\", \n      \"suggested_video\", \n      \"pearls\", \n      \"recent_updates\"\n    ],\n    \"is_bookmark_on_test_toolbar\": false,\n    \"is_test_intro_footer_enabled\": true,\n    \"is_import_bundle_enabled\": true,\n    \"show_go_pro_button\": true,\n    \"default_plan_banner_design\":false,\n    \"copy_text\": {\n      \"qbank_header_title\": \"QBank\",\n      \"test_header_title\": \"Tests\",\n      \"video_header_title\": \"Video\",\n      \"search_desc\": \"Search MCQ IDs, topics from QBank, Tests, Videos\",\n      \"search_hint\": \"Try MB7831\",\n      \"video_page_notes_title\": \"Notes\"\n    }\n}\n        ";
+        }
+
+        public static String[] AudioAttributesCompatParcelizer() {
+            return write;
+        }
+
+        public static String[] RemoteActionCompatParcelizer() {
+            return RemoteActionCompatParcelizer;
+        }
+    }
+}

@@ -1,0 +1,119 @@
+package kotlin;
+
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import com.clevertap.android.sdk.customviews.CloseImageView;
+import com.clevertap.android.sdk.inapp.CTInAppNotificationButton;
+import com.clevertap.android.sdk.inapp.CTInAppNotificationMedia;
+import java.util.ArrayList;
+import java.util.List;
+import kotlin.Metadata;
+import kotlin.RendererCapabilitiesAdaptiveSupport;
+
+/* JADX INFO: loaded from: classes2.dex */
+@Metadata(d1 = {"\u0000&\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\b\u0000\u0018\u00002\u00020\u0001B\u0007¢\u0006\u0004\b\u0002\u0010\u0003J-\u0010\u000b\u001a\u0004\u0018\u00010\n2\u0006\u0010\u0005\u001a\u00020\u00042\b\u0010\u0007\u001a\u0004\u0018\u00010\u00062\b\u0010\t\u001a\u0004\u0018\u00010\bH\u0016¢\u0006\u0004\b\u000b\u0010\f"}, d2 = {"Lo/SimpleBasePlayerExternalSyntheticLambda32;", "Lo/SimpleBasePlayerExternalSyntheticLambda17;", "<init>", "()V", "Landroid/view/LayoutInflater;", "p0", "Landroid/view/ViewGroup;", "p1", "Landroid/os/Bundle;", "p2", "Landroid/view/View;", "onCreateView", "(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;"}, k = 1, mv = {2, 0, 0}, xi = 48)
+public final class SimpleBasePlayerExternalSyntheticLambda32 extends SimpleBasePlayerExternalSyntheticLambda17 {
+    @Override // androidx.fragment.app.Fragment
+    public final View onCreateView(LayoutInflater p0, ViewGroup p1, Bundle p2) {
+        toMagicModuleMetaRepoModel.write(p0, "");
+        ArrayList arrayList = new ArrayList();
+        View viewInflate = p0.inflate(RendererCapabilitiesAdaptiveSupport.IconCompatParcelizer.inapp_cover, p1, false);
+        toMagicModuleMetaRepoModel.write(viewInflate);
+        PlayerPlaybackSuppressionReason.read(viewInflate, (MagicModuleSubmissionRequestBody<? super _verifyEndArrayForSingle, ? super ViewGroup.MarginLayoutParams, getShowPopup>) new MagicModuleSubmissionRequestBody() { // from class: o.SimpleBasePlayerExternalSyntheticLambda33
+            @Override // kotlin.MagicModuleSubmissionRequestBody
+            public final Object invoke(Object obj, Object obj2) {
+                return SimpleBasePlayerExternalSyntheticLambda32.write((_verifyEndArrayForSingle) obj, (ViewGroup.MarginLayoutParams) obj2);
+            }
+        });
+        FrameLayout frameLayout = (FrameLayout) viewInflate.findViewById(RendererCapabilitiesAdaptiveSupport.write.inapp_cover_frame_layout);
+        RelativeLayout relativeLayout = (RelativeLayout) frameLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_relative_layout);
+        relativeLayout.setBackgroundColor(Color.parseColor(AudioAttributesImplApi26Parcelizer().getOnPlay()));
+        LinearLayout linearLayout = (LinearLayout) relativeLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_linear_layout);
+        Button button = (Button) linearLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_button1);
+        arrayList.add(button);
+        Button button2 = (Button) linearLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_button2);
+        arrayList.add(button2);
+        ImageView imageView = (ImageView) relativeLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.backgroundImage);
+        CTInAppNotificationMedia cTInAppNotificationMediaRemoteActionCompatParcelizer = AudioAttributesImplApi26Parcelizer().RemoteActionCompatParcelizer(getIconCompatParcelizer());
+        if (cTInAppNotificationMediaRemoteActionCompatParcelizer != null) {
+            if (!TestGroupLSModel.IconCompatParcelizer((CharSequence) cTInAppNotificationMediaRemoteActionCompatParcelizer.getWrite())) {
+                imageView.setContentDescription(cTInAppNotificationMediaRemoteActionCompatParcelizer.getWrite());
+            }
+            Bitmap bitmap = AudioAttributesImplBaseParcelizer().read(cTInAppNotificationMediaRemoteActionCompatParcelizer.getRemoteActionCompatParcelizer());
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+                imageView.setTag(0);
+            }
+        }
+        TextView textView = (TextView) relativeLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_title);
+        textView.setText(AudioAttributesImplApi26Parcelizer().getMediaMetadataCompat());
+        textView.setTextColor(Color.parseColor(AudioAttributesImplApi26Parcelizer().getOnSkipToQueueItem()));
+        TextView textView2 = (TextView) relativeLayout.findViewById(RendererCapabilitiesAdaptiveSupport.write.cover_message);
+        textView2.setText(AudioAttributesImplApi26Parcelizer().getRatingCompat());
+        textView2.setTextColor(Color.parseColor(AudioAttributesImplApi26Parcelizer().getOnSetRating()));
+        List<CTInAppNotificationButton> listIconCompatParcelizer = AudioAttributesImplApi26Parcelizer().IconCompatParcelizer();
+        if (listIconCompatParcelizer.size() == 1) {
+            if (getIconCompatParcelizer() == 2) {
+                button.setVisibility(8);
+            } else if (getIconCompatParcelizer() == 1) {
+                button.setVisibility(4);
+            }
+            toMagicModuleMetaRepoModel.write(button2);
+            AudioAttributesCompatParcelizer(button2, listIconCompatParcelizer.get(0), 0);
+        } else if (!listIconCompatParcelizer.isEmpty()) {
+            int size = listIconCompatParcelizer.size();
+            for (int i = 0; i < size; i++) {
+                if (i < 2) {
+                    CTInAppNotificationButton cTInAppNotificationButton = listIconCompatParcelizer.get(i);
+                    Object obj = arrayList.get(i);
+                    toMagicModuleMetaRepoModel.AudioAttributesCompatParcelizer(obj, "");
+                    AudioAttributesCompatParcelizer((Button) obj, cTInAppNotificationButton, i);
+                }
+            }
+        }
+        CloseImageView closeImageView = (CloseImageView) frameLayout.findViewById(199272);
+        closeImageView.setOnClickListener(new View.OnClickListener() { // from class: o.SimpleBasePlayerExternalSyntheticLambda30
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                SimpleBasePlayerExternalSyntheticLambda32.read(this.write);
+            }
+        });
+        if (!AudioAttributesImplApi26Parcelizer().getOnRewind()) {
+            closeImageView.setVisibility(8);
+            return viewInflate;
+        }
+        closeImageView.setVisibility(0);
+        return viewInflate;
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public static final getShowPopup write(_verifyEndArrayForSingle _verifyendarrayforsingle, ViewGroup.MarginLayoutParams marginLayoutParams) {
+        toMagicModuleMetaRepoModel.write(_verifyendarrayforsingle, "");
+        toMagicModuleMetaRepoModel.write(marginLayoutParams, "");
+        marginLayoutParams.leftMargin = _verifyendarrayforsingle.read;
+        marginLayoutParams.rightMargin = _verifyendarrayforsingle.IconCompatParcelizer;
+        marginLayoutParams.topMargin = _verifyendarrayforsingle.write;
+        marginLayoutParams.bottomMargin = _verifyendarrayforsingle.AudioAttributesCompatParcelizer;
+        return getShowPopup.INSTANCE;
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public static final void read(SimpleBasePlayerExternalSyntheticLambda32 simpleBasePlayerExternalSyntheticLambda32) {
+        toMagicModuleMetaRepoModel.write(simpleBasePlayerExternalSyntheticLambda32, "");
+        simpleBasePlayerExternalSyntheticLambda32.RemoteActionCompatParcelizer(null);
+        maybeGetTypeVariable activity = simpleBasePlayerExternalSyntheticLambda32.getActivity();
+        if (activity != null) {
+            activity.finish();
+        }
+    }
+}
