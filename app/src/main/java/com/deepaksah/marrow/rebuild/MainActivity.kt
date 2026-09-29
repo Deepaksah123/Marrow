@@ -446,29 +446,71 @@ class MainActivity : Activity() {
         val index = state.test.currentIndex
         val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
         box.addView(TextView(this).apply { text = "Test · ${index + 1} / ${ids.size}"; textSize = 16f })
-        box.addView(TextView(this).apply { text = q?.text ?: "No supplied test MCQ payload is loaded."; textSize = 20f; setTypeface(typeface, Typeface.BOLD); setPadding(0,18,0,18) })
+        box.addView(TextView(this).apply {
+            text = q?.text ?: "No supplied test MCQ payload is loaded."
+            textSize = 20f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(0,18,0,18)
+        })
         if (q != null) {
             val existing = state.session.answers[q.id]
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
                     isEnabled = existing?.locked != true
-                    setOnClickListener { QBankSession(state).answer(q.id, choice.id, q.correctChoiceId); showTestPlay() }
+                    if (existing?.locked == true) {
+                        when {
+                            choice.id == q.correctChoiceId -> {
+                                setBackgroundColor(0xFF2E7D32.toInt())
+                                setTextColor(0xFFFFFFFF.toInt())
+                            }
+                            choice.id == existing.selectedAnswer -> {
+                                setBackgroundColor(0xFFC62828.toInt())
+                                setTextColor(0xFFFFFFFF.toInt())
+                            }
+                        }
+                    }
+                    setOnClickListener {
+                        QBankSession(state).answer(q.id, choice.id, q.correctChoiceId)
+                        showTestPlay()
+                    }
+                })
+            }
+            if (existing?.locked == true && q.solution.isNotBlank()) {
+                box.addView(TextView(this).apply {
+                    text = "Explanation\n\n" + q.solution
+                    textSize = 14f
+                    setPadding(8,16,8,16)
                 })
             }
         }
+        val nav = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         if (index > 0) {
-            box.addView(Button(this).apply {
+            nav.addView(Button(this).apply {
                 text = "PREVIOUS"
                 setOnClickListener { state.moveTestQuestion(index - 1); showTestPlay() }
-            })
+            }, LinearLayout.LayoutParams(0, -2, 1f))
         }
         if (index + 1 < ids.size) {
-            box.addView(Button(this).apply {
+            nav.addView(Button(this).apply {
                 text = "NEXT"
                 setOnClickListener { state.moveTestQuestion(index + 1); showTestPlay() }
-            })
+            }, LinearLayout.LayoutParams(0, -2, 1f))
         }
+        box.addView(nav)
+        box.addView(Button(this).apply {
+            text = "SKIP"
+            setOnClickListener {
+                q?.let { QBankSession(state).skip(it.id) }
+                if (index + 1 < ids.size) {
+                    state.moveTestQuestion(index + 1)
+                    showTestPlay()
+                } else {
+                    tests.openScore()
+                    showTests()
+                }
+            }
+        })
         box.addView(Button(this).apply {
             text = "SUBMIT / SCORE"
             setOnClickListener { tests.openScore(); showTests() }
