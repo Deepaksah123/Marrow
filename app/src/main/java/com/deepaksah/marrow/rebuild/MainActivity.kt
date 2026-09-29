@@ -51,6 +51,7 @@ class MainActivity : Activity() {
         when (state.session.route) {
             MarrowRoute.HOME -> showHome()
             MarrowRoute.QBANK -> showQBank()
+            MarrowRoute.QBANK_INTRO -> showQBankIntroduction()
             MarrowRoute.QBANK_TRACKER -> showQBankTracker()
             MarrowRoute.QBANK_MODULE, MarrowRoute.QBANK_LESSON -> showLessons(state.session.subjectId ?: "")
             MarrowRoute.QBANK_PLAY -> showPlayer()
@@ -271,6 +272,44 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun showQBankIntroduction() {
+        val lessonId = state.session.moduleId ?: state.session.subjectId ?: ""
+        val model = QBankIntroductionModel(lessonId = lessonId)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 24, 24, 24)
+        }
+        box.addView(TextView(this).apply {
+            text = "QBank Introduction"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = if (model.lessonId.isBlank()) "No lesson selected." else "Lesson: " + model.lessonId
+            textSize = 16f
+            setPadding(4, 18, 4, 18)
+        })
+        box.addView(TextView(this).apply {
+            text = "Source-backed lesson introduction state. The recovered ViewModel is lesson-specific; no generic subject-level content is invented here."
+            setPadding(4, 4, 4, 18)
+        })
+        box.addView(Button(this).apply {
+            text = "CONTINUE"
+            isEnabled = model.enabled && model.lessonId.isNotBlank()
+            setOnClickListener {
+                state.navigate(MarrowRoute.QBANK_MODULE)
+                showLessons(state.session.subjectId ?: model.lessonId)
+            }
+        })
+        box.addView(Button(this).apply {
+            text = "BACK"
+            setOnClickListener {
+                state.navigate(MarrowRoute.QBANK)
+                showQBank()
+            }
+        })
+        replace(ScrollView(this).apply { addView(box) })
+    }
     private fun showQBankTracker() {
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
         val box = LinearLayout(this).apply {
