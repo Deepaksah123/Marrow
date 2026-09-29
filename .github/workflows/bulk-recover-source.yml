@@ -52,14 +52,43 @@ jobs:
           unzip -q /tmp/marrow-recovery/base.apk_Decompiler.com.zip -d recovery/base_apk_Decompiler.com
           test "$(find recovery/base_apk_Decompiler.com -type f | wc -l)" -gt 20000
 
-      - name: Commit the recovered source as one bulk commit
+      - name: Commit recovered source in automated batches
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add recovery/base_apk_Decompiler.com
-          git diff --cached --stat
-          git diff --cached --name-only | head -20
-          git commit -m "Bulk import exact decompiler source archive"
-          git push origin HEAD:main
+          git config http.version HTTP/1.1
+          git config http.postBuffer 524288000
+
+          cd recovery/base_apk_Decompiler.com
+          find . -type f -print0 | sort -z > /tmp/recovery-files
+          total=$(tr -cd '\0' < /tmp/recovery-files | wc -c)
+          test "$total" -gt 20000
+          echo "Recovered files: $total"
+
+          batch=0
+          count=0
+          : > /tmp/current-batch
+          while IFS= read -r -d '' file; do
+            printf '%s\0' "${file#./}" >> /tmp/current-batch
+            count=$((count + 1))
+            if [ "$count" -ge 3000 ]; then
+              batch=$((batch + 1))
+              echo "Preparing batch $batch ($count files)"
+              git -C ../.. add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
+              git -C ../.. diff --cached --quiet && { : > /tmp/current-batch; count=0; continue; }
+              git -C ../.. commit -m "Bulk import recovered source batch $batch"
+              git -C ../.. push origin HEAD:main
+              : > /tmp/current-batch
+              count=0
+            fi
+          done < /tmp/recovery-files
+
+          if [ "$count" -gt 0 ]; then
+            batch=$((batch + 1))
+            echo "Preparing final batch $batch ($count files)"
+            git -C ../.. add --pathspec-from-file=/tmp/current-batch --pathspec-file-nul
+            git -C ../.. diff --cached --quiet || git -C ../.. commit -m "Bulk import recovered source batch $batch"
+            git -C ../.. push origin HEAD:main
+          fi
