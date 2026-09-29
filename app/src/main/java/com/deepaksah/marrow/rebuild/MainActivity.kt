@@ -62,7 +62,6 @@ class MainActivity : Activity() {
             MarrowRoute.BOOKMARKS -> showBookmarks()
             MarrowRoute.SEARCH -> showSearch()
             MarrowRoute.QBANK_ANALYTICS -> showAnalytics()
-            MarrowRoute.QBANK_TRACKER,
             MarrowRoute.PYQ,
             MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW,
             MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME -> showUnresolvedSurface(state.session.route)
