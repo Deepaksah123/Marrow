@@ -81,6 +81,16 @@ class MarrowStateStore {
         )
     }
 
+    fun completeQBank() {
+        session = session.copy(
+            qbank = session.qbank.copy(
+                completed = true,
+                submissionInProcess = false,
+                timerEndAtMs = null
+            )
+        )
+    }
+
     fun setAnswer(answer: McqAnswerState) {
         session = session.copy(answers = session.answers + (answer.mcqId to answer))
     }
