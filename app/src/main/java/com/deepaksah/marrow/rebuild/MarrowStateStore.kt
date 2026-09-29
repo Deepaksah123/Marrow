@@ -72,6 +72,15 @@ class MarrowStateStore {
         session = session.copy(qbank = session.qbank.copy(timerEndAtMs = null, timerExpired = expired))
     }
 
+    fun recordQBankAnswerPosition(mcqId: String, position: Int) {
+        if (session.qbank.answerPositions.containsKey(mcqId)) return
+        session = session.copy(
+            qbank = session.qbank.copy(
+                answerPositions = session.qbank.answerPositions + (mcqId to position)
+            )
+        )
+    }
+
     fun setAnswer(answer: McqAnswerState) {
         session = session.copy(answers = session.answers + (answer.mcqId to answer))
     }
