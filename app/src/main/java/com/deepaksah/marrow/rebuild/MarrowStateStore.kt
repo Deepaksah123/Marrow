@@ -21,18 +21,55 @@ class MarrowStateStore {
         session = session.copy(subjectId = id, moduleId = null, mcqIds = emptyList(), currentMcqIndex = 0)
     }
 
+    private fun navigationStatus(index: Int, total: Int): NavigationButtonStatus {
+        if (total <= 0) return NavigationButtonStatus.DONE
+        return if (index >= total - 1) NavigationButtonStatus.COMPLETE else NavigationButtonStatus.NEXT
+    }
+
     fun selectModule(id: String, mcqIds: List<String>) {
         session = session.copy(
             moduleId = id,
             mcqIds = mcqIds,
             currentMcqIndex = 0,
-            qbank = session.qbank.copy(parentId = id, mcqIds = mcqIds, totalMcq = mcqIds.size)
+            qbank = session.qbank.copy(
+                parentId = id,
+                mcqIds = mcqIds,
+                totalMcq = mcqIds.size,
+                startIndex = 0,
+                currentIndex = 0,
+                navigationButtonStatus = navigationStatus(0, mcqIds.size),
+                timerEnabled = true,
+                timerDouble = false,
+                timerEndAtMs = null,
+                timerExpired = false
+            )
         )
     }
 
     fun moveQuestion(index: Int) {
-        val safe = index.coerceIn(0, (session.mcqIds.size - 1).coerceAtLeast(0))
-        session = session.copy(currentMcqIndex = safe, qbank = session.qbank.copy(currentIndex = safe))
+        val total = session.mcqIds.size
+        val safe = index.coerceIn(0, (total - 1).coerceAtLeast(0))
+        session = session.copy(
+            currentMcqIndex = safe,
+            qbank = session.qbank.copy(
+                currentIndex = safe,
+                navigationButtonStatus = navigationStatus(safe, total),
+                timerEndAtMs = null,
+                timerExpired = false
+            )
+        )
+    }
+
+    fun startQBankTimer(nowMs: Long = System.currentTimeMillis()) {
+        if (!session.qbank.timerEnabled || session.qbank.timerExpired) return
+        if (session.qbank.timerEndAtMs == null) {
+            val duration = if (session.qbank.timerDouble) 60_000L else 30_000L
+            session = session.copy(qbank = session.qbank.copy(timerEndAtMs = nowMs + duration))
+        }
+    }
+
+    fun clearQBankTimer(expired: Boolean = false) {
+        session = session.copy(qbank = session.qbank.copy(timerEndAtMs = null, timerExpired = expired))
     }
 
     fun setAnswer(answer: McqAnswerState) {

@@ -8,7 +8,11 @@ data class QBankState(
     val totalMcq: Int = 0,
     val resumeExplanation: Boolean = false,
     val vibrationEnabled: Boolean = false,
-    val navigationButtonStatus: NavigationButtonStatus = NavigationButtonStatus.NEXT
+    val navigationButtonStatus: NavigationButtonStatus = NavigationButtonStatus.NEXT,
+    val timerEnabled: Boolean = true,
+    val timerDouble: Boolean = false,
+    val timerEndAtMs: Long? = null,
+    val timerExpired: Boolean = false
 )
 
 enum class NavigationButtonStatus { SKIP, NEXT, COMPLETE, DONE }
