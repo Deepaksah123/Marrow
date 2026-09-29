@@ -708,6 +708,21 @@ class MainActivity : Activity() {
                 })
             }
         }
+        val jumpRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val jumpInput = EditText(this).apply { hint = "Question no."; inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        jumpRow.addView(jumpInput, LinearLayout.LayoutParams(0, -2, 1f))
+        jumpRow.addView(Button(this).apply {
+            text = "JUMP"
+            setOnClickListener {
+                val target = jumpInput.text.toString().toIntOrNull()
+                if (target != null && target in 1..ids.size) {
+                    state.moveTestQuestion(target - 1)
+                    showTestPlay()
+                }
+            }
+        })
+        box.addView(jumpRow)
+
         val nav = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         if (index > 0) {
             nav.addView(Button(this).apply {
