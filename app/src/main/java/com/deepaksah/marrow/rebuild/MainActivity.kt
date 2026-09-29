@@ -1,6 +1,7 @@
 package com.deepaksah.marrow.rebuild
 
-import android.app.Activity\nimport android.app.AlertDialog
+import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -121,7 +122,7 @@ class MainActivity : Activity() {
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
                 box.addView(Button(this).apply {
-                    text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
+                    text = q?.text?.let { "${index + 1}. $it" } ?: "Question ${index + 1}"
                     setOnClickListener {
                         val questionIndex = state.session.mcqIds.indexOf(id)
                         if (questionIndex >= 0) {
