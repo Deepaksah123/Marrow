@@ -20,4 +20,7 @@ object TestEngine {
         val skipped = rows.count { it.skipped }
         return TestMetrics(ids.size, attempted, correct, wrong, skipped)
     }
+
+    fun metrics(state: TestState): TestMetrics =
+        metrics(state.mcqIds, state.answers)
 }
