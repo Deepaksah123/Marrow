@@ -360,16 +360,79 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
     private fun showTests() {
-        val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
-        replace(v)
-        v.findViewById<Button>(R.id.testStart).setOnClickListener {
-            tests.openIntro("source-test")
-            showTests()
+        when (state.session.route) {
+            MarrowRoute.TEST_INTRO -> showTestIntro()
+            MarrowRoute.TEST_SCORE -> showTestScore()
+            MarrowRoute.TEST_REVIEW -> showTestReview()
+            MarrowRoute.TEST_ANALYTICS -> showTestAnalytics()
+            MarrowRoute.TEST_PLAY -> showTestPlay()
+            else -> {
+                val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
+                replace(v)
+                v.findViewById<Button>(R.id.testStart).setOnClickListener { tests.openIntro("source-test"); showTests() }
+                v.findViewById<Button>(R.id.testReview).setOnClickListener { tests.openAnalytics(); showTests() }
+            }
         }
-        v.findViewById<Button>(R.id.testReview).setOnClickListener {
-            tests.openAnalytics()
-            showTests()
+    }
+
+    private fun showTestIntro() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
+        box.addView(TextView(this).apply { text = "Test Introduction"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply { text = "No verified test payload is attached to the current C content layer."; setPadding(4,20,4,20) })
+        box.addView(Button(this).apply { text = "BACK"; setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showTestPlay() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        val ids = state.test.mcqIds
+        val index = state.test.currentIndex
+        val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
+        box.addView(TextView(this).apply { text = "Test · \${index + 1} / \${ids.size}"; textSize = 16f })
+        box.addView(TextView(this).apply { text = q?.text ?: "No supplied test MCQ payload is loaded."; textSize = 20f; setTypeface(typeface, Typeface.BOLD); setPadding(0,18,0,18) })
+        if (q != null) {
+            val existing = state.session.answers[q.id]
+            q.choices.forEach { choice ->
+                box.addView(Button(this).apply {
+                    text = choice.text
+                    isEnabled = existing?.locked != true
+                    setOnClickListener { QBankSession(state).answer(q.id, choice.id, q.correctChoiceId); showTestPlay() }
+                })
+            }
         }
+        box.addView(Button(this).apply { text = "SUBMIT / SCORE"; setOnClickListener { tests.openScore(); showTests() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showTestScore() {
+        val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
+        box.addView(TextView(this).apply { text = "Test Score"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply { text = "Total: \${metrics.total}   Attempted: \${metrics.attempted}\nCorrect: \${metrics.correct}   Wrong: \${metrics.wrong}\nSkipped: \${metrics.skipped}   Accuracy: \${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        box.addView(Button(this).apply { text = "REVIEW"; setOnClickListener { tests.openReview(); showTests() } })
+        box.addView(Button(this).apply { text = "ANALYTICS"; setOnClickListener { tests.openAnalytics(); showTests() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showTestReview() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        box.addView(TextView(this).apply { text = "Test Review"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
+        state.test.mcqIds.forEachIndexed { index, id ->
+            val q = state.contentRegistry.question(id)
+            box.addView(Button(this).apply {
+                text = q?.text?.let { "\${index + 1}. \$it" } ?: "Question \${index + 1}"
+                setOnClickListener { if (index < state.session.mcqIds.size) { state.moveQuestion(index); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
+            })
+        }
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showTestAnalytics() {
+        val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
+        box.addView(TextView(this).apply { text = "Test Analytics"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply { text = "Total \${metrics.total}\nAttempted \${metrics.attempted}\nCorrect \${metrics.correct}\nWrong \${metrics.wrong}\nSkipped \${metrics.skipped}\nAccuracy \${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        replace(ScrollView(this).apply { addView(box) })
     }
 
     private fun showVideos() {
