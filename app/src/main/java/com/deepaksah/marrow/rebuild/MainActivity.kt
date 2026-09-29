@@ -51,6 +51,7 @@ class MainActivity : Activity() {
         when (state.session.route) {
             MarrowRoute.HOME -> showHome()
             MarrowRoute.QBANK -> showQBank()
+            MarrowRoute.QBANK_TRACKER -> showQBankTracker()
             MarrowRoute.QBANK_MODULE, MarrowRoute.QBANK_LESSON -> showLessons(state.session.subjectId ?: "")
             MarrowRoute.QBANK_PLAY -> showPlayer()
             MarrowRoute.QBANK_SCORE -> showScore()
@@ -250,6 +251,13 @@ class MainActivity : Activity() {
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
         replace(v)
+        val tracker = v.findViewById<TextView>(R.id.qbankTracker)
+        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        tracker.text = "Progress  ·  " + metrics.attempted + "/" + metrics.total + " attempted  ·  " + String.format("%.1f", metrics.accuracy) + "% accuracy"
+        tracker.setOnClickListener {
+            state.navigate(MarrowRoute.QBANK_TRACKER)
+            showQBankTracker()
+        }
         val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
         subjects.forEach { s ->
             val row = TextView(this).apply {
@@ -264,6 +272,41 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun showQBankTracker() {
+        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
+        }
+        box.addView(TextView(this).apply {
+            text = "QBank Tracker"
+            textSize = 26f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "Current loaded QBank session"
+            textSize = 13f
+            setPadding(0, 6, 0, 20)
+        })
+        listOf("Total questions" to metrics.total, "Attempted" to metrics.attempted, "Correct" to metrics.correct, "Wrong" to metrics.wrong, "Skipped" to metrics.skipped, "Bookmarked" to metrics.bookmarked).forEach { (label, value) ->
+            box.addView(TextView(this).apply {
+                text = label + "    " + value
+                textSize = 17f
+                setPadding(8, 14, 8, 14)
+            })
+        }
+        box.addView(TextView(this).apply {
+            text = "Accuracy    " + String.format("%.1f", metrics.accuracy) + "%"
+            textSize = 18f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(8, 18, 8, 18)
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO QBANK"
+            setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
+        })
+        replace(ScrollView(this).apply { addView(box) })
+    }
     private fun showLessons(subject: String) {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_lessons, content, false)
         replace(v)
