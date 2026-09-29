@@ -1,6 +1,10 @@
 package com.deepaksah.marrow.rebuild
 
 class TestNavigator(private val state: MarrowStateStore) {
+    fun selectConfiguredTab(tabId: String) {
+        state.session.selectedTestGroup = tabId
+    }
+
     fun openIntro(testId: String) {
         state.selectTest(testId, emptyList())
         state.navigate(MarrowRoute.TEST_INTRO)
