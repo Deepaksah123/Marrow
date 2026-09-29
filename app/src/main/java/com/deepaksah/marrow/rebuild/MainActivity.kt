@@ -621,62 +621,32 @@ class MainActivity : Activity() {
     }
 
     private fun showReview() {
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20,20,20,20)
-        }
-        val title = TextView(this).apply {
-            text = "Review"
-            textSize = 22f
-            setTypeface(typeface, Typeface.BOLD)
-            setPadding(4,4,4,12)
-        }
-        root.addView(title)
-
+        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        root.addView(TextView(this).apply { text = "QBank Review"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        var showAnswer = false
+        val answerToggle = CheckBox(this).apply { text = "Show answer / explanation"; isChecked = false }
+        root.addView(answerToggle)
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(list)
-
         fun render(filter: ReviewFilter) {
             list.removeAllViews()
             val ids = ReviewEngine.filter(state.session.mcqIds, state.session.answers, state.contentRegistry.allQuestions(), filter)
-            list.addView(TextView(this).apply {
-                text = filter.name.replace('_', ' ') + " · " + ids.size
-                textSize = 15f
-                setPadding(4,8,4,12)
-            })
-            if (ids.isEmpty()) {
-                list.addView(TextView(this).apply {
-                    text = "No questions in this filter."
-                    setPadding(4,12,4,12)
-                })
-                return
-            }
+            list.addView(TextView(this).apply { text = filter.name.replace('_', ' ') + " · " + ids.size; textSize = 15f; setTypeface(typeface, Typeface.BOLD); setPadding(4,8,4,12) })
+            if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No questions in this filter."; setPadding(4,12,4,12) }); return }
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
-                list.addView(Button(this).apply {
-                    text = q?.text?.let { "${index + 1}. $it" } ?: "Question ${index + 1}"
-                    setOnClickListener {
-                        val questionIndex = state.session.mcqIds.indexOf(id)
-                        if (questionIndex >= 0) {
-                            state.moveQuestion(questionIndex)
-                            state.navigate(MarrowRoute.QBANK_PLAY)
-                            showPlayer()
-                        }
-                    }
-                })
+                val item = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,6,4,10) }
+                item.addView(TextView(this@MainActivity).apply { text = "${index + 1}. " + (q?.text ?: "Question ${index + 1}"); textSize = 16f; setTypeface(typeface, Typeface.BOLD) })
+                if (showAnswer && q != null) item.addView(TextView(this@MainActivity).apply { val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text; text = "Answer: " + (answer ?: "Not available") + if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""; setPadding(8,8,8,8) })
+                item.setOnClickListener { val questionIndex = state.session.mcqIds.indexOf(id); if (questionIndex >= 0) { state.moveQuestion(questionIndex); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
+                list.addView(item); addDivider(list)
             }
         }
-
-        ReviewFilter.values().forEach { filter ->
-            root.addView(Button(this).apply {
-                text = filter.name.replace('_', ' ')
-                setOnClickListener { render(filter) }
-            })
-        }
+        answerToggle.setOnCheckedChangeListener { _, checked -> showAnswer = checked; render(ReviewFilter.ALL) }
+        ReviewFilter.values().forEach { filter -> root.addView(Button(this).apply { text = filter.name.replace('_', ' '); setOnClickListener { render(filter) } }) }
         render(ReviewFilter.ALL)
         replace(ScrollView(this).apply { addView(root) })
     }
-
     private fun showAnalytics() {
         val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
