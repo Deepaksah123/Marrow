@@ -69,7 +69,6 @@ class MainActivity : Activity() {
             MarrowRoute.CUSTOM_SUBJECTS, MarrowRoute.CUSTOM_TOPICS, MarrowRoute.CUSTOM_TAGS, MarrowRoute.CUSTOM_ADDONS,
             MarrowRoute.CUSTOM_JOIN, MarrowRoute.CUSTOM_PLAY, MarrowRoute.CUSTOM_SCORE -> showCustom()
         }
-        }
     }
 
     private fun replace(v: View) { content.removeAllViews(); content.addView(v) }
