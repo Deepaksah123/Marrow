@@ -220,6 +220,11 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.QBANK_MODULE)
             showLessons(state.session.subjectId ?: "")
         }
+        v.findViewById<Button>(R.id.reviewButton).setOnLongClickListener {
+            state.navigate(MarrowRoute.QBANK_ANALYTICS)
+            showAnalytics()
+            true
+        }
     }
 
     private fun showReview() {
@@ -279,6 +284,24 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(root) })
     }
 
+    private fun showAnalytics() {
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24,24,24,24)
+        }
+        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        box.addView(TextView(this).apply {
+            text = "Analytics"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "Total: \${metrics.total}\nAttempted: \${metrics.attempted}\nCorrect: \${metrics.correct}\nWrong: \${metrics.wrong}\nSkipped: \${metrics.skipped}\nBookmarked: \${metrics.bookmarked}\nAccuracy: \${String.format("%.1f", metrics.accuracy)}%"
+            textSize = 16f
+            setPadding(4,18,4,18)
+        })
+        replace(ScrollView(this).apply { addView(box) })
+    }
     private fun showTests() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
         replace(v)
