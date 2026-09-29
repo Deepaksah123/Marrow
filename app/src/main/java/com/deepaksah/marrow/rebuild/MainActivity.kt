@@ -2,6 +2,8 @@ package com.deepaksah.marrow.rebuild
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +26,13 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.navQBank).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         findViewById<TextView>(R.id.navTests).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         findViewById<TextView>(R.id.navVideos).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
-        renderCurrent()
+        showSplashThenHome()
+    }
+
+    private fun showSplashThenHome() {
+        val splash = LayoutInflater.from(this).inflate(R.layout.screen_splash, content, false)
+        replace(splash)
+        Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 850L)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -55,7 +63,17 @@ class MainActivity : Activity() {
     }
 
     private fun replace(v: View) { content.removeAllViews(); content.addView(v) }
-    private fun showHome() { replace(LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)) }
+    private fun showHome() {
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
+        replace(v)
+        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show() }
+        v.findViewById<TextView>(R.id.homeSearch).setOnClickListener { Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show() }
+        v.findViewById<TextView>(R.id.homeBookmark).setOnClickListener { Toast.makeText(this, "Bookmarks", Toast.LENGTH_SHORT).show() }
+        v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
+        v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
+        v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
+        v.findViewById<Button>(R.id.homeShare).setOnClickListener { Toast.makeText(this, "Share Marrow", Toast.LENGTH_SHORT).show() }
+    }
 
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
