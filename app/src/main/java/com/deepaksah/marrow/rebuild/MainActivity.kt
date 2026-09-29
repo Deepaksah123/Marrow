@@ -35,13 +35,21 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.navQBank).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         findViewById<TextView>(R.id.navTests).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         findViewById<TextView>(R.id.navVideos).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
-        showSplashThenHome()
+        loadMarrowContentThenHome()
     }
 
-    private fun showSplashThenHome() {
+    private fun loadMarrowContentThenHome() {
         val splash = LayoutInflater.from(this).inflate(R.layout.screen_splash, content, false)
         replace(splash)
-        Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 850L)
+        Thread {
+            val imported = runCatching {
+                MarrowJsonImporter(assets).loadEdition8QBank()
+            }.getOrElse { emptyMap() }
+            runOnUiThread {
+                if (imported.isNotEmpty()) state.importContent(imported)
+                Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 350L)
+            }
+        }.start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
