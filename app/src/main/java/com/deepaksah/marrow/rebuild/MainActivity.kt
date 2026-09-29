@@ -11,6 +11,8 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import android.webkit.WebView
+import android.webkit.WebSettings
 
 class MainActivity : Activity() {
     private lateinit var content: FrameLayout
@@ -504,15 +506,17 @@ class MainActivity : Activity() {
                 }
             }.start()
         }
-        val questionView = v.findViewById<TextView>(R.id.playQuestion)
+        val questionView = v.findViewById<WebView>(R.id.playQuestion)
         val optionContainer = v.findViewById<LinearLayout>(R.id.optionContainer)
-        val explanation = v.findViewById<TextView>(R.id.explanation)
+        val explanation = v.findViewById<WebView>(R.id.explanation)
         optionContainer.removeAllViews()
 
         if (question == null) {
-            questionView.text = "No supplied MCQ payload is loaded for this module."
+            configureContentWebView(questionView)
+            loadContentHtml(questionView, "<p><b>No supplied MCQ payload is loaded for this module.</b></p>")
         } else {
-            questionView.text = question.text
+            configureContentWebView(questionView)
+            loadContentHtml(questionView, question.text)
             val existing = state.session.answers[question.id]
             question.choices.forEach { choice ->
                 optionContainer.addView(Button(this).apply {
@@ -534,7 +538,8 @@ class MainActivity : Activity() {
                 })
             }
             if (existing?.locked == true && question.solution.isNotBlank()) {
-                explanation.text = "Explanation\n\n" + question.solution
+                configureContentWebView(explanation)
+                loadContentHtml(explanation, "<h3>Explanation</h3>" + question.solution)
                 explanation.visibility = View.VISIBLE
             } else {
                 explanation.visibility = View.GONE
@@ -596,6 +601,47 @@ class MainActivity : Activity() {
                 showScore()
             }
         }
+    }
+
+    private fun configureContentWebView(webView: WebView) {
+        webView.settings.javaScriptEnabled = false
+        webView.settings.domStorageEnabled = false
+        webView.settings.loadsImagesAutomatically = true
+        webView.settings.blockNetworkImage = false
+        webView.settings.useWideViewPort = true
+        webView.settings.loadWithOverviewMode = false
+        webView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        webView.isVerticalScrollBarEnabled = false
+        webView.isHorizontalScrollBarEnabled = false
+    }
+
+    private fun loadContentHtml(webView: WebView, sourceHtml: String) {
+        val css = """
+            <style>
+              html,body { margin:0; padding:0; background:transparent; color:#111; font-family:sans-serif; font-size:16px; }
+              body { width:100%; overflow-x:hidden; }
+              img { max-width:100%; height:auto; display:block; margin:10px auto; }
+              table { max-width:100%; width:auto; border-collapse:collapse; overflow-x:auto; }
+              td,th { border:1px solid #999; padding:6px; vertical-align:top; }
+              p { margin:8px 0; }
+            </style>
+        """.trimIndent()
+        webView.webViewClient = object : android.webkit.WebViewClient() {
+            override fun onPageFinished(view: WebView, url: String?) {
+                view.evaluateJavascript(
+                    "(function(){return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);})()"
+                ) { value ->
+                    val px = value?.replace(""", "")?.toFloatOrNull()?.toInt() ?: return@evaluateJavascript
+                    if (px > 0) {
+                        view.layoutParams = view.layoutParams.apply {
+                            height = (px * resources.displayMetrics.density).toInt().coerceAtLeast(1)
+                        }
+                        view.requestLayout()
+                    }
+                }
+            }
+        }
+        webView.loadDataWithBaseURL(null, css + "<body>" + sourceHtml + "</body>", "text/html", "UTF-8", null)
     }
 
     private fun showScore() {
