@@ -16,9 +16,11 @@ class MarrowStateStore {
 
     fun importContent(modules: Map<String, List<McqContent>>): ContentImportResult =
         ContentImporter(contentRegistry).import(modules)
+
     fun selectSubject(id: String) {
         session = session.copy(subjectId = id, moduleId = null, mcqIds = emptyList(), currentMcqIndex = 0)
     }
+
     fun selectModule(id: String, mcqIds: List<String>) {
         session = session.copy(
             moduleId = id,
@@ -27,33 +29,51 @@ class MarrowStateStore {
             qbank = session.qbank.copy(parentId = id, mcqIds = mcqIds, totalMcq = mcqIds.size)
         )
     }
+
     fun moveQuestion(index: Int) {
         val safe = index.coerceIn(0, (session.mcqIds.size - 1).coerceAtLeast(0))
         session = session.copy(currentMcqIndex = safe, qbank = session.qbank.copy(currentIndex = safe))
     }
+
     fun setAnswer(answer: McqAnswerState) {
         session = session.copy(answers = session.answers + (answer.mcqId to answer))
     }
+
+    fun setTestAnswer(answer: McqAnswerState) {
+        test = test.copy(answers = test.answers + (answer.mcqId to answer))
+    }
+
     fun selectTest(id: String, mcqIds: List<String>) {
-        test = test.copy(testId = id, mcqIds = mcqIds, currentIndex = 0)
+        val sameTest = test.testId == id
+        test = test.copy(
+            testId = id,
+            mcqIds = mcqIds,
+            currentIndex = 0,
+            answers = if (sameTest) test.answers else emptyMap()
+        )
         session = session.copy(
             selectedTestId = id,
             testMcqIds = mcqIds,
             currentTestIndex = 0,
-            answers = if (session.selectedTestId == id) session.answers else emptyMap()
+            testEndTimeMs = null
         )
     }
+
     fun moveTestQuestion(index: Int) {
         val safe = index.coerceIn(0, (test.mcqIds.size - 1).coerceAtLeast(0))
         test = test.copy(currentIndex = safe)
         session = session.copy(currentTestIndex = safe)
     }
+
     fun setTestState(value: TestState) { test = value }
+
     fun setTestEndTime(endTimeMs: Long?) {
         test = test.copy(testEndTimeMs = endTimeMs)
         session = session.copy(testEndTimeMs = endTimeMs)
     }
+
     fun setCustomStep(step: CustomModuleStep) { customModule = customModule.copy(step = step) }
+
     fun save(out: Bundle) {
         out.putString("route", session.route.name)
         out.putString("subjectId", session.subjectId)
@@ -62,6 +82,7 @@ class MarrowStateStore {
         out.putString("testId", test.testId)
         out.putInt("testIndex", test.currentIndex)
     }
+
     fun restore(input: Bundle?) {
         if (input == null) return
         val route = input.getString("route")?.let { runCatching { MarrowRoute.valueOf(it) }.getOrNull() } ?: MarrowRoute.HOME
