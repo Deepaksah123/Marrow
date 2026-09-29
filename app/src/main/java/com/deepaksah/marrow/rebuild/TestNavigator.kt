@@ -2,7 +2,7 @@ package com.deepaksah.marrow.rebuild
 
 class TestNavigator(private val state: MarrowStateStore) {
     fun selectConfiguredTab(tabId: String) {
-        state.session.selectedTestGroup = tabId
+        state.setSelectedTestGroup(tabId)
     }
 
     fun openIntro(testId: String) {
