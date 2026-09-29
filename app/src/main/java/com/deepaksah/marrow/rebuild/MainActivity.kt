@@ -68,13 +68,50 @@ class MainActivity : Activity() {
         replace(v)
         v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show() }
         v.findViewById<TextView>(R.id.homeSearch).setOnClickListener { Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show() }
-        v.findViewById<TextView>(R.id.homeBookmark).setOnClickListener { Toast.makeText(this, "Bookmarks", Toast.LENGTH_SHORT).show() }
+        v.findViewById<TextView>(R.id.homeBookmark).setOnClickListener {
+            state.navigate(MarrowRoute.BOOKMARKS)
+            showBookmarks()
+        }
         v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
         v.findViewById<Button>(R.id.homeShare).setOnClickListener { Toast.makeText(this, "Share Marrow", Toast.LENGTH_SHORT).show() }
     }
 
+    private fun showBookmarks() {
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20,20,20,20)
+        }
+        box.addView(TextView(this).apply {
+            text = "Bookmarks"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        val ids = state.session.mcqIds.filter { state.session.answers[it]?.isStarred == true }
+        if (ids.isEmpty()) {
+            box.addView(TextView(this).apply {
+                text = "No bookmarked questions in the current session."
+                setPadding(4,20,4,20)
+            })
+        } else {
+            ids.forEachIndexed { index, id ->
+                val q = state.contentRegistry.question(id)
+                box.addView(Button(this).apply {
+                    text = q?.text?.let { "\${index + 1}. \$it" } ?: "Question \${index + 1}"
+                    setOnClickListener {
+                        val questionIndex = state.session.mcqIds.indexOf(id)
+                        if (questionIndex >= 0) {
+                            state.moveQuestion(questionIndex)
+                            state.navigate(MarrowRoute.QBANK_PLAY)
+                            showPlayer()
+                        }
+                    }
+                })
+            }
+        }
+        replace(ScrollView(this).apply { addView(box) })
+    }
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
         replace(v)
