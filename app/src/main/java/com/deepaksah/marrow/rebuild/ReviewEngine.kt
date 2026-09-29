@@ -18,7 +18,7 @@ object ReviewEngine {
                 ReviewFilter.GUESS_WRONG -> a?.isGuessed == true && a.isRight == false
                 ReviewFilter.SILLY_MISTAKES -> a?.isSillyMistake == true
                 ReviewFilter.SKIPPED -> a?.skipped == true
-                ReviewFilter.WRONG -> a?.isRight == false && a.skipped != true
+                ReviewFilter.WRONG -> a?.let { it.isRight == false && !it.skipped } == true
                 ReviewFilter.SCHEMA_MCQS, ReviewFilter.NEW_REVISED -> false
             }
         }
