@@ -1,6 +1,6 @@
 package com.deepaksah.marrow.rebuild
 
-import android.app.Activity
+import android.app.Activity\nimport android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -435,12 +435,37 @@ class MainActivity : Activity() {
     private fun showTestReview() {
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
         box.addView(TextView(this).apply { text = "Test Review"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        state.test.mcqIds.forEachIndexed { index, id ->
-            val q = state.contentRegistry.question(id)
-            box.addView(Button(this).apply {
-                text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
-                setOnClickListener { if (index < state.session.mcqIds.size) { state.moveQuestion(index); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
-            })
+        if (state.test.mcqIds.isEmpty()) {
+            box.addView(TextView(this).apply { text = "No verified test question payload is attached to the current C content layer."; setPadding(4,20,4,20) })
+        } else {
+            state.test.mcqIds.forEachIndexed { index, id ->
+                val q = state.contentRegistry.question(id)
+                val answer = state.session.answers[id]
+                box.addView(Button(this).apply {
+                    text = q?.let {
+                        val status = when {
+                            answer?.skipped == true -> "Skipped"
+                            answer?.isRight == true -> "Correct"
+                            answer?.isRight == false -> "Wrong"
+                            else -> "Unanswered"
+                        }
+                        "${index + 1}. ${status} — ${it.text}"
+                    } ?: "Question ${index + 1} — content unavailable"
+                    setOnClickListener {
+                        q?.let { question ->
+                            AlertDialog.Builder(this@MainActivity)
+                                .setTitle("Question ${index + 1}")
+                                .setMessage(buildString {
+                                    append(question.text)
+                                    question.choices.forEach { choice -> append("\n\n").append(choice.text) }
+                                    if (question.solution.isNotBlank()) append("\n\nExplanation\n").append(question.solution)
+                                })
+                                .setPositiveButton("Close", null)
+                                .show()
+                        }
+                    }
+                })
+            }
         }
         replace(ScrollView(this).apply { addView(box) })
     }
