@@ -681,7 +681,7 @@ class MainActivity : Activity() {
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
-                    isEnabled = existing?.locked != true && !state.test.timedOut
+                    isEnabled = !state.test.timedOut
                     if (existing?.locked == true) {
                         when {
                             choice.id == q.correctChoiceId -> {
@@ -696,15 +696,6 @@ class MainActivity : Activity() {
                     }
                     setOnClickListener {
                         TestSession(state).answer(q.id, choice.id, q.correctChoiceId)
-                        showTestPlay()
-                    }
-                })
-            }
-            if (existing?.locked == true) {
-                box.addView(Button(this).apply {
-                    text = "CHANGE ANSWER"
-                    setOnClickListener { 
-                        existing.selectedAnswer?.let { TestSession(state).changeAnswer(q.id, it, q.correctChoiceId) }
                         showTestPlay()
                     }
                 })
