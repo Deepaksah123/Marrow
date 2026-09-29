@@ -440,9 +440,14 @@ class MainActivity : Activity() {
             }
         }
 
-        v.findViewById<Button>(R.id.playComplete).setOnClickListener {
-            qbank.openScore()
-            showScore()
+        val navigationStatus = state.session.qbank.navigationButtonStatus
+        v.findViewById<Button>(R.id.playComplete).apply {
+            visibility = if (navigationStatus == NavigationButtonStatus.COMPLETE) View.VISIBLE else View.GONE
+            text = if (navigationStatus == NavigationButtonStatus.COMPLETE) "COMPLETE" else "COMPLETE"
+            setOnClickListener {
+                qbank.openScore()
+                showScore()
+            }
         }
         v.findViewById<Button>(R.id.playPrevious).setOnClickListener {
             if (state.session.currentMcqIndex > 0) {
