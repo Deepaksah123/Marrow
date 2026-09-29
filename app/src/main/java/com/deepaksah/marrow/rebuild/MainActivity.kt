@@ -266,7 +266,7 @@ class MainActivity : Activity() {
                 textSize = 16f
                 setTypeface(typeface, Typeface.BOLD)
                 setPadding(20,22,20,22)
-                setOnClickListener { qbank.openSubject(s); showLessons(s) }
+                setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
             }
             c.addView(row)
             addDivider(c)
