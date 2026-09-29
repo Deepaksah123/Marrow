@@ -37,7 +37,11 @@ class MarrowStateStore {
                 totalMcq = mcqIds.size,
                 startIndex = 0,
                 currentIndex = 0,
-                navigationButtonStatus = navigationStatus(0, mcqIds.size)
+                navigationButtonStatus = navigationStatus(0, mcqIds.size),
+                timerEnabled = true,
+                timerDouble = false,
+                timerEndAtMs = null,
+                timerExpired = false
             )
         )
     }
@@ -49,9 +53,23 @@ class MarrowStateStore {
             currentMcqIndex = safe,
             qbank = session.qbank.copy(
                 currentIndex = safe,
-                navigationButtonStatus = navigationStatus(safe, total)
+                navigationButtonStatus = navigationStatus(safe, total),
+                timerEndAtMs = null,
+                timerExpired = false
             )
         )
+    }
+
+    fun startQBankTimer(nowMs: Long = System.currentTimeMillis()) {
+        if (!session.qbank.timerEnabled || session.qbank.timerExpired) return
+        if (session.qbank.timerEndAtMs == null) {
+            val duration = if (session.qbank.timerDouble) 60_000L else 30_000L
+            session = session.copy(qbank = session.qbank.copy(timerEndAtMs = nowMs + duration))
+        }
+    }
+
+    fun clearQBankTimer(expired: Boolean = false) {
+        session = session.copy(qbank = session.qbank.copy(timerEndAtMs = null, timerExpired = expired))
     }
 
     fun setAnswer(answer: McqAnswerState) {
