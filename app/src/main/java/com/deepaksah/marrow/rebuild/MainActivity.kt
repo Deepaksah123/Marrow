@@ -18,6 +18,7 @@ class MainActivity : Activity() {
     private val qbank by lazy { QBankNavigator(state) }
     private val tests by lazy { TestNavigator(state) }
     private val custom by lazy { CustomModuleNavigator(state) }
+    private var selectedSchemaTitle: String = ""
     private val subjects = listOf("Anatomy","Anaesthesia","Biochemistry","Community Medicine","Dermatology","ENT","Forensic Medicine","Medicine","Microbiology","Obstetrics & Gynaecology","Ophthalmology","Orthopaedics","Paediatrics","Pathology","Pharmacology","Physiology","Psychiatry","Radiology","Surgery")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,8 +66,10 @@ class MainActivity : Activity() {
             MarrowRoute.BOOKMARKS -> showBookmarks()
             MarrowRoute.SEARCH -> showSearch()
             MarrowRoute.QBANK_ANALYTICS -> showAnalytics()
-            MarrowRoute.PYQ,
-            MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW,
+            MarrowRoute.PYQ -> showPyq()
+            MarrowRoute.SCHEMA -> showSchemaList()
+            MarrowRoute.SCHEMA_DETAIL -> showSchemaDetail()
+            MarrowRoute.SCHEMA_REVIEW -> showSchemaReview()
             MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME -> showUnresolvedSurface(state.session.route)
             MarrowRoute.CUSTOM_MODULE, MarrowRoute.CUSTOM_INTRO, MarrowRoute.CUSTOM_CREATION, MarrowRoute.CUSTOM_MODE,
             MarrowRoute.CUSTOM_SUBJECTS, MarrowRoute.CUSTOM_TOPICS, MarrowRoute.CUSTOM_TAGS, MarrowRoute.CUSTOM_ADDONS,
@@ -158,6 +161,72 @@ class MainActivity : Activity() {
                 }
             }
         })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+
+    private fun showPyq() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        box.addView(TextView(this).apply { text = "PYQ"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        val results = state.contentRegistry.search("pyq")
+        box.addView(TextView(this).apply {
+            text = if (results.isEmpty()) "No verified PYQ-tagged questions are loaded in the current local content registry. No PYQ data has been fabricated." else "Verified PYQ-tagged questions: ${results.size}"
+            setPadding(4,16,4,16)
+        })
+        results.take(100).forEachIndexed { index, q ->
+            box.addView(Button(this).apply {
+                text = "${index + 1}. ${q.text}"
+                setOnClickListener {
+                    val module = state.contentRegistry.findModuleForQuestion(q.id)
+                    if (module != null) {
+                        val ids = state.contentRegistry.questionIds(module)
+                        state.selectModule(module, ids)
+                        state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0))
+                        state.navigate(MarrowRoute.QBANK_PLAY)
+                        showPlayer()
+                    }
+                }
+            })
+        }
+        box.addView(Button(this).apply { text = "BACK TO QBANK"; setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showSchemaList() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        box.addView(TextView(this).apply { text = "Schema"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply {
+            text = "Recovered native Schema flow: Listing → Detail → Review. Live schema payload is not present in the local content registry."
+            setPadding(4,16,4,16)
+        })
+        box.addView(Button(this).apply {
+            text = "OPEN SCHEMA DETAIL"
+            setOnClickListener { selectedSchemaTitle = "Schema"; state.navigate(MarrowRoute.SCHEMA_DETAIL); showSchemaDetail() }
+        })
+        box.addView(Button(this).apply { text = "BACK TO QBANK"; setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showSchemaDetail() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        box.addView(TextView(this).apply { text = selectedSchemaTitle.ifBlank { "Schema" }; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply {
+            text = "Source-backed detail flow recovered. Schema ID, lesson payload, completion status and MCQ groups are server-backed in the original app and are not fabricated here."
+            setPadding(4,16,4,16)
+        })
+        box.addView(Button(this).apply { text = "OPEN SCHEMA REVIEW"; setOnClickListener { state.navigate(MarrowRoute.SCHEMA_REVIEW); showSchemaReview() } })
+        box.addView(Button(this).apply { text = "BACK TO SCHEMA LIST"; setOnClickListener { state.navigate(MarrowRoute.SCHEMA); showSchemaList() } })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showSchemaReview() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        box.addView(TextView(this).apply { text = "Schema Review"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        box.addView(TextView(this).apply {
+            text = "Recovered review state supports answer/review loading and navigation, but the original schema MCQ payload is remote and unavailable in the local reconstruction."
+            setPadding(4,16,4,16)
+        })
+        box.addView(Button(this).apply { text = "BACK TO SCHEMA DETAIL"; setOnClickListener { state.navigate(MarrowRoute.SCHEMA_DETAIL); showSchemaDetail() } })
         replace(ScrollView(this).apply { addView(box) })
     }
 
@@ -261,6 +330,15 @@ class MainActivity : Activity() {
             showQBankTracker()
         }
         val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
+        c.addView(Button(this).apply {
+            text = "PYQ"
+            setOnClickListener { state.navigate(MarrowRoute.PYQ); showPyq() }
+        })
+        c.addView(Button(this).apply {
+            text = "SCHEMA"
+            setOnClickListener { state.navigate(MarrowRoute.SCHEMA); showSchemaList() }
+        })
+        addDivider(c)
         subjects.forEach { s ->
             val row = TextView(this).apply {
                 text = s
