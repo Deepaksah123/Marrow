@@ -141,7 +141,7 @@ class MainActivity : Activity() {
         })
         val input = EditText(this).apply {
             hint = "Search loaded QBank content"
-            singleLine = true
+            isSingleLine = true
         }
         box.addView(input)
         val results = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
