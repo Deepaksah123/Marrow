@@ -12,7 +12,7 @@ class QBankNavigator(private val state: MarrowStateStore) {
 
     fun openSubject(subjectId: String) {
         state.selectSubject(subjectId)
-        state.navigate(MarrowRoute.QBANK_MODULE)
+        state.navigate(MarrowRoute.QBANK_INTRO)
     }
 
     fun openModule(moduleId: String, mcqIds: List<String>) {
