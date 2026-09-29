@@ -20,7 +20,7 @@ jobs:
           cd "$TMP"
           git sparse-checkout set "frontend/quizx/Brain/Marrow/Edition 8 qBank"
           cd "$GITHUB_WORKSPACE"
-          SRC="frontend/quizx/Brain/Marrow/Edition 8 qBank"
+          SRC="$TMP/frontend/quizx/Brain/Marrow/Edition 8 qBank"
           DST="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
           python3 - <<'PY'
           import json, pathlib, hashlib
