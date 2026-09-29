@@ -18,6 +18,8 @@ class ContentRegistry(
     fun questionIds(moduleId: String): List<String> = modules[moduleId].orEmpty()
     fun moduleIds(): List<String> = modules.keys.toList()
 
+    fun allQuestions(): Map<String, McqContent> = questions.toMap()
+
     fun search(query: String): List<McqContent> {
         val needle = query.trim().lowercase()
         if (needle.isBlank()) return emptyList()
