@@ -1,6 +1,15 @@
 package com.deepaksah.marrow.rebuild
 
 class QBankNavigator(private val state: MarrowStateStore) {
+    fun openIntroduction(subjectId: String) {
+        state.selectSubject(subjectId)
+        state.navigate(MarrowRoute.QBANK_MODULE)
+    }
+
+    fun openTracker() {
+        state.navigate(MarrowRoute.QBANK_TRACKER)
+    }
+
     fun openSubject(subjectId: String) {
         state.selectSubject(subjectId)
         state.navigate(MarrowRoute.QBANK_MODULE)
