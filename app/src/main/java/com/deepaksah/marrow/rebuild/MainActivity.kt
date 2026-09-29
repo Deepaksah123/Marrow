@@ -121,7 +121,7 @@ class MainActivity : Activity() {
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
                 box.addView(Button(this).apply {
-                    text = q?.text?.let { "\${index + 1}. \$it" } ?: "Question \${index + 1}"
+                    text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
                     setOnClickListener {
                         val questionIndex = state.session.mcqIds.indexOf(id)
                         if (questionIndex >= 0) {
@@ -321,7 +321,7 @@ class MainActivity : Activity() {
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
                 list.addView(Button(this).apply {
-                    text = q?.text?.let { "\${index + 1}. \$it" } ?: "Question \${index + 1}"
+                    text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
                     setOnClickListener {
                         val questionIndex = state.session.mcqIds.indexOf(id)
                         if (questionIndex >= 0) {
@@ -356,7 +356,7 @@ class MainActivity : Activity() {
             setTypeface(typeface, Typeface.BOLD)
         })
         box.addView(TextView(this).apply {
-            text = "Total: \${metrics.total}\nAttempted: \${metrics.attempted}\nCorrect: \${metrics.correct}\nWrong: \${metrics.wrong}\nSkipped: \${metrics.skipped}\nBookmarked: \${metrics.bookmarked}\nAccuracy: \${String.format("%.1f", metrics.accuracy)}%"
+            text = "Total: ${metrics.total}\nAttempted: ${metrics.attempted}\nCorrect: ${metrics.correct}\nWrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}\nBookmarked: ${metrics.bookmarked}\nAccuracy: ${String.format("%.1f", metrics.accuracy)}%"
             textSize = 16f
             setPadding(4,18,4,18)
         })
@@ -391,7 +391,7 @@ class MainActivity : Activity() {
         val ids = state.test.mcqIds
         val index = state.test.currentIndex
         val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
-        box.addView(TextView(this).apply { text = "Test · \${index + 1} / \${ids.size}"; textSize = 16f })
+        box.addView(TextView(this).apply { text = "Test · ${index + 1} / ${ids.size}"; textSize = 16f })
         box.addView(TextView(this).apply { text = q?.text ?: "No supplied test MCQ payload is loaded."; textSize = 20f; setTypeface(typeface, Typeface.BOLD); setPadding(0,18,0,18) })
         if (q != null) {
             val existing = state.session.answers[q.id]
@@ -411,7 +411,7 @@ class MainActivity : Activity() {
         val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
         box.addView(TextView(this).apply { text = "Test Score"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "Total: \${metrics.total}   Attempted: \${metrics.attempted}\nCorrect: \${metrics.correct}   Wrong: \${metrics.wrong}\nSkipped: \${metrics.skipped}   Accuracy: \${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        box.addView(TextView(this).apply { text = "Total: ${metrics.total}   Attempted: ${metrics.attempted}\nCorrect: ${metrics.correct}   Wrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}   Accuracy: ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
         box.addView(Button(this).apply { text = "REVIEW"; setOnClickListener { tests.openReview(); showTests() } })
         box.addView(Button(this).apply { text = "ANALYTICS"; setOnClickListener { tests.openAnalytics(); showTests() } })
         replace(ScrollView(this).apply { addView(box) })
@@ -423,7 +423,7 @@ class MainActivity : Activity() {
         state.test.mcqIds.forEachIndexed { index, id ->
             val q = state.contentRegistry.question(id)
             box.addView(Button(this).apply {
-                text = q?.text?.let { "\${index + 1}. \$it" } ?: "Question \${index + 1}"
+                text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
                 setOnClickListener { if (index < state.session.mcqIds.size) { state.moveQuestion(index); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
             })
         }
@@ -434,7 +434,7 @@ class MainActivity : Activity() {
         val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
         box.addView(TextView(this).apply { text = "Test Analytics"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "Total \${metrics.total}\nAttempted \${metrics.attempted}\nCorrect \${metrics.correct}\nWrong \${metrics.wrong}\nSkipped \${metrics.skipped}\nAccuracy \${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        box.addView(TextView(this).apply { text = "Total ${metrics.total}\nAttempted ${metrics.attempted}\nCorrect ${metrics.correct}\nWrong ${metrics.wrong}\nSkipped ${metrics.skipped}\nAccuracy ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
         replace(ScrollView(this).apply { addView(box) })
     }
 
