@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.graphics.Typeface
@@ -386,6 +387,40 @@ class MainActivity : Activity() {
             "QBank · " + (state.session.currentMcqIndex + 1) + " / " + state.session.qbank.totalMcq
 
         val question = currentQuestion()
+        val timerView = v.findViewById<TextView>(R.id.playTimer)
+        val timerEndAt = state.session.qbank.timerEndAtMs
+        val timerRemaining = if (timerEndAt != null) (timerEndAt - System.currentTimeMillis()).coerceAtLeast(0L) else 0L
+        val timerVisible = state.session.qbank.timerEnabled && question != null && state.session.answers[question.id]?.locked != true
+        timerView.visibility = if (timerVisible) View.VISIBLE else View.GONE
+        if (timerVisible) {
+            state.startQBankTimer()
+            val endAt = state.session.qbank.timerEndAtMs ?: (System.currentTimeMillis() + if (state.session.qbank.timerDouble) 60_000L else 30_000L)
+            val remainingNow = (endAt - System.currentTimeMillis()).coerceAtLeast(0L)
+            val duration = if (state.session.qbank.timerDouble) 60_000L else 30_000L
+            timerView.text = "Time left: " + ((remainingNow + 999L) / 1000L) + "s"
+            object : CountDownTimer(remainingNow, 250L) {
+                override fun onTick(millisUntilFinished: Long) {
+                    if (state.session.route != MarrowRoute.QBANK_PLAY || state.session.currentMcqIndex < 0) {
+                        cancel()
+                        return
+                    }
+                    timerView.text = "Time left: " + ((millisUntilFinished + 999L) / 1000L) + "s"
+                }
+                override fun onFinish() {
+                    val current = currentQuestion()
+                    if (current != null && state.session.answers[current.id]?.locked != true) {
+                        QBankSession(state).timeout(current.id)
+                        if (state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
+                            qbank.openQuestion(state.session.currentMcqIndex + 1)
+                            showPlayer()
+                        } else {
+                            qbank.openScore()
+                            showScore()
+                        }
+                    }
+                }
+            }.start()
+        }
         val questionView = v.findViewById<TextView>(R.id.playQuestion)
         val optionContainer = v.findViewById<LinearLayout>(R.id.optionContainer)
         val explanation = v.findViewById<TextView>(R.id.explanation)
