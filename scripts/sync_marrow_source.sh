@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP_DIR="${RUNNER_TEMP:-/tmp}/marrow-source"
-DEST="$ROOT/app/src/main/assets/marrow_source"
+DEST="$ROOT/app/src/main/assets/marrow_content"
 
 rm -rf "$TMP_DIR" "$DEST"
 mkdir -p "$TMP_DIR" "$DEST"
