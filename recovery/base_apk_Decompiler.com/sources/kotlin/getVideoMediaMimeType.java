@@ -1,0 +1,9 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes3.dex */
+public final class getVideoMediaMimeType {
+    public static final getTrackTypeOfCodec write(String str) {
+        toMagicModuleMetaRepoModel.write(str, "");
+        return toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.read.getWrite()) ? getTrackTypeOfCodec.read : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.RemoteActionCompatParcelizer.getWrite()) ? getTrackTypeOfCodec.RemoteActionCompatParcelizer : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.IconCompatParcelizer.getWrite()) ? getTrackTypeOfCodec.IconCompatParcelizer : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.AudioAttributesCompatParcelizer.getWrite()) ? getTrackTypeOfCodec.AudioAttributesCompatParcelizer : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.MediaBrowserCompatCustomActionResultReceiver.getWrite()) ? getTrackTypeOfCodec.MediaBrowserCompatCustomActionResultReceiver : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.AudioAttributesImplApi21Parcelizer.getWrite()) ? getTrackTypeOfCodec.AudioAttributesImplApi21Parcelizer : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.MediaBrowserCompatItemReceiver.getWrite()) ? getTrackTypeOfCodec.MediaBrowserCompatItemReceiver : toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) str, (Object) getTrackTypeOfCodec.AudioAttributesImplBaseParcelizer.getWrite()) ? getTrackTypeOfCodec.AudioAttributesImplBaseParcelizer : getTrackTypeOfCodec.write;
+    }
+}

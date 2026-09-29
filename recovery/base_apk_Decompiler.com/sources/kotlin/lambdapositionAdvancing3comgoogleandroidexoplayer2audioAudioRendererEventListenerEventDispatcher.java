@@ -1,0 +1,6 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class lambdapositionAdvancing3comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher extends parseAudioSpecificConfig {
+    public static final lambdapositionAdvancing3comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher write = new lambdapositionAdvancing3comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher();
+}

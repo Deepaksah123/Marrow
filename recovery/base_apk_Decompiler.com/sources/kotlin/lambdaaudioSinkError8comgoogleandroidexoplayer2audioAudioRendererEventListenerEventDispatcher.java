@@ -1,0 +1,6 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class lambdaaudioSinkError8comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher extends parseAudioSpecificConfig {
+    public static final lambdaaudioSinkError8comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher RemoteActionCompatParcelizer = new lambdaaudioSinkError8comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher();
+}

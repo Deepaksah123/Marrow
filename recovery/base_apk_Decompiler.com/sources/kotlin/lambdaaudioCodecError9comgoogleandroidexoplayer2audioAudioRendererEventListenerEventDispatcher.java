@@ -1,0 +1,6 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class lambdaaudioCodecError9comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher extends parseAudioSpecificConfig {
+    public static final lambdaaudioCodecError9comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher AudioAttributesCompatParcelizer = new lambdaaudioCodecError9comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher();
+}

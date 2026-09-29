@@ -1,0 +1,6 @@
+package kotlin;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class lambdaskipSilenceEnabledChanged7comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher extends parseAudioSpecificConfig {
+    public static final lambdaskipSilenceEnabledChanged7comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher RemoteActionCompatParcelizer = new lambdaskipSilenceEnabledChanged7comgoogleandroidexoplayer2audioAudioRendererEventListenerEventDispatcher();
+}

@@ -1,0 +1,96 @@
+package kotlin;
+
+import android.graphics.Bitmap;
+import android.graphics.ColorFilter;
+import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.Typeface;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
+/* JADX INFO: loaded from: classes2.dex */
+public interface onAudioPositionAdvancing {
+    public static final Float AudioAttributesImplApi21Parcelizer;
+    public static final Float AudioAttributesImplApi26Parcelizer;
+    public static final Float AudioAttributesImplBaseParcelizer;
+    public static final PointF MediaBrowserCompatCustomActionResultReceiver;
+    public static final Float MediaBrowserCompatItemReceiver;
+    public static final Path MediaBrowserCompatSearchResultReceiver;
+    public static final Float MediaControllerCompatMediaControllerImplApi21ExtraBinderRequestResultReceiver;
+    public static final Float MediaDescriptionCompat;
+    public static final Bitmap MediaMetadataCompat;
+    public static final Integer[] RatingCompat;
+    public static final ColorFilter RemoteActionCompatParcelizer;
+    public static final Float handleMediaPlayPauseIfPendingOnHandler;
+    public static final Float onAddQueueItem;
+    public static final Float onCommand;
+    public static final Float onCustomAction;
+    public static final PointF onFastForward;
+    public static final PointF onPause;
+    public static final Float onPlay;
+    public static final Float onPlayFromMediaId;
+    public static final Float onPlayFromSearch;
+    public static final Float onPlayFromUri;
+    public static final CharSequence onPrepare;
+    public static final Float onPrepareFromMediaId;
+    public static final Float onPrepareFromSearch;
+    public static final Float onRewind;
+    public static final Float onSeekTo;
+    public static final Float onSetCaptioningEnabled;
+    public static final setHeight onSetPlaybackSpeed;
+    public static final Float onSetRating;
+    public static final Float onSetRepeatMode;
+    public static final Float onSetShuffleMode;
+    public static final Typeface onSkipToQueueItem;
+    public static final Float read;
+    public static final Float setSessionImpl;
+    public static final Float write;
+    public static final Integer AudioAttributesCompatParcelizer = 1;
+    public static final Integer onMediaButtonEvent = 2;
+    public static final Integer onRemoveQueueItem = 3;
+    public static final Integer MediaBrowserCompatMediaItem = 4;
+    public static final Integer IconCompatParcelizer = 5;
+    public static final PointF onPrepareFromUri = new PointF();
+    public static final PointF onRemoveQueueItemAt = new PointF();
+
+    static {
+        Float fValueOf = Float.valueOf(15.0f);
+        onSeekTo = fValueOf;
+        Float fValueOf2 = Float.valueOf(16.0f);
+        onSetRating = fValueOf2;
+        Float fValueOf3 = Float.valueOf(17.0f);
+        read = fValueOf3;
+        MediaBrowserCompatCustomActionResultReceiver = new PointF();
+        onPause = new PointF();
+        Float fValueOf4 = Float.valueOf(BitmapDescriptorFactory.HUE_RED);
+        write = fValueOf4;
+        onFastForward = new PointF();
+        onSetPlaybackSpeed = new setHeight();
+        onSetRepeatMode = Float.valueOf(1.0f);
+        onSetCaptioningEnabled = fValueOf4;
+        onSetShuffleMode = fValueOf4;
+        onPlayFromUri = Float.valueOf(2.0f);
+        onPlayFromSearch = Float.valueOf(3.0f);
+        onPlayFromMediaId = Float.valueOf(4.0f);
+        onPlay = Float.valueOf(5.0f);
+        onCustomAction = Float.valueOf(6.0f);
+        handleMediaPlayPauseIfPendingOnHandler = Float.valueOf(7.0f);
+        MediaDescriptionCompat = Float.valueOf(8.0f);
+        MediaControllerCompatMediaControllerImplApi21ExtraBinderRequestResultReceiver = Float.valueOf(9.0f);
+        onCommand = Float.valueOf(10.0f);
+        onAddQueueItem = Float.valueOf(11.0f);
+        setSessionImpl = Float.valueOf(12.0f);
+        onRewind = Float.valueOf(12.1f);
+        onPrepareFromSearch = Float.valueOf(13.0f);
+        onPrepareFromMediaId = Float.valueOf(14.0f);
+        AudioAttributesImplApi21Parcelizer = fValueOf;
+        AudioAttributesImplBaseParcelizer = fValueOf2;
+        MediaBrowserCompatItemReceiver = fValueOf3;
+        AudioAttributesImplApi26Parcelizer = Float.valueOf(18.0f);
+        RemoteActionCompatParcelizer = new ColorFilter();
+        RatingCompat = new Integer[0];
+        onSkipToQueueItem = Typeface.DEFAULT;
+        MediaMetadataCompat = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+        onPrepare = "dynamic_text";
+        MediaBrowserCompatSearchResultReceiver = new Path();
+    }
+}

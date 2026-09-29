@@ -1,0 +1,27 @@
+package kotlin;
+
+import android.text.TextPaint;
+import android.text.style.MetricAffectingSpan;
+import kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes.dex */
+@Metadata(d1 = {"\u0000\u001c\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0010\u0007\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0010\u0002\n\u0002\b\u0006\b\u0010\u0018\u00002\u00020\u0001B\u000f\u0012\u0006\u0010\u0003\u001a\u00020\u0002¢\u0006\u0004\b\u0004\u0010\u0005J\u0017\u0010\b\u001a\u00020\u00072\u0006\u0010\u0003\u001a\u00020\u0006H\u0016¢\u0006\u0004\b\b\u0010\tJ\u0017\u0010\n\u001a\u00020\u00072\u0006\u0010\u0003\u001a\u00020\u0006H\u0016¢\u0006\u0004\b\n\u0010\tR\u0011\u0010\r\u001a\u00020\u00028\u0006¢\u0006\u0006\n\u0004\b\u000b\u0010\f"}, d2 = {"Lo/modifyEnumDeserializer;", "Landroid/text/style/MetricAffectingSpan;", "", "p0", "<init>", "(F)V", "Landroid/text/TextPaint;", "", "updateDrawState", "(Landroid/text/TextPaint;)V", "updateMeasureState", "IconCompatParcelizer", "F", "RemoteActionCompatParcelizer"}, k = 1, mv = {2, 0, 0}, xi = 48)
+public class modifyEnumDeserializer extends MetricAffectingSpan {
+
+    /* JADX INFO: renamed from: IconCompatParcelizer, reason: from kotlin metadata */
+    private final float RemoteActionCompatParcelizer;
+
+    public modifyEnumDeserializer(float f) {
+        this.RemoteActionCompatParcelizer = f;
+    }
+
+    @Override // android.text.style.CharacterStyle
+    public void updateDrawState(TextPaint p0) {
+        p0.setTextSkewX(this.RemoteActionCompatParcelizer + p0.getTextSkewX());
+    }
+
+    @Override // android.text.style.MetricAffectingSpan
+    public void updateMeasureState(TextPaint p0) {
+        p0.setTextSkewX(this.RemoteActionCompatParcelizer + p0.getTextSkewX());
+    }
+}
