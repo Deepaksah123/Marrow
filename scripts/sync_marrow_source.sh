@@ -15,7 +15,6 @@ cd "$TMP_DIR/repo"
 git sparse-checkout set \
   "frontend/quizx/Brain/Marrow" \
   "frontend/quizx/marrow" \
-  "frontend/1234xxx/marrow6" \
   "frontend/1234xxx/marrow" \
   "frontend/datax/marrow" \
   "frontend/srcx/platforms/marrow"
