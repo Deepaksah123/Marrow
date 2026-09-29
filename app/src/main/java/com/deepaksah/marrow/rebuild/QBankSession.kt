@@ -4,6 +4,7 @@ class QBankSession(private val state: MarrowStateStore) {
     fun answer(mcqId: String, selected: String, correct: String?) {
         val old = state.session.answers[mcqId]
         val right = correct != null && selected == correct
+        state.clearQBankTimer()
         state.setAnswer(McqAnswerState(
             mcqId = mcqId, selectedAnswer = selected,
             firstAnswer = old?.firstAnswer ?: selected,
@@ -16,8 +17,15 @@ class QBankSession(private val state: MarrowStateStore) {
         ))
     }
     fun skip(mcqId: String) {
+        state.clearQBankTimer()
         val old = state.session.answers[mcqId] ?: McqAnswerState(mcqId)
         state.setAnswer(old.copy(skipped = true, locked = true))
+    }
+
+    fun timeout(mcqId: String) {
+        state.clearQBankTimer(expired = true)
+        val old = state.session.answers[mcqId] ?: McqAnswerState(mcqId)
+        state.setAnswer(old.copy(isRight = false, skipped = false, locked = true))
     }
     fun toggleBookmark(mcqId: String) {
         val old = state.session.answers[mcqId] ?: McqAnswerState(mcqId)
