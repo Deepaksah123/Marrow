@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json, pathlib, hashlib, re
 from collections import Counter, defaultdict
-SRC=pathlib.Path("/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank")
+import os\nSRC=pathlib.Path(os.environ.get("RUNNER_TEMP","/tmp"))/"marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank"
 DST=pathlib.Path("app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank")
 def scan(root):
     files={}; qcount=0; ids=[]; malformed=[]; empty=[]; field_issues=[]; subjects=defaultdict(lambda:[0,0]); sigs={}
