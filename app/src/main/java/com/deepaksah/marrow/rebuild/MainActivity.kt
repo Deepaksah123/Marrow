@@ -2,6 +2,7 @@ package com.deepaksah.marrow.rebuild
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -86,7 +87,21 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
         }
-        v.findViewById<Button>(R.id.homeShare).setOnClickListener { Toast.makeText(this, "Share Marrow", Toast.LENGTH_SHORT).show() }
+        v.findViewById<Button>(R.id.homeShare).setOnClickListener { shareCurrentRoute() }
+    }
+
+    private fun shareCurrentRoute() {
+        val text = when (state.session.route) {
+            MarrowRoute.HOME -> "Marrow Home"
+            MarrowRoute.QBANK, MarrowRoute.QBANK_MODULE, MarrowRoute.QBANK_LESSON, MarrowRoute.QBANK_PLAY -> "Marrow QBank"
+            MarrowRoute.TESTS, MarrowRoute.TEST_INTRO, MarrowRoute.TEST_PLAY, MarrowRoute.TEST_SCORE, MarrowRoute.TEST_REVIEW, MarrowRoute.TEST_ANALYTICS -> "Marrow Test"
+            else -> "Marrow"
+        }
+        startActivity(Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
+        }, "Share"))
     }
 
     private fun showSearch() {
