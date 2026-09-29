@@ -429,29 +429,16 @@ class MainActivity : Activity() {
             question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() }
         }
 
-        val jumpRow = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 10, 0, 10)
-        }
-        val jumpInput = EditText(this).apply {
-            hint = "Question no."
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            singleLine = true
-        }
-        jumpRow.addView(jumpInput, LinearLayout.LayoutParams(0, -2, 1f))
-        jumpRow.addView(Button(this).apply {
-            text = "JUMP"
-            setOnClickListener {
-                val target = jumpInput.text.toString().toIntOrNull()
-                if (target != null && target in 1..state.session.qbank.totalMcq) {
-                    qbank.openQuestion(target - 1)
-                    showPlayer()
-                } else {
-                    Toast.makeText(this@MainActivity, "Enter 1–" + state.session.qbank.totalMcq, Toast.LENGTH_SHORT).show()
-                }
+        val jumpInput = v.findViewById<EditText>(R.id.qbankJumpInput)
+        v.findViewById<Button>(R.id.qbankJumpButton).setOnClickListener {
+            val target = jumpInput.text.toString().toIntOrNull()
+            if (target != null && target in 1..state.session.qbank.totalMcq) {
+                qbank.openQuestion(target - 1)
+                showPlayer()
+            } else {
+                Toast.makeText(this@MainActivity, "Enter 1–" + state.session.qbank.totalMcq, Toast.LENGTH_SHORT).show()
             }
-        })
-        box.addView(jumpRow)
+        }
 
         v.findViewById<Button>(R.id.playComplete).setOnClickListener {
             qbank.openScore()
