@@ -174,6 +174,10 @@ class MainActivity : Activity() {
         v.findViewById<TextView>(R.id.playBookmark).setOnClickListener {
             question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() }
         }
+        v.findViewById<Button>(R.id.playComplete).setOnClickListener {
+            qbank.openScore()
+            showScore()
+        }
         v.findViewById<Button>(R.id.playPrevious).setOnClickListener {
             if (state.session.currentMcqIndex > 0) {
                 state.moveQuestion(state.session.currentMcqIndex - 1)
