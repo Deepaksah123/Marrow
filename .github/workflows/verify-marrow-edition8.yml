@@ -18,8 +18,8 @@ jobs:
           SRC="/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank"
           DST="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
           python3 - <<'PY'
-          import json, pathlib, hashlib
-          src=pathlib.Path("/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank")
+          import json, pathlib, hashlib, os
+          src=pathlib.Path(os.environ["RUNNER_TEMP"])/"marrow-source"/"repo"/"frontend"/"quizx"/"Brain"/"Marrow"/"Edition 8 qBank"
           dst=pathlib.Path("app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank")
           def scan(root):
               files={}; questions=0; image_tags=0; image_fields=0; ids=0; subjects={}
