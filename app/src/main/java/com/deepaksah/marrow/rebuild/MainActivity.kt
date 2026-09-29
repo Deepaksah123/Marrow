@@ -643,7 +643,19 @@ class MainActivity : Activity() {
         val ids = state.test.mcqIds
         val index = state.test.currentIndex
         val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
-        box.addView(TextView(this).apply { text = "Test · ${index + 1} / ${ids.size}"; textSize = 16f })
+
+        state.startTestTimer()
+        val remaining = state.test.remainingTimeMs
+        box.addView(TextView(this).apply {
+            text = "Test · ${index + 1} / ${ids.size}"
+            textSize = 16f
+        })
+        if (remaining != null) {
+            box.addView(TextView(this).apply {
+                text = "Time remaining: " + ((remaining + 999L) / 1000L) + "s"
+                setPadding(0, 6, 0, 12)
+            })
+        }
         box.addView(TextView(this).apply {
             text = q?.text ?: "No supplied test MCQ payload is loaded."
             textSize = 20f
@@ -655,7 +667,7 @@ class MainActivity : Activity() {
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
-                    isEnabled = existing?.locked != true
+                    isEnabled = existing?.locked != true && !state.test.timedOut
                     if (existing?.locked == true) {
                         when {
                             choice.id == q.correctChoiceId -> {
@@ -689,21 +701,31 @@ class MainActivity : Activity() {
                 setOnClickListener { state.moveTestQuestion(index - 1); showTestPlay() }
             }, LinearLayout.LayoutParams(0, -2, 1f))
         }
-        if (index + 1 < ids.size) {
-            nav.addView(Button(this).apply {
-                text = "NEXT"
-                setOnClickListener { state.moveTestQuestion(index + 1); showTestPlay() }
-            }, LinearLayout.LayoutParams(0, -2, 1f))
-        }
+        val navStatus = state.test.navigationButtonStatus
+        nav.addView(Button(this).apply {
+            text = if (navStatus == NavigationButtonStatus.COMPLETE) "SUBMIT" else "NEXT"
+            setOnClickListener {
+                if (navStatus == NavigationButtonStatus.COMPLETE) {
+                    state.confirmTestSubmission()
+                    tests.openScore()
+                    showTests()
+                } else {
+                    state.moveTestQuestion(index + 1)
+                    showTestPlay()
+                }
+            }
+        }, LinearLayout.LayoutParams(0, -2, 1f))
         box.addView(nav)
         box.addView(Button(this).apply {
             text = "SKIP"
+            isEnabled = !state.test.timedOut
             setOnClickListener {
                 q?.let { TestSession(state).skip(it.id) }
                 if (index + 1 < ids.size) {
                     state.moveTestQuestion(index + 1)
                     showTestPlay()
                 } else {
+                    state.confirmTestSubmission()
                     tests.openScore()
                     showTests()
                 }
@@ -711,7 +733,11 @@ class MainActivity : Activity() {
         })
         box.addView(Button(this).apply {
             text = "SUBMIT / SCORE"
-            setOnClickListener { tests.openScore(); showTests() }
+            setOnClickListener {
+                state.confirmTestSubmission()
+                tests.openScore()
+                showTests()
+            }
         })
         replace(ScrollView(this).apply { addView(box) })
     }

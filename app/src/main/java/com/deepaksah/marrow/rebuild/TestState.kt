@@ -12,6 +12,9 @@ data class TestState(
     val submissionInProcess: Boolean = false,
     val reviewState: Boolean = false,
     val navigationButtonStatus: NavigationButtonStatus = NavigationButtonStatus.NEXT,
+    val timerRunning: Boolean = false,
+    val remainingTimeMs: Long? = null,
+    val submissionConfirmed: Boolean = false,
     /**
      * Test-local answer state. The original TestResponseBody keeps my_answer,
      * answer_changed, mark_reviewed and guessed separate from QBank state.
