@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid
+                android:width="2dp"
+                android:color="#62c8df"/>
+            <size
+                android:height="56dp"
+                android:width="56dp"/>
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/ic_review_white"
+        android:left="16dp"
+        android:top="16dp"
+        android:right="16dp"
+        android:bottom="16dp"/>
+</layer-list>

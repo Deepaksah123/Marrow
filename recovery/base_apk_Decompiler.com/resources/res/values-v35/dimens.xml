@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="practical_corner__banner_content_top_margin">46dp</dimen>
+    <dimen name="practical_corner_home_banner_content_top_margin">28dp</dimen>
+    <dimen name="practical_corner_landing_banner_height">209dp</dimen>
+</resources>

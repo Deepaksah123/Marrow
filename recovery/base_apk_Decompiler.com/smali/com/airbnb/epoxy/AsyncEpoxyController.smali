@@ -1,0 +1,61 @@
+###### Class com.airbnb.epoxy.AsyncEpoxyController (com.airbnb.epoxy.AsyncEpoxyController)
+.class public abstract Lcom/airbnb/epoxy/AsyncEpoxyController;
+.super Lo/getContentBufferedPosition;
+.source "SourceFile"
+
+
+# direct methods
+.method public constructor <init>()V
+    .registers 2
+
+    const/4 v0, 0x1
+
+    .line 20
+    invoke-direct {p0, v0}, Lcom/airbnb/epoxy/AsyncEpoxyController;-><init>(Z)V
+
+    return-void
+.end method
+
+.method public constructor <init>(Z)V
+    .registers 2
+
+    .line 28
+    invoke-direct {p0, p1, p1}, Lcom/airbnb/epoxy/AsyncEpoxyController;-><init>(ZZ)V
+
+    return-void
+.end method
+
+.method public constructor <init>(ZZ)V
+    .registers 3
+
+    .line 35
+    invoke-static {p1}, Lcom/airbnb/epoxy/AsyncEpoxyController;->getHandler(Z)Landroid/os/Handler;
+
+    move-result-object p1
+
+    invoke-static {p2}, Lcom/airbnb/epoxy/AsyncEpoxyController;->getHandler(Z)Landroid/os/Handler;
+
+    move-result-object p2
+
+    invoke-direct {p0, p1, p2}, Lo/getContentBufferedPosition;-><init>(Landroid/os/Handler;Landroid/os/Handler;)V
+
+    return-void
+.end method
+
+.method private static getHandler(Z)Landroid/os/Handler;
+    .registers 1
+
+    if-eqz p0, :cond_7
+
+    .line 39
+    invoke-static {}, Lo/getBufferedPosition;->RemoteActionCompatParcelizer()Landroid/os/Handler;
+
+    move-result-object p0
+
+    return-object p0
+
+    :cond_7
+    sget-object p0, Lo/getBufferedPosition;->RemoteActionCompatParcelizer:Landroid/os/Handler;
+
+    return-object p0
+.end method

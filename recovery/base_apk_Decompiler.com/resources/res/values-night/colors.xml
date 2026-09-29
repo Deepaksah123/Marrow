@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actionButtonBackground">#000000</color>
+    <color name="buttonClicked">#121314</color>
+    <color name="customButtonBackground">#404040</color>
+    <color name="material_timepicker_button_stroke">vz.xml</color>
+    <color name="material_timepicker_clockface">vw.xml</color>
+    <color name="material_timepicker_modebutton_tint">vx.xml</color>
+    <color name="messageColor">#a0a0a0</color>
+    <color name="metaColor">#c9c9c9</color>
+    <color name="titleColor">#c9c9c9</color>
+</resources>

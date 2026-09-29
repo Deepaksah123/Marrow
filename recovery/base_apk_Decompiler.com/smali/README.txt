@@ -1,0 +1,1 @@
+Smali disassembly stopped after 120 seconds with 817 of 20638 classes written. The Java sources are complete.

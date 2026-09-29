@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="abc_dialog_material_background">dw.xml</drawable>
+    <drawable name="common_google_signin_btn_text_dark_normal">pu.xml</drawable>
+    <drawable name="common_google_signin_btn_text_disabled">LL.xml</drawable>
+    <drawable name="common_google_signin_btn_text_light_normal">CD.xml</drawable>
+</resources>

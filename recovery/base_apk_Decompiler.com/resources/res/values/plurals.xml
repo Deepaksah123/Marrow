@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="exo_controls_fastforward_by_amount_description">
+        <item quantity="one">Fast forward %d second</item>
+        <item quantity="other">Fast forward %d seconds</item>
+    </plurals>
+    <plurals name="exo_controls_rewind_by_amount_description">
+        <item quantity="one">Rewind %d second</item>
+        <item quantity="other">Rewind %d seconds</item>
+    </plurals>
+    <plurals name="f_skipped_questions">
+        <item quantity="one">You have %d unattempted question %s</item>
+        <item quantity="other">You have %d unattempted questions %s</item>
+    </plurals>
+    <plurals name="f_skipped_review_questions">
+        <item quantity="one">, including %d question marked for review.</item>
+        <item quantity="other">, including %d questions marked for review.</item>
+    </plurals>
+    <plurals name="gta_weak_lessons_subtitle">
+        <item quantity="one">In the last %1$d GTs, you repeatedly made mistakes in this %2$d lesson</item>
+        <item quantity="other">In the last %1$d GTs, you repeatedly made mistakes in these %2$d lessons</item>
+    </plurals>
+    <plurals name="label_videos">
+        <item quantity="one">%s Video</item>
+        <item quantity="other">%s Videos</item>
+    </plurals>
+    <plurals name="mcq_count">
+        <item quantity="one">%s MCQ</item>
+        <item quantity="other">%s MCQs</item>
+    </plurals>
+    <plurals name="module_completed">
+        <item quantity="zero">Module completed</item>
+        <item quantity="one">Module completed</item>
+        <item quantity="other">Modules completed</item>
+    </plurals>
+    <plurals name="modules_count">
+        <item quantity="one">%d Module</item>
+        <item quantity="other">%d Modules</item>
+    </plurals>
+    <plurals name="modules_watched_count">
+        <item quantity="one">%1$d/%2$d module</item>
+        <item quantity="other">%1$d/%2$d modules</item>
+    </plurals>
+    <plurals name="mtrl_badge_content_description">
+        <item quantity="one">%d new notification</item>
+        <item quantity="other">%d new notifications</item>
+    </plurals>
+    <plurals name="notes_pages">
+        <item quantity="one">%s (%d page)</item>
+        <item quantity="other">%s (%d pages)</item>
+    </plurals>
+    <plurals name="plural_bookmark_count">
+        <item quantity="zero">0 bookmark</item>
+        <item quantity="one">1 bookmark</item>
+        <item quantity="other">%d bookmarks</item>
+    </plurals>
+    <plurals name="plural_subject_video_watched_count">
+        <item quantity="zero">No videos available</item>
+        <item quantity="one">%d/1 video watched</item>
+        <item quantity="other">%d/%d videos watched</item>
+    </plurals>
+    <plurals name="plurals_cm_subject_used">
+        <item quantity="one">%d subject </item>
+        <item quantity="other">%d subjects </item>
+    </plurals>
+    <plurals name="plurals_cm_subject_used_revamp">
+        <item quantity="one">%d Subject </item>
+        <item quantity="other">%d Subjects </item>
+    </plurals>
+    <plurals name="plurals_cm_tag_selected_revamp">
+        <item quantity="one">%d Tag </item>
+        <item quantity="other">%d Tags </item>
+    </plurals>
+    <plurals name="qbank_plural_bookmark_count">
+        <item quantity="zero">0 Bookmark</item>
+        <item quantity="one">1 Bookmark</item>
+        <item quantity="other">%d Bookmarks</item>
+    </plurals>
+    <plurals name="renew_days_left">
+        <item quantity="one">%d day!</item>
+        <item quantity="other">%d days!</item>
+    </plurals>
+    <plurals name="review_active_recall_card_desc">
+        <item quantity="one">%d module scored &lt; %d%%</item>
+        <item quantity="other">%d modules scored &lt; %d%%</item>
+    </plurals>
+    <plurals name="text_bookmark_timeline_deleted">
+        <item quantity="one">%d Video have been deleted!</item>
+        <item quantity="other">%d Videos have been deleted!</item>
+    </plurals>
+    <plurals name="text_cm_quota_left_today_n_month_wise_free">
+        <item quantity="zero">You have %d module left.</item>
+        <item quantity="one">You have %d module left.</item>
+        <item quantity="other">You have %d modules left.</item>
+    </plurals>
+    <plurals name="text_cm_quota_left_today_n_month_wise_pro">
+        <item quantity="zero">You have %d custom module left today, %d left this month.</item>
+        <item quantity="one">You have %d custom module left today, %d left this month.</item>
+        <item quantity="other">You have %d custom modules left today, %d left this month.</item>
+    </plurals>
+    <plurals name="text_mcq_right_answer_percent">
+        <item quantity="zero">none of the attendees got this right</item>
+        <item quantity="one">1%% of the people got this right</item>
+        <item quantity="other">%d%% of the people got this right</item>
+    </plurals>
+    <plurals name="title_bookmarked_videos_count">
+        <item quantity="zero">%d bookmarks</item>
+        <item quantity="one">%d bookmark</item>
+        <item quantity="other">%d bookmarks</item>
+    </plurals>
+    <plurals name="topic_suffix_revamp">
+        <item quantity="zero">%d Topic</item>
+        <item quantity="one">%d Topic</item>
+        <item quantity="other">%d Topics</item>
+    </plurals>
+    <plurals name="videos_selected">
+        <item quantity="one">%s video selected</item>
+        <item quantity="other">%s videos selected</item>
+    </plurals>
+</resources>
