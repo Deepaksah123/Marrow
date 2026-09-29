@@ -13,6 +13,9 @@ class MarrowStateStore {
     val contentRegistry = ContentRegistry()
 
     fun navigate(route: MarrowRoute) { session = session.copy(route = route) }
+
+    fun importContent(modules: Map<String, List<McqContent>>): ContentImportResult =
+        ContentImporter(contentRegistry).import(modules)
     fun selectSubject(id: String) {
         session = session.copy(subjectId = id, moduleId = null, mcqIds = emptyList(), currentMcqIndex = 0)
     }
