@@ -664,10 +664,24 @@ class MainActivity : Activity() {
         })
         if (q != null) {
             val existing = state.test.answers[q.id]
+            box.addView(Button(this).apply {
+                text = if (existing?.isGuessed == true) "GUESSED ✓" else "MARK GUESSED"
+                setOnClickListener {
+                    TestSession(state).markGuessed(q.id, existing?.isGuessed != true)
+                    showTestPlay()
+                }
+            })
+            box.addView(Button(this).apply {
+                text = if (existing?.isStarred == true) "★ BOOKMARKED" else "☆ BOOKMARK"
+                setOnClickListener {
+                    TestSession(state).toggleBookmark(q.id)
+                    showTestPlay()
+                }
+            }
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
-                    isEnabled = existing?.locked != true && !state.test.timedOut
+                    isEnabled = !state.test.timedOut
                     if (existing?.locked == true) {
                         when {
                             choice.id == q.correctChoiceId -> {
@@ -694,6 +708,21 @@ class MainActivity : Activity() {
                 })
             }
         }
+        val jumpRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val jumpInput = EditText(this).apply { hint = "Question no."; inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        jumpRow.addView(jumpInput, LinearLayout.LayoutParams(0, -2, 1f))
+        jumpRow.addView(Button(this).apply {
+            text = "JUMP"
+            setOnClickListener {
+                val target = jumpInput.text.toString().toIntOrNull()
+                if (target != null && target in 1..ids.size) {
+                    state.moveTestQuestion(target - 1)
+                    showTestPlay()
+                }
+            }
+        })
+        box.addView(jumpRow)
+
         val nav = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         if (index > 0) {
             nav.addView(Button(this).apply {

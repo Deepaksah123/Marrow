@@ -28,6 +28,26 @@ class TestSession(private val state: MarrowStateStore) {
         )
     }
 
+    fun changeAnswer(mcqId: String, selected: String, correct: String?) {
+        val old = state.test.answers[mcqId]
+        val right = correct != null && selected == correct
+        state.setTestAnswer(
+            McqAnswerState(
+                mcqId = mcqId,
+                selectedAnswer = selected,
+                firstAnswer = old?.firstAnswer ?: selected,
+                serverAnswer = correct,
+                isRight = right,
+                isStarred = old?.isStarred ?: false,
+                isGuessed = old?.isGuessed ?: false,
+                isSillyMistake = old?.isSillyMistake ?: false,
+                skipped = false,
+                changedByYou = old?.firstAnswer != null && old.firstAnswer != selected,
+                locked = true
+            )
+        )
+    }
+
     fun skip(mcqId: String) {
         val old = state.test.answers[mcqId] ?: McqAnswerState(mcqId)
         state.setTestAnswer(old.copy(skipped = true, locked = true))
