@@ -58,6 +58,7 @@ class MainActivity : Activity() {
             MarrowRoute.QBANK_SCORE -> showScore()
             MarrowRoute.QBANK_REVIEW -> showReview()
             MarrowRoute.TESTS, MarrowRoute.TEST_INTRO, MarrowRoute.TEST_PLAY, MarrowRoute.TEST_SCORE, MarrowRoute.TEST_REVIEW, MarrowRoute.TEST_ANALYTICS -> showTests()
+            MarrowRoute.GT_ANALYTICS -> showGTAnalytics()
             MarrowRoute.VIDEOS, MarrowRoute.VIDEO_SUBJECT, MarrowRoute.VIDEO_PLAYER -> showVideos()
             MarrowRoute.PEARLS -> showPearls()
             MarrowRoute.BOOKMARKS -> showBookmarks()
@@ -265,7 +266,7 @@ class MainActivity : Activity() {
                 textSize = 16f
                 setTypeface(typeface, Typeface.BOLD)
                 setPadding(20,22,20,22)
-                setOnClickListener { qbank.openSubject(s); showLessons(s) }
+                setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
             }
             c.addView(row)
             addDivider(c)
@@ -714,6 +715,42 @@ class MainActivity : Activity() {
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
         box.addView(TextView(this).apply { text = "Test Analytics"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
         box.addView(TextView(this).apply { text = "Completion ${String.format("%.1f", analytics.completionPercent)}%\nTotal ${metrics.total}\nAttempted ${metrics.attempted}\nCorrect ${metrics.correct}\nWrong ${metrics.wrong}\nSkipped ${metrics.skipped}\nAccuracy ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showGTAnalytics() {
+        val analytics = GTAnalyticsStateModel()
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 24, 24, 24)
+        }
+        box.addView(TextView(this).apply {
+            text = "Grand Test Analytics"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = analytics.summary()
+            textSize = 16f
+            setPadding(4, 18, 4, 18)
+        })
+        box.addView(TextView(this).apply {
+            text = "Restricted subjects"
+            textSize = 18f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(4, 12, 4, 8)
+        })
+        box.addView(TextView(this).apply {
+            text = if (analytics.restrictedSubjects.isEmpty()) "None reported by the recovered state." else analytics.restrictedSubjects.joinToString("\n")
+            setPadding(4, 4, 4, 16)
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO TESTS"
+            setOnClickListener {
+                state.navigate(MarrowRoute.TESTS)
+                showTests()
+            }
+        })
         replace(ScrollView(this).apply { addView(box) })
     }
 
