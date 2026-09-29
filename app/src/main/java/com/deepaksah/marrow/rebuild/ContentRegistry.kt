@@ -17,4 +17,17 @@ class ContentRegistry(
     fun question(id: String): McqContent? = questions[id]
     fun questionIds(moduleId: String): List<String> = modules[moduleId].orEmpty()
     fun moduleIds(): List<String> = modules.keys.toList()
+
+    fun search(query: String): List<McqContent> {
+        val needle = query.trim().lowercase()
+        if (needle.isBlank()) return emptyList()
+        return questions.values.filter { q ->
+            q.text.lowercase().contains(needle) ||
+                q.solution.lowercase().contains(needle) ||
+                q.tags.any { it.lowercase().contains(needle) }
+        }
+    }
+
+    fun findModuleForQuestion(questionId: String): String? =
+        modules.entries.firstOrNull { questionId in it.value }?.key
 }
