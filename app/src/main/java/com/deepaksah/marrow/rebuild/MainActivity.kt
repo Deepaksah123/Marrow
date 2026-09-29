@@ -134,6 +134,7 @@ class MainActivity : Activity() {
         val question = currentQuestion()
         val questionView = v.findViewById<TextView>(R.id.playQuestion)
         val optionContainer = v.findViewById<LinearLayout>(R.id.optionContainer)
+        val explanation = v.findViewById<TextView>(R.id.explanation)
         optionContainer.removeAllViews()
 
         if (question == null) {
@@ -152,11 +153,13 @@ class MainActivity : Activity() {
                 })
             }
             if (existing?.locked == true && question.solution.isNotBlank()) {
-                optionContainer.addView(TextView(this).apply {
-                    text = "Explanation\n\n" + question.solution
-                    setPadding(16,20,16,20)
-                })
+                explanation.text = "Explanation\n\n" + question.solution
+                explanation.visibility = View.VISIBLE
+            } else {
+                explanation.visibility = View.GONE
             }
+            v.findViewById<TextView>(R.id.playBookmark).text =
+                if (existing?.isStarred == true) "★" else "☆"
         }
 
         v.findViewById<TextView>(R.id.playBookmark).setOnClickListener {
