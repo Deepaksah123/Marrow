@@ -117,8 +117,30 @@ class MarrowStateStore {
 
     fun moveTestQuestion(index: Int) {
         val safe = index.coerceIn(0, (test.mcqIds.size - 1).coerceAtLeast(0))
-        test = test.copy(currentIndex = safe)
+        val status = when {
+            test.mcqIds.isEmpty() -> NavigationButtonStatus.DONE
+            safe >= test.mcqIds.lastIndex -> NavigationButtonStatus.COMPLETE
+            else -> NavigationButtonStatus.NEXT
+        }
+        test = test.copy(currentIndex = safe, navigationButtonStatus = status)
         session = session.copy(currentTestIndex = safe)
+    }
+
+    fun startTestTimer(nowMs: Long = System.currentTimeMillis()) {
+        val end = test.testEndTimeMs
+        if (end != null) {
+            test = test.copy(timerRunning = end > nowMs, remainingTimeMs = (end - nowMs).coerceAtLeast(0L))
+        }
+    }
+
+    fun updateTestRemainingTime(nowMs: Long = System.currentTimeMillis()) {
+        val end = test.testEndTimeMs ?: return
+        val remaining = (end - nowMs).coerceAtLeast(0L)
+        test = test.copy(timerRunning = remaining > 0L, remainingTimeMs = remaining, timedOut = remaining == 0L)
+    }
+
+    fun confirmTestSubmission() {
+        test = test.copy(submissionConfirmed = true, submissionInProcess = false, timerRunning = false)
     }
 
     fun setTestState(value: TestState) { test = value }
