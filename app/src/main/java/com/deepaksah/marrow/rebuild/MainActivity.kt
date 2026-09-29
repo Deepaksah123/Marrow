@@ -375,7 +375,7 @@ class MainActivity : Activity() {
 
         fun render(filter: ReviewFilter) {
             list.removeAllViews()
-            val ids = ReviewEngine.filter(state.session.mcqIds, state.session.answers, filter)
+            val ids = ReviewEngine.filter(state.session.mcqIds, state.session.answers, state.contentRegistry.allQuestions(), filter)
             list.addView(TextView(this).apply {
                 text = filter.name.replace('_', ' ') + " · " + ids.size
                 textSize = 15f
