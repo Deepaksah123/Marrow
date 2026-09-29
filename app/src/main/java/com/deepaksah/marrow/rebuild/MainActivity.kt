@@ -86,7 +86,7 @@ class MainActivity : Activity() {
         })
     }
 
-    private fun showPlayer() {
+    private fun currentQuestion(): McqContent? {\n        val ids = state.session.mcqIds\n        val index = state.session.currentMcqIndex\n        return if (index in ids.indices) contentStore.get(ids[index]) else null\n    }\n\n    private fun showPlayer() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_play, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.playPosition).text =
