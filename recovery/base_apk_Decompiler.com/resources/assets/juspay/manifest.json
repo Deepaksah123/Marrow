@@ -1,0 +1,246 @@
+{
+  "godel": {
+    "v1-config.zip": {
+      "hash": "d075d86a254dcd9ca1f198d771145015"
+    }
+  },
+  "hyper": {
+    "bundles": {
+      "acs": {
+        "in.juspay.godel": {
+          "1.3.1": {
+            "v1-acs.zip": {
+              "hash": "b562e4fcc1a9f783f78cce04547c0e0d"
+            }
+          },
+          "1.3.3": {
+            "v1-acs.zip": {
+              "hash": "46f7a67a3fd5a9b078a7c195633fadd6"
+            }
+          },
+          "1.4.3": {
+            "v1-acs.zip": {
+              "hash": "49659ea65255b1bc933ebbae9941e99e"
+            }
+          }
+        }
+      },
+      "app": {
+        "in.juspay.dotp": {
+          "7.29.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "3de541d49a0637681c01d5ef1952f874"
+              }
+            }
+          }
+        },
+        "in.juspay.ec": {
+          "3.36.7": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "30c3b08b29fbd91d9894612be4b9a59a"
+              }
+            }
+          },
+          "3.40.3": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "d0fe8d6bf27810026e6752d76571438d"
+              }
+            }
+          },
+          "7.29.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "fce1dc1dccf68d9f747f949e9cc1348f"
+              }
+            }
+          }
+        },
+        "in.juspay.escrow": {
+          "4.5.3": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "4e1b531c5d9e17976fa4c36b10cf9bee"
+              }
+            }
+          }
+        },
+        "in.juspay.flyer": {
+          "2.5.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "f839bc6db955a6f8e23935445de08265"
+              }
+            }
+          }
+        },
+        "in.juspay.godel": {
+          "1.1.1": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "2ca7a415a33ec26826dacf7d6e55b0a5"
+              }
+            }
+          },
+          "1.11.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "ebf7fdd92bd1a87d84bfc66eb557b0bd"
+              }
+            }
+          }
+        },
+        "in.juspay.hyperpay": {
+          "4.157.19-release-20260406.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "2dfc57a8281cd8da6d998e6089c726bd"
+              }
+            }
+          }
+        },
+        "in.juspay.hyperupi": {
+          "2.9.15": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "b1407809e197df0140ba543c8400a9a4"
+              }
+            }
+          }
+        },
+        "in.juspay.inappupi": {
+          "2.4.19": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "3a5e7a5aa4f66b998c98c8776d86744a"
+              }
+            }
+          }
+        },
+        "in.juspay.upiintent": {
+          "7.29.2": {
+            "android": {
+              "v1-index_bundle.zip": {
+                "hash": "13db0c13b80914af5b0b9387e4337f8c"
+              }
+            }
+          }
+        },
+        "tracker": {
+          "2.0.50": {
+            "v1-tracker.zip": {
+              "hash": "72e0db9d6d92d558b8a3dbb2e6abf0ec"
+            }
+          },
+          "2.2.9": {
+            "v1-tracker.zip": {
+              "hash": "c4223532dfd5df4b83cdf7946ded3503"
+            }
+          }
+        }
+      },
+      "config": {
+        "in.juspay.godel": {
+          "1.6.4": {
+            "v1-config.zip": {
+              "hash": "7fed84f30675859a97148f5d914eaaf5"
+            }
+          }
+        }
+      },
+      "in.juspay.merchants": {
+        "bbdaily": {
+          "ios": {
+            "release": {
+              "config.json": {
+                "hash": "3hkj23h5k23jh52kj3h"
+              }
+            }
+          }
+        },
+        "marrowmed": {
+          "android": {
+            "release": {
+              "sdk_config.json": {
+                "hash": "75fef58c3ef8341fbef1ea7fd4e73deb"
+              }
+            }
+          }
+        }
+      },
+      "release": {
+        "in.juspay.godel": {
+          "android": {
+            "1.0rc2": {
+              "common": {
+                "1.0.1": {
+                  "v1-boot_loader.zip": {
+                    "hash": "3b52f2f0d550507208f50689c5dff01f"
+                  }
+                },
+                "stable": {
+                  "v1-boot_loader.zip": {
+                    "hash": "1a675fbf2067227d1857566bc3b4ebf6"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "configs": {
+      "marrowmed": {
+        "in.juspay.hyperpay": {
+          "1.46.1": {
+            "v1-configuration.zip": {
+              "hash": "56cc3eb0f0072c093ef2e3bcc64e9e83"
+            },
+            "v1-icons.zip": {
+              "hash": "5ab88c3d2763dce8d8240a67f47730f2"
+            },
+            "v1-strings.zip": {
+              "hash": "620364992c0cd3514a88d45292c4d7df"
+            }
+          }
+        }
+      }
+    }
+  },
+  "juspay": {
+    "payments": {
+      "in.juspay.dotp": {
+        "release": {
+          "v1-config.zip": {
+            "hash": "d1be46cb32c6ae215f492b0b963486b7"
+          }
+        }
+      },
+      "in.juspay.ec": {
+        "release": {
+          "v1-config.zip": {
+            "hash": "01ec08875f5d676ef172339e7d3f9b8f"
+          }
+        }
+      },
+      "in.juspay.godel": {
+        "release": {
+          "1.0rc2": {
+            "v1-acs.zip": {
+              "hash": "0e6e2249b7adef09c1ffc8e673f312ae"
+            }
+          }
+        }
+      },
+      "in.juspay.upiintent": {
+        "release": {
+          "v1-config.zip": {
+            "hash": "f67f6696dc05617814c509afb42a4a43"
+          }
+        }
+      }
+    }
+  }
+}
