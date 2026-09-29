@@ -699,7 +699,7 @@ class MainActivity : Activity() {
         box.addView(Button(this).apply {
             text = "SKIP"
             setOnClickListener {
-                q?.let { QBankSession(state).skip(it.id) }
+                q?.let { TestSession(state).skip(it.id) }
                 if (index + 1 < ids.size) {
                     state.moveTestQuestion(index + 1)
                     showTestPlay()
