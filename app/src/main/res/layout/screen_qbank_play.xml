@@ -46,6 +46,27 @@
             android:visibility="gone"
             android:padding="12dp"/>
         <LinearLayout
+            android:id="@+id/qbankJumpRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <EditText
+                android:id="@+id/qbankJumpInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Question no."
+                android:inputType="number"
+                android:maxLines="1"/>
+            <Button
+                android:id="@+id/qbankJumpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JUMP"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
