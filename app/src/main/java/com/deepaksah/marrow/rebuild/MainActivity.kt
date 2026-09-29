@@ -59,11 +59,16 @@ class MainActivity : Activity() {
             MarrowRoute.VIDEOS, MarrowRoute.VIDEO_SUBJECT, MarrowRoute.VIDEO_PLAYER -> showVideos()
             MarrowRoute.PEARLS -> showPearls()
             MarrowRoute.BOOKMARKS -> showBookmarks()
+            MarrowRoute.SEARCH -> showSearch()
             MarrowRoute.QBANK_ANALYTICS -> showAnalytics()
+            MarrowRoute.QBANK_TRACKER,
+            MarrowRoute.PYQ,
+            MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW,
+            MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME -> showUnresolvedSurface(state.session.route)
             MarrowRoute.CUSTOM_MODULE, MarrowRoute.CUSTOM_INTRO, MarrowRoute.CUSTOM_CREATION, MarrowRoute.CUSTOM_MODE,
             MarrowRoute.CUSTOM_SUBJECTS, MarrowRoute.CUSTOM_TOPICS, MarrowRoute.CUSTOM_TAGS, MarrowRoute.CUSTOM_ADDONS,
             MarrowRoute.CUSTOM_JOIN, MarrowRoute.CUSTOM_PLAY, MarrowRoute.CUSTOM_SCORE -> showCustom()
-            else -> showHome()
+        }
         }
     }
 
@@ -148,6 +153,45 @@ class MainActivity : Activity() {
                             }
                         })
                     }
+                }
+            }
+        })
+        replace(ScrollView(this).apply { addView(box) })
+    }
+
+    private fun showUnresolvedSurface(route: MarrowRoute) {
+        val evidence = when (route) {
+            MarrowRoute.QBANK_TRACKER -> "recovery/base_apk_Decompiler.com/sources/com/marrow2/ui/qbank/tracker/QbankTrackerViewModel.java"
+            MarrowRoute.PYQ -> "Recovered QBank/PYQ surface is present in the APK inventory; dedicated reconstruction is not yet wired."
+            MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW ->
+                "Recovered QBank schema resources are present; dedicated reconstruction is not yet wired."
+            MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME ->
+                "recovery/base_apk_Decompiler.com/sources/com/marrow2/ui/profile/viewmodel/ProfileEditViewModel.java"
+            else -> "No recovered evidence mapping has been registered for this route."
+        }
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 24, 24, 24)
+        }
+        box.addView(TextView(this).apply {
+            text = route.name.replace('_', ' ')
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "Recovered surface: not yet reconstructed in the native layer.\n\n$evidence"
+            textSize = 15f
+            setPadding(4, 18, 4, 18)
+        })
+        box.addView(Button(this).apply {
+            text = "BACK"
+            setOnClickListener {
+                state.session.route.parent?.let {
+                    state.navigate(it)
+                    renderCurrent()
+                } ?: run {
+                    state.navigate(MarrowRoute.HOME)
+                    showHome()
                 }
             }
         })
