@@ -1,0 +1,60 @@
+name: Temporary Marrow Edition 8 Audit
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/sync_marrow_source.sh
+          python3 - <<'PY'
+          import json, pathlib, hashlib, re
+          src=pathlib.Path("/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank")
+          dst=pathlib.Path("app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank")
+          def scan(root):
+              files={}; questions=0; ids=[]; image_tags=0; image_fields=0; malformed=[]; empty=[]
+              subjects={}
+              for p in sorted(root.rglob("*.json")):
+                  rel=p.relative_to(root).as_posix()
+                  try: data=json.loads(p.read_text(encoding="utf-8"))
+                  except Exception as e: malformed.append((rel,str(e))); continue
+                  qs=data.get("questions",[])
+                  if not isinstance(qs,list): malformed.append((rel,"questions not list")); qs=[]
+                  questions += len(qs)
+                  for q in qs:
+                      ids.append(q.get("question_id"))
+                      sol=q.get("solution") or ""
+                      image_tags += len(re.findall(r'<img\\b',sol,re.I))
+                      image_fields += len(q.get("question_images") or []) + len(q.get("explanation_images") or [])
+                      if not q.get("text") or not q.get("choices"): empty.append((rel,q.get("question_id")))
+                  s=rel.split("/",1)[0]; subjects.setdefault(s,[0,0]); subjects[s][0]+=1; subjects[s][1]+=len(qs)
+                  files[rel]=hashlib.sha256(p.read_bytes()).hexdigest()
+              return files,questions,ids,image_tags,image_fields,subjects,malformed,empty
+          sf,sq,sids,si,sif,ss,sm,se=scan(src); df,dq,dids,di,dif,ds,dm,de=scan(dst)
+          missing=sorted(set(sf)-set(df)); extra=sorted(set(df)-set(sf)); changed=sorted(k for k in sf if k in df and sf[k]!=df[k])
+          from collections import Counter
+          sc=Counter(x for x in sids if x is not None); dc=Counter(x for x in dids if x is not None)
+          missids=sorted(set(sc)-set(dc)); extraids=sorted(set(dc)-set(sc)); dupsrc=sorted(k for k,v in sc.items() if v>1); dupdst=sorted(k for k,v in dc.items() if v>1)
+          lines=[]
+          lines += [f"SOURCE_FILES={len(sf)}",f"APP_FILES={len(df)}",f"SOURCE_QUESTIONS={sq}",f"APP_QUESTIONS={dq}",f"MISSING_FILES={len(missing)}",f"EXTRA_FILES={len(extra)}",f"CHANGED_FILES={len(changed)}"]
+          lines += [f"SOURCE_IDS={len(sids)}",f"APP_IDS={len(dids)}",f"SOURCE_UNIQUE_IDS={len(sc)}",f"APP_UNIQUE_IDS={len(dc)}",f"MISSING_IDS={len(missids)}",f"EXTRA_IDS={len(extraids)}",f"DUP_SOURCE_IDS={len(dupsrc)}",f"DUP_APP_IDS={len(dupdst)}"]
+          lines += [f"SOURCE_SOLUTION_IMG_TAGS={si}",f"APP_SOLUTION_IMG_TAGS={di}",f"SOURCE_IMAGE_FIELDS={sif}",f"APP_IMAGE_FIELDS={dif}",f"SOURCE_MALFORMED={len(sm)}",f"APP_MALFORMED={len(dm)}",f"SOURCE_EMPTY={len(se)}",f"APP_EMPTY={len(de)}"]
+          lines.append("SUBJECTS:")
+          for s in sorted(set(ss)|set(ds)): lines.append(f"{s}|SRC_FILES={ss.get(s,[0,0])[0]}|APP_FILES={ds.get(s,[0,0])[0]}|SRC_Q={ss.get(s,[0,0])[1]}|APP_Q={ds.get(s,[0,0])[1]}")
+          lines.append("MISSING_FILES_LIST="+repr(missing[:100])); lines.append("EXTRA_FILES_LIST="+repr(extra[:100])); lines.append("CHANGED_FILES_LIST="+repr(changed[:100]))
+          lines.append("MISSING_IDS_LIST="+repr(missids[:100])); lines.append("EXTRA_IDS_LIST="+repr(extraids[:100])); lines.append("DUP_SOURCE_IDS_LIST="+repr(dupsrc[:100])); lines.append("DUP_APP_IDS_LIST="+repr(dupdst[:100]))
+          pathlib.Path("edition8_audit_result.txt").write_text("\n".join(lines),encoding="utf-8")
+          print("\n".join(lines))
+          PY
+      - name: Upload audit result
+        uses: actions/upload-artifact@v4
+        with:
+          name: edition8-audit-result
+          path: edition8_audit_result.txt
