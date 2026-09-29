@@ -133,22 +133,17 @@ class MainActivity : Activity() {
     }
 
     private fun showVideos() {
-        val v = LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false)
-        replace(v)
-    }
-
-    private fun addDivider(c: LinearLayout) {
-        replace(TextView(this).apply {
-            text = "Videos\n\nVideo landing → subject → lesson → player. Live playback/download URLs are not fabricated."
-            textSize = 18f; setPadding(24,24,24,24)
-        })
+        replace(LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false))
     }
 
     private fun showCustom() {
-        replace(TextView(this).apply {
-            text = "Custom Module\n\nIntroduction → Mode → Subjects → Topics → Tags → Add-ons → Join by Code → Generated Module → Play → Score/Review"
-            textSize = 18f; setPadding(24,24,24,24)
-        })
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_custom, content, false)
+        replace(v)
+        v.findViewById<Button>(R.id.customNext).setOnClickListener {
+            custom.mode()
+            v.findViewById<TextView>(R.id.customFlow).text =
+                "Mode → Subjects → Topics → Tags → Add-ons → Join by Code → Generated Module → Play → Score/Review"
+        }
     }
 
     private fun addDivider(c: LinearLayout) {
