@@ -132,10 +132,25 @@ class MainActivity : Activity() {
     }
 
     private fun showReview() {
-        replace(TextView(this).apply {
-            text = "Review\n\nFilters are source-backed: All, Bookmarked, Changed By You, Correct, Guess correct, Guess wrong, Schema MCQs, New / Revised, Silly Mistakes, Skipped, Wrong."
-            textSize = 17f; setPadding(24,24,24,24)
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 24, 24, 24)
+        }
+        box.addView(TextView(this).apply {
+            text = "Review"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
         })
+        ReviewFilter.values().forEach { filter ->
+            box.addView(Button(this).apply {
+                text = filter.name.replace('_', ' ')
+                setOnClickListener {
+                    val ids = ReviewEngine.filter(state.session.mcqIds, state.session.answers, filter)
+                    Toast.makeText(this@MainActivity, filter.name + ": " + ids.size, Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+        replace(ScrollView(this).apply { addView(box) })
     }
 
     private fun showTests() {
