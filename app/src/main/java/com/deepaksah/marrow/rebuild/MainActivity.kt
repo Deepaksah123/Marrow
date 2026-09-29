@@ -748,7 +748,7 @@ class MainActivity : Activity() {
                     textSize = 17f
                 })
                 testCard.addView(TextView(this).apply {
-                    text = "The recovered landing ViewModel exposes configured tabs, year selection, test-list state, subscription state and GT analytics/nudge state. No remote test catalog is fabricated here."
+                    text = "The recovered landing ViewModel exposes configured tabs, year selection, test-list state, GT analytics/nudge state. No remote test catalog is fabricated here."
                     setPadding(0,8,0,12)
                 })
                 testCard.addView(Button(this).apply {
@@ -1168,9 +1168,9 @@ class MainActivity : Activity() {
             0 -> root.addView(Button(this).apply { text="QBank mode"; setOnClickListener { customStage=1; showCustom() } })
             1 -> subjects.forEach { s -> root.addView(Button(this).apply { text=s; setOnClickListener { customSubject=s; customStage=2; showCustom() } }) }
             2 -> {
-                val modules=state.contentRegistry.modules().filter { it.title.contains(customSubject,true) }
+                val modules=state.contentRegistry.moduleIds().filter { it.contains(customSubject,true) }
                 if(modules.isEmpty()) root.addView(TextView(this).apply { text="No verified local topic payload for " + customSubject + "."; setPadding(4,12,4,12) })
-                modules.take(30).forEach { m -> root.addView(Button(this).apply { text=m.title; setOnClickListener { customTopic=m.id; customStage=3; showCustom() } }) }
+                modules.take(30).forEach { moduleId -> root.addView(Button(this).apply { text=moduleId; setOnClickListener { customTopic=moduleId; customStage=3; showCustom() } }) }
             }
             3 -> { val input=EditText(this).apply { hint="Tags (optional)" }; root.addView(input); root.addView(Button(this).apply { text="CONTINUE"; setOnClickListener { customTags=input.text.toString(); customStage=4; showCustom() } }) }
             4 -> root.addView(Button(this).apply { text="USE DEFAULT ADD-ONS"; setOnClickListener { customStage=5; showCustom() } })
