@@ -40,7 +40,7 @@ jobs:
           cat /tmp/marrow-recovery/part01 \
               /tmp/marrow-recovery/part02 \
               /tmp/marrow-recovery/part03 > /tmp/marrow-recovery/base.apk_Decompiler.com.zip
-          test "$(stat -c%s /tmp/marrow-recovery/base.apk_Decompiler.com.zip)" = "722031803"
+          test "$(stat -c%s /tmp/marrow-recovery/base.apk_Decompiler.com.zip)" = "72031803"
           unzip -t /tmp/marrow-recovery/base.apk_Decompiler.com.zip
 
       - name: Extract into the recovery source tree
