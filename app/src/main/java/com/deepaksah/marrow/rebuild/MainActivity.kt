@@ -664,6 +664,20 @@ class MainActivity : Activity() {
         })
         if (q != null) {
             val existing = state.test.answers[q.id]
+            box.addView(Button(this).apply {
+                text = if (existing?.isGuessed == true) "GUESSED ✓" else "MARK GUESSED"
+                setOnClickListener {
+                    TestSession(state).markGuessed(q.id, existing?.isGuessed != true)
+                    showTestPlay()
+                }
+            })
+            box.addView(Button(this).apply {
+                text = if (existing?.isStarred == true) "★ BOOKMARKED" else "☆ BOOKMARK"
+                setOnClickListener {
+                    TestSession(state).toggleBookmark(q.id)
+                    showTestPlay()
+                }
+            }
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
@@ -682,6 +696,15 @@ class MainActivity : Activity() {
                     }
                     setOnClickListener {
                         TestSession(state).answer(q.id, choice.id, q.correctChoiceId)
+                        showTestPlay()
+                    }
+                })
+            }
+            if (existing?.locked == true) {
+                box.addView(Button(this).apply {
+                    text = "CHANGE ANSWER"
+                    setOnClickListener { 
+                        existing.selectedAnswer?.let { TestSession(state).changeAnswer(q.id, it, q.correctChoiceId) }
                         showTestPlay()
                     }
                 })
