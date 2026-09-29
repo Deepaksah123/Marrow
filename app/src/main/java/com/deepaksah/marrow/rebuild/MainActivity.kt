@@ -63,10 +63,14 @@ class MainActivity : Activity() {
         val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
         subjects.forEach { s ->
             val row = TextView(this).apply {
-                text = s; textSize = 16f; setTypeface(typeface, Typeface.BOLD); setPadding(20,22,20,22)
+                text = s
+                textSize = 16f
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(20,22,20,22)
                 setOnClickListener { qbank.openSubject(s); showLessons(s) }
             }
-            c.addView(row); addDivider(c)
+            c.addView(row)
+            addDivider(c)
         }
     }
 
@@ -75,26 +79,45 @@ class MainActivity : Activity() {
         replace(v)
         v.findViewById<TextView>(R.id.lessonTitle).text = if (subject.isBlank()) "QBank" else subject
         v.findViewById<TextView>(R.id.lessonBack).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
+
         val c = v.findViewById<LinearLayout>(R.id.lessonContainer)
-        c.addView(TextView(this).apply {
-            text = "Lesson/module list is populated from the supplied content repository. No module names are fabricated."
-            textSize = 15f; setPadding(16,18,16,18)
-        })
-        c.addView(Button(this).apply {
-            text = "Open QBank player"
-            setOnClickListener { qbank.openModule(subject, emptyList()); showPlayer() }
-        })
+        val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$subject/") || it == subject }
+        if (moduleIds.isEmpty()) {
+            c.addView(TextView(this).apply {
+                text = "No supplied module payload is loaded for this subject."
+                textSize = 15f
+                setPadding(16,18,16,18)
+            })
+        } else {
+            moduleIds.forEach { moduleId ->
+                c.addView(Button(this).apply {
+                    text = moduleId.removePrefix("$subject/")
+                    setOnClickListener {
+                        qbank.openModule(subject, state.contentRegistry.questionIds(moduleId))
+                        showPlayer()
+                    }
+                })
+            }
+        }
     }
 
-    private fun currentQuestion(): McqContent? {\n        val ids = state.session.mcqIds\n        val index = state.session.currentMcqIndex\n        return if (index in ids.indices) contentStore.get(ids[index]) else null\n    }\n\n    private fun showPlayer() {
+    private fun currentQuestion(): McqContent? {
+        val ids = state.session.mcqIds
+        val index = state.session.currentMcqIndex
+        return if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
+    }
+
+    private fun showPlayer() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_play, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.playPosition).text =
             "QBank · " + (state.session.currentMcqIndex + 1) + " / " + state.session.qbank.totalMcq
+
         val question = currentQuestion()
         val questionView = v.findViewById<TextView>(R.id.playQuestion)
         val optionContainer = v.findViewById<LinearLayout>(R.id.optionContainer)
         optionContainer.removeAllViews()
+
         if (question == null) {
             questionView.text = "No supplied MCQ payload is loaded for this module."
         } else {
@@ -104,19 +127,31 @@ class MainActivity : Activity() {
                 optionContainer.addView(Button(this).apply {
                     text = choice.text
                     isEnabled = existing?.locked != true
-                    setOnClickListener { QBankSession(state).answer(question.id, choice.id, question.correctChoiceId); showPlayer() }
+                    setOnClickListener {
+                        QBankSession(state).answer(question.id, choice.id, question.correctChoiceId)
+                        showPlayer()
+                    }
                 })
             }
             if (existing?.locked == true && question.solution.isNotBlank()) {
-                optionContainer.addView(TextView(this).apply { text = "Explanation\\n\\n" + question.solution; setPadding(16,20,16,20) })
+                optionContainer.addView(TextView(this).apply {
+                    text = "Explanation\n\n" + question.solution
+                    setPadding(16,20,16,20)
+                })
             }
         }
-        v.findViewById<LinearLayout>(R.id.optionContainer).removeAllViews()
-        v.findViewById<TextView>(R.id.playBookmark).setOnClickListener { question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() } }
+
+        v.findViewById<TextView>(R.id.playBookmark).setOnClickListener {
+            question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() }
+        }
         v.findViewById<Button>(R.id.playNext).setOnClickListener {
             if (state.session.qbank.totalMcq > 0 && state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
-                state.moveQuestion(state.session.currentMcqIndex + 1); showPlayer()
-            } else { qbank.openScore(); showScore() }
+                state.moveQuestion(state.session.currentMcqIndex + 1)
+                showPlayer()
+            } else {
+                qbank.openScore()
+                showScore()
+            }
         }
     }
 
@@ -124,17 +159,21 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_score, content, false)
         replace(v)
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
-        v.findViewById<TextView>(R.id.scoreSummary).text = "Total: " + metrics.total + "   Attempted: " + metrics.attempted + "\\nCorrect: " + metrics.correct + "   Wrong: " + metrics.wrong + "\\nSkipped: " + metrics.skipped + "   Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
+        v.findViewById<TextView>(R.id.scoreSummary).text =
+            "Total: " + metrics.total + "   Attempted: " + metrics.attempted + "\n" +
+            "Correct: " + metrics.correct + "   Wrong: " + metrics.wrong + "\n" +
+            "Skipped: " + metrics.skipped + "   Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
         v.findViewById<Button>(R.id.reviewButton).setOnClickListener { qbank.openReview(); showReview() }
         v.findViewById<Button>(R.id.reviewLessonButton).setOnClickListener {
-            state.navigate(MarrowRoute.QBANK_MODULE); showLessons(state.session.subjectId ?: "")
+            state.navigate(MarrowRoute.QBANK_MODULE)
+            showLessons(state.session.subjectId ?: "")
         }
     }
 
     private fun showReview() {
         val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(24, 24, 24, 24)
+            setPadding(24,24,24,24)
         }
         box.addView(TextView(this).apply {
             text = "Review"
@@ -181,6 +220,6 @@ class MainActivity : Activity() {
     }
 
     private fun addDivider(c: LinearLayout) {
-        c.addView(View(this).apply { setBackgroundColor(0xFFE6E6E6.toInt()) }, LinearLayout.LayoutParams(-1, 1))
+        c.addView(View(this).apply { setBackgroundColor(0xFFE6E6E6.toInt()) }, LinearLayout.LayoutParams(-1,1))
     }
 }
