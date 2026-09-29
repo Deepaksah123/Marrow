@@ -315,7 +315,7 @@ class MainActivity : Activity() {
         }
         v.findViewById<Button>(R.id.playSkip).setOnClickListener {
             question?.let {
-                QBankSession(state).skip(it.id)
+                TestSession(state).skip(it.id)
                 if (state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
                     state.moveQuestion(state.session.currentMcqIndex + 1)
                     showPlayer()
@@ -469,7 +469,7 @@ class MainActivity : Activity() {
             setPadding(0,18,0,18)
         })
         if (q != null) {
-            val existing = state.session.answers[q.id]
+            val existing = state.test.answers[q.id]
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
@@ -487,7 +487,7 @@ class MainActivity : Activity() {
                         }
                     }
                     setOnClickListener {
-                        QBankSession(state).answer(q.id, choice.id, q.correctChoiceId)
+                        TestSession(state).answer(q.id, choice.id, q.correctChoiceId)
                         showTestPlay()
                     }
                 })
@@ -535,7 +535,7 @@ class MainActivity : Activity() {
     }
 
     private fun showTestScore() {
-        val metrics = TestEngine.metrics(state.test.mcqIds, state.session.answers)
+        val metrics = TestEngine.metrics(state.test)
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
         box.addView(TextView(this).apply { text = "Test Score"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
         box.addView(TextView(this).apply { text = "Total: ${metrics.total}   Attempted: ${metrics.attempted}\nCorrect: ${metrics.correct}   Wrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}   Accuracy: ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
@@ -552,7 +552,7 @@ class MainActivity : Activity() {
         } else {
             state.test.mcqIds.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
-                val answer = state.session.answers[id]
+                val answer = state.test.answers[id]
                 box.addView(Button(this).apply {
                     text = q?.let {
                         val status = when {
