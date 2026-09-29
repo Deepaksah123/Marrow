@@ -5,7 +5,7 @@ import org.json.JSONObject
 
 class MarrowJsonImporter(private val assets: AssetManager) {
     fun loadEdition8QBank(): Map<String, List<McqContent>> {
-        val root = "marrow_source/Brain/Marrow/Edition 8 qBank"
+        val root = "marrow_content/Brain/Marrow/Edition 8 qBank"
         val modules = LinkedHashMap<String, List<McqContent>>()
         loadTree(root, modules)
         return modules
@@ -18,7 +18,7 @@ class MarrowJsonImporter(private val assets: AssetManager) {
             if (children.isNotEmpty()) {
                 loadTree(child, modules)
             } else if (name.endsWith(".json", ignoreCase = true)) {
-                val relative = child.removePrefix("marrow_source/Brain/Marrow/Edition 8 qBank/").removeSuffix(".json")
+                val relative = child.removePrefix("marrow_content/Brain/Marrow/Edition 8 qBank/").removeSuffix(".json")
                 val subject = relative.substringBefore("/")
                 if (subject.isBlank()) return@forEach
                 val moduleName = relative.substringAfter("/").ifBlank { name.removeSuffix(".json") }
