@@ -20,7 +20,7 @@ The recovered APK tree under `recovery/base_apk_Decompiler.com/` is the authorit
 |---|---|---|---|
 | Home | `ui/home/HomeViewModelV2.java` | `MainActivity.showHome()`, `screen_home.xml` | Partial |
 | QBank landing | `ui/qbank/landing/QBankLandingViewModel.java` | `showQBank()`, `screen_qbank.xml` | Partial |
-| QBank introduction | `ui/qbank/introduction/QbankIntroductionViewModel.java` | No dedicated renderer | Missing |
+| QBank introduction | `ui/qbank/introduction/QbankIntroductionViewModel.java` | `QBankIntroductionModel.kt`, `showQBankIntroduction()` | Partial |
 | QBank lesson list | `ui/qbank/lesson_list/QBankLessonListViewModel.java` | `showLessons()` | Partial |
 | QBank play | `ui/qbank/play/QBankPlayViewModel.java`, `QBankMcqViewModel.java` | `showPlayer()` | Partial |
 | QBank score | `ui/qbank/score/QbankScoreViewModel.java` | `showScore()`, `QBankScoreModel.kt` | Partial |
