@@ -677,7 +677,7 @@ class MainActivity : Activity() {
                     TestSession(state).toggleBookmark(q.id)
                     showTestPlay()
                 }
-            }
+            })
             q.choices.forEach { choice ->
                 box.addView(Button(this).apply {
                     text = choice.text
@@ -773,24 +773,79 @@ class MainActivity : Activity() {
 
     private fun showTestScore() {
         val metrics = TestEngine.metrics(state.test)
+        val answers = state.test.answers
+        val bookmarked = answers.values.count { it.isStarred }
+        val guessed = answers.values.count { it.isGuessed }
+        val changed = answers.values.count { it.changedByYou }
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
-        box.addView(TextView(this).apply { text = "Test Score"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "Total: ${metrics.total}   Attempted: ${metrics.attempted}\nCorrect: ${metrics.correct}   Wrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}   Accuracy: ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
-        box.addView(Button(this).apply { text = "REVIEW"; setOnClickListener { tests.openReview(); showTests() } })
-        box.addView(Button(this).apply { text = "ANALYTICS"; setOnClickListener { tests.openAnalytics(); showTests() } })
+        box.addView(TextView(this).apply {
+            text = "Test Score"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "Total: ${metrics.total}\nAttempted: ${metrics.attempted}\nCorrect: ${metrics.correct}\nWrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}\nUnanswered: ${metrics.unanswered}\nAccuracy: ${String.format("%.1f", metrics.accuracy)}%"
+            textSize = 16f
+            setPadding(4,18,4,18)
+        })
+        box.addView(TextView(this).apply {
+            text = "Bookmarked: $bookmarked   Guessed: $guessed   Changed: $changed"
+            textSize = 15f
+            setPadding(4,4,4,18)
+        })
+        box.addView(Button(this).apply {
+            text = "REVIEW"
+            setOnClickListener { tests.openReview(); showTests() }
+        })
+        box.addView(Button(this).apply {
+            text = "ANALYTICS"
+            setOnClickListener { tests.openAnalytics(); showTests() }
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO TESTS"
+            setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
+        })
         replace(ScrollView(this).apply { addView(box) })
     }
 
     private fun showTestReview() {
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        box.addView(TextView(this).apply { text = "Test Review"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        if (state.test.mcqIds.isEmpty()) {
-            box.addView(TextView(this).apply { text = "No verified test question payload is attached to the current C content layer."; setPadding(4,20,4,20) })
-        } else {
-            state.test.mcqIds.forEachIndexed { index, id ->
+        box.addView(TextView(this).apply {
+            text = "Test Review"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val filters = listOf(
+            ReviewFilter.ALL,
+            ReviewFilter.BOOKMARKED,
+            ReviewFilter.CHANGED_BY_YOU,
+            ReviewFilter.CORRECT,
+            ReviewFilter.GUESS_CORRECT,
+            ReviewFilter.GUESS_WRONG,
+            ReviewFilter.SKIPPED,
+            ReviewFilter.WRONG
+        )
+        fun render(filter: ReviewFilter) {
+            list.removeAllViews()
+            val content = state.test.mcqIds.associateWith { state.contentRegistry.question(it) }.mapNotNull { (id, q) -> q?.let { id to it } }.toMap()
+            val ids = ReviewEngine.filter(state.test.mcqIds, state.test.answers, content, filter)
+            list.addView(TextView(this).apply {
+                text = filter.name.replace('_',' ') + " · " + ids.size
+                textSize = 15f
+                setPadding(4,10,4,12)
+            })
+            if (ids.isEmpty()) {
+                list.addView(TextView(this).apply {
+                    text = "No questions in this filter."
+                    setPadding(4,12,4,12)
+                })
+                return
+            }
+            ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
                 val answer = state.test.answers[id]
-                box.addView(Button(this).apply {
+                list.addView(Button(this).apply {
                     text = q?.let {
                         val status = when {
                             answer?.skipped == true -> "Skipped"
@@ -798,24 +853,31 @@ class MainActivity : Activity() {
                             answer?.isRight == false -> "Wrong"
                             else -> "Unanswered"
                         }
-                        "${index + 1}. ${status} — ${it.text}"
-                    } ?: "Question ${index + 1} — content unavailable"
+                        "${index + 1}. $status — ${it.text}"
+                    } ?: "Question ${index + 1}"
                     setOnClickListener {
-                        q?.let { question ->
-                            AlertDialog.Builder(this@MainActivity)
-                                .setTitle("Question ${index + 1}")
-                                .setMessage(buildString {
-                                    append(question.text)
-                                    question.choices.forEach { choice -> append("\n\n").append(choice.text) }
-                                    if (question.solution.isNotBlank()) append("\n\nExplanation\n").append(question.solution)
-                                })
-                                .setPositiveButton("Close", null)
-                                .show()
+                        val questionIndex = state.test.mcqIds.indexOf(id)
+                        if (questionIndex >= 0) {
+                            state.moveTestQuestion(questionIndex)
+                            state.navigate(MarrowRoute.TEST_PLAY)
+                            showTestPlay()
                         }
                     }
                 })
             }
         }
+        filters.forEach { filter ->
+            box.addView(Button(this).apply {
+                text = filter.name.replace('_',' ')
+                setOnClickListener { render(filter) }
+            })
+        }
+        box.addView(list)
+        box.addView(Button(this).apply {
+            text = "BACK TO SCORE"
+            setOnClickListener { tests.openScore(); showTests() }
+        })
+        render(ReviewFilter.ALL)
         replace(ScrollView(this).apply { addView(box) })
     }
 
