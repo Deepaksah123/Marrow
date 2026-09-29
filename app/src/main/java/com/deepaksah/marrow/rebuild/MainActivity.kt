@@ -328,7 +328,8 @@ class MainActivity : Activity() {
         v.findViewById<TextView>(R.id.scoreSummary).text =
             "Total: " + metrics.total + "   Attempted: " + metrics.attempted + "\n" +
             "Correct: " + metrics.correct + "   Wrong: " + metrics.wrong + "\n" +
-            "Skipped: " + metrics.skipped + "   Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
+            "Skipped: " + metrics.skipped + "   Unanswered: " + metrics.unanswered + "\n" +
+            "Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
         v.findViewById<Button>(R.id.reviewButton).setOnClickListener { qbank.openReview(); showReview() }
         v.findViewById<Button>(R.id.reviewLessonButton).setOnClickListener {
             state.navigate(MarrowRoute.QBANK_MODULE)
