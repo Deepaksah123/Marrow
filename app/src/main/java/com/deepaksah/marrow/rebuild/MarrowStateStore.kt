@@ -21,18 +21,37 @@ class MarrowStateStore {
         session = session.copy(subjectId = id, moduleId = null, mcqIds = emptyList(), currentMcqIndex = 0)
     }
 
+    private fun navigationStatus(index: Int, total: Int): NavigationButtonStatus {
+        if (total <= 0) return NavigationButtonStatus.DONE
+        return if (index >= total - 1) NavigationButtonStatus.COMPLETE else NavigationButtonStatus.NEXT
+    }
+
     fun selectModule(id: String, mcqIds: List<String>) {
         session = session.copy(
             moduleId = id,
             mcqIds = mcqIds,
             currentMcqIndex = 0,
-            qbank = session.qbank.copy(parentId = id, mcqIds = mcqIds, totalMcq = mcqIds.size)
+            qbank = session.qbank.copy(
+                parentId = id,
+                mcqIds = mcqIds,
+                totalMcq = mcqIds.size,
+                startIndex = 0,
+                currentIndex = 0,
+                navigationButtonStatus = navigationStatus(0, mcqIds.size)
+            )
         )
     }
 
     fun moveQuestion(index: Int) {
-        val safe = index.coerceIn(0, (session.mcqIds.size - 1).coerceAtLeast(0))
-        session = session.copy(currentMcqIndex = safe, qbank = session.qbank.copy(currentIndex = safe))
+        val total = session.mcqIds.size
+        val safe = index.coerceIn(0, (total - 1).coerceAtLeast(0))
+        session = session.copy(
+            currentMcqIndex = safe,
+            qbank = session.qbank.copy(
+                currentIndex = safe,
+                navigationButtonStatus = navigationStatus(safe, total)
+            )
+        )
     }
 
     fun setAnswer(answer: McqAnswerState) {
