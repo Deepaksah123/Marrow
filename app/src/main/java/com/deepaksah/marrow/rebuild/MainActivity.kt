@@ -375,7 +375,7 @@ class MainActivity : Activity() {
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(id)
                 list.addView(Button(this).apply {
-                    text = q?.text?.let { "${index + 1}. \$it" } ?: "Question ${index + 1}"
+                    text = q?.text?.let { "${index + 1}. $it" } ?: "Question ${index + 1}"
                     setOnClickListener {
                         val questionIndex = state.session.mcqIds.indexOf(id)
                         if (questionIndex >= 0) {
