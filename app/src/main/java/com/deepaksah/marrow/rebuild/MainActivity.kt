@@ -71,7 +71,10 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show() }
-        v.findViewById<TextView>(R.id.homeSearch).setOnClickListener { Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show() }
+        v.findViewById<TextView>(R.id.homeSearch).setOnClickListener {
+            state.navigate(MarrowRoute.SEARCH)
+            showSearch()
+        }
         v.findViewById<TextView>(R.id.homeBookmark).setOnClickListener {
             state.navigate(MarrowRoute.BOOKMARKS)
             showBookmarks()
@@ -84,6 +87,56 @@ class MainActivity : Activity() {
             showPearls()
         }
         v.findViewById<Button>(R.id.homeShare).setOnClickListener { Toast.makeText(this, "Share Marrow", Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun showSearch() {
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
+        }
+        box.addView(TextView(this).apply {
+            text = "Search"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        val input = EditText(this).apply {
+            hint = "Search loaded QBank content"
+            singleLine = true
+        }
+        box.addView(input)
+        val results = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        box.addView(results)
+        box.addView(Button(this).apply {
+            text = "SEARCH"
+            setOnClickListener {
+                results.removeAllViews()
+                val query = input.text.toString().trim()
+                if (query.isBlank()) return@setOnClickListener
+                val matches = state.contentRegistry.search(query)
+                if (matches.isEmpty()) {
+                    results.addView(TextView(this@MainActivity).apply {
+                        text = "No matches in loaded content."
+                        setPadding(4, 20, 4, 20)
+                    })
+                } else {
+                    matches.forEachIndexed { index, q ->
+                        results.addView(Button(this@MainActivity).apply {
+                            text = "${index + 1}. ${q.text}"
+                            setOnClickListener {
+                                state.contentRegistry.findModuleForQuestion(q.id)?.let { moduleId ->
+                                    val ids = state.contentRegistry.questionIds(moduleId)
+                                    state.selectModule(moduleId, ids)
+                                    state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0))
+                                    state.navigate(MarrowRoute.QBANK_PLAY)
+                                    showPlayer()
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        })
+        replace(ScrollView(this).apply { addView(box) })
     }
 
     private fun showPearls() {
