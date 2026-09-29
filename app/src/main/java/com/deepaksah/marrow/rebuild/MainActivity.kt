@@ -162,6 +162,24 @@ class MainActivity : Activity() {
         v.findViewById<TextView>(R.id.playBookmark).setOnClickListener {
             question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() }
         }
+        v.findViewById<Button>(R.id.playPrevious).setOnClickListener {
+            if (state.session.currentMcqIndex > 0) {
+                state.moveQuestion(state.session.currentMcqIndex - 1)
+                showPlayer()
+            }
+        }
+        v.findViewById<Button>(R.id.playSkip).setOnClickListener {
+            question?.let {
+                QBankSession(state).skip(it.id)
+                if (state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
+                    state.moveQuestion(state.session.currentMcqIndex + 1)
+                    showPlayer()
+                } else {
+                    qbank.openScore()
+                    showScore()
+                }
+            }
+        }
         v.findViewById<Button>(R.id.playNext).setOnClickListener {
             if (state.session.qbank.totalMcq > 0 && state.session.currentMcqIndex + 1 < state.session.qbank.totalMcq) {
                 state.moveQuestion(state.session.currentMcqIndex + 1)
