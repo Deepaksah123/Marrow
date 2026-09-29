@@ -617,15 +617,84 @@ class MainActivity : Activity() {
     private fun showTests() {
         when (state.session.route) {
             MarrowRoute.TEST_INTRO -> showTestIntro()
+            MarrowRoute.TEST_PLAY -> showTestPlay()
             MarrowRoute.TEST_SCORE -> showTestScore()
             MarrowRoute.TEST_REVIEW -> showTestReview()
             MarrowRoute.TEST_ANALYTICS -> showTestAnalytics()
-            MarrowRoute.TEST_PLAY -> showTestPlay()
             else -> {
-                val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
-                replace(v)
-                v.findViewById<Button>(R.id.testStart).setOnClickListener { tests.openIntro("source-test"); showTests() }
-                v.findViewById<Button>(R.id.testReview).setOnClickListener { tests.openAnalytics(); showTests() }
+                val box = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(20,20,20,20)
+                }
+                box.addView(TextView(this).apply {
+                    text = "Tests"
+                    textSize = 26f
+                    setTypeface(typeface, Typeface.BOLD)
+                })
+
+                val tabs = listOf("ALL TESTS", "GRAND TEST", "SUBJECT TESTS")
+                val tabRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+                tabs.forEachIndexed { index, tab ->
+                    tabRow.addView(Button(this).apply {
+                        text = tab
+                        setOnClickListener {
+                            tests.selectConfiguredTab(tab)
+                            Toast.makeText(this@MainActivity, "Selected $tab", Toast.LENGTH_SHORT).show()
+                        }
+                    }, LinearLayout.LayoutParams(0,-2,1f))
+                }
+                box.addView(tabRow)
+
+                box.addView(TextView(this).apply {
+                    text = "Test year"
+                    textSize = 16f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setPadding(4,20,4,8)
+                })
+                val yearRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+                listOf("2026","2025","2024").forEach { year ->
+                    yearRow.addView(Button(this).apply {
+                        text = year
+                        setOnClickListener {
+                            Toast.makeText(this@MainActivity, "Year $year selected", Toast.LENGTH_SHORT).show()
+                        }
+                    }, LinearLayout.LayoutParams(0,-2,1f))
+                }
+                box.addView(yearRow)
+
+                box.addView(TextView(this).apply {
+                    text = "Configured test list"
+                    textSize = 18f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setPadding(4,20,4,8)
+                })
+                val testCard = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(12,12,12,12)
+                }
+                testCard.addView(TextView(this).apply {
+                    text = "Source-backed test selection"
+                    textSize = 17f
+                })
+                testCard.addView(TextView(this).apply {
+                    text = "The recovered landing ViewModel exposes configured tabs, year selection, test-list state, subscription state and GT analytics/nudge state. No remote test catalog is fabricated here."
+                    setPadding(0,8,0,12)
+                })
+                testCard.addView(Button(this).apply {
+                    text = "OPEN TEST INTRO"
+                    setOnClickListener { tests.openIntro("source-test"); showTests() }
+                })
+                box.addView(testCard)
+
+                box.addView(Button(this).apply {
+                    text = "GRAND TEST ANALYTICS"
+                    setOnClickListener { state.navigate(MarrowRoute.GT_ANALYTICS); showGTAnalytics() }
+                })
+                box.addView(Button(this).apply {
+                    text = "LAST TEST ANALYTICS"
+                    setOnClickListener { tests.openAnalytics(); showTests() }
+                })
+                replace(ScrollView(this).apply { addView(box) })
             }
         }
     }
@@ -883,10 +952,34 @@ class MainActivity : Activity() {
 
     private fun showTestAnalytics() {
         val analytics = TestAnalyticsModel.from(state.test)
-        val metrics = analytics.metrics
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
-        box.addView(TextView(this).apply { text = "Test Analytics"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "Completion ${String.format("%.1f", analytics.completionPercent)}%\nTotal ${metrics.total}\nAttempted ${metrics.attempted}\nCorrect ${metrics.correct}\nWrong ${metrics.wrong}\nSkipped ${metrics.skipped}\nAccuracy ${String.format("%.1f", metrics.accuracy)}%"; textSize = 16f; setPadding(4,18,4,18) })
+        val m = analytics.metrics
+        val box = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24,24,24,24)
+        }
+        box.addView(TextView(this).apply {
+            text = "Test Analytics"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        box.addView(TextView(this).apply {
+            text = "Completion: ${String.format("%.1f", analytics.completionPercent)}%\nAccuracy: ${String.format("%.1f", analytics.accuracyPercent)}%\n\nTotal: ${m.total}\nAttempted: ${m.attempted}\nCorrect: ${m.correct}\nWrong: ${m.wrong}\nSkipped: ${m.skipped}\nUnanswered: ${m.unanswered}\n\nBookmarked: ${analytics.bookmarked}\nGuessed: ${analytics.guessed}\nChanged by you: ${analytics.changedByYou}"
+            textSize = 16f
+            setPadding(4,18,4,18)
+        })
+        box.addView(TextView(this).apply {
+            text = "Remote analytics such as rank, percentile and subject-wise server statistics require the original test payload/API response and are not fabricated locally."
+            textSize = 13f
+            setPadding(4,8,4,18)
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO SCORE"
+            setOnClickListener { tests.openScore(); showTests() }
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO TESTS"
+            setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
+        })
         replace(ScrollView(this).apply { addView(box) })
     }
 
