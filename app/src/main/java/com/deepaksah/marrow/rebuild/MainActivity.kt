@@ -403,7 +403,22 @@ class MainActivity : Activity() {
                 })
             }
         }
-        box.addView(Button(this).apply { text = "SUBMIT / SCORE"; setOnClickListener { tests.openScore(); showTests() } })
+        if (index > 0) {
+            box.addView(Button(this).apply {
+                text = "PREVIOUS"
+                setOnClickListener { state.moveTestQuestion(index - 1); showTestPlay() }
+            })
+        }
+        if (index + 1 < ids.size) {
+            box.addView(Button(this).apply {
+                text = "NEXT"
+                setOnClickListener { state.moveTestQuestion(index + 1); showTestPlay() }
+            })
+        }
+        box.addView(Button(this).apply {
+            text = "SUBMIT / SCORE"
+            setOnClickListener { tests.openScore(); showTests() }
+        })
         replace(ScrollView(this).apply { addView(box) })
     }
 
