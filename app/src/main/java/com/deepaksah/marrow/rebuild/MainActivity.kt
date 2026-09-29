@@ -146,6 +146,15 @@ class MainActivity : Activity() {
                 optionContainer.addView(Button(this).apply {
                     text = choice.text
                     isEnabled = existing?.locked != true
+                    if (existing?.locked == true) {
+                        if (choice.id == question.correctChoiceId) {
+                            setBackgroundColor(0xFF2E7D32.toInt())
+                            setTextColor(0xFFFFFFFF.toInt())
+                        } else if (choice.id == existing.selectedAnswer) {
+                            setBackgroundColor(0xFFC62828.toInt())
+                            setTextColor(0xFFFFFFFF.toInt())
+                        }
+                    }
                     setOnClickListener {
                         QBankSession(state).answer(question.id, choice.id, question.correctChoiceId)
                         showPlayer()
