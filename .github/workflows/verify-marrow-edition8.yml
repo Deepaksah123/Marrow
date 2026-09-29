@@ -2,8 +2,6 @@ name: Verify Marrow Edition 8
 
 on:
   push:
-    paths:
-      - ".github/workflows/verify-marrow-edition8.yml"
   workflow_dispatch:
 
 jobs:
