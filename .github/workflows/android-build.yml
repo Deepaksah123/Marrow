@@ -15,3 +15,9 @@ jobs:
           gradle-version: "8.10"
       - name: Assemble debug
         run: gradle assembleDebug --stacktrace
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
