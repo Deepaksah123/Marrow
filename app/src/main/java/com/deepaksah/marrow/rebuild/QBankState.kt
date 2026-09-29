@@ -13,7 +13,9 @@ data class QBankState(
     val timerDouble: Boolean = false,
     val timerEndAtMs: Long? = null,
     val timerExpired: Boolean = false,
-    val answerPositions: Map<String, Int> = emptyMap()
+    val answerPositions: Map<String, Int> = emptyMap(),
+    val completed: Boolean = false,
+    val submissionInProcess: Boolean = false
 )
 
 enum class NavigationButtonStatus { SKIP, NEXT, COMPLETE, DONE }
