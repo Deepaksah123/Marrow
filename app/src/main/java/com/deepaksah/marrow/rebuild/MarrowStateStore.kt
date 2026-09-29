@@ -17,6 +17,8 @@ class MarrowStateStore {
     fun importContent(modules: Map<String, List<McqContent>>): ContentImportResult =
         ContentImporter(contentRegistry).import(modules)
 
+    fun setSelectedTestGroup(id: String) { session = session.copy(selectedTestGroup = id) }
+
     fun selectSubject(id: String) {
         session = session.copy(subjectId = id, moduleId = null, mcqIds = emptyList(), currentMcqIndex = 0)
     }
