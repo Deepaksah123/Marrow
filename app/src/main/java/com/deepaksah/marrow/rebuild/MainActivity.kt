@@ -526,7 +526,11 @@ class MainActivity : Activity() {
             "Correct: " + metrics.correct + "   Wrong: " + metrics.wrong + "\n" +
             "Skipped: " + metrics.skipped + "   Unanswered: " + metrics.unanswered + "\n" +
             "Accuracy: " + String.format("%.1f", metrics.accuracy) + "%"
-        v.findViewById<Button>(R.id.reviewButton).setOnClickListener { qbank.openReview(); showReview() }
+
+        v.findViewById<Button>(R.id.reviewButton).setOnClickListener {
+            qbank.openReview()
+            showReview()
+        }
         v.findViewById<Button>(R.id.reviewLessonButton).setOnClickListener {
             state.navigate(MarrowRoute.QBANK_MODULE)
             showLessons(state.session.subjectId ?: "")
@@ -602,18 +606,41 @@ class MainActivity : Activity() {
         }
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
         val reviewSummary = QBankReviewSummary.from(state.session.mcqIds, state.session.answers)
+        val completion = if (metrics.total == 0) 0.0 else (metrics.attempted + metrics.skipped).toDouble() / metrics.total * 100.0
         box.addView(TextView(this).apply {
-            text = "Analytics"
+            text = "QBank Analytics"
             textSize = 22f
             setTypeface(typeface, Typeface.BOLD)
         })
         box.addView(TextView(this).apply {
-            text = "Total: ${metrics.total}\nAttempted: ${metrics.attempted}\nCorrect: ${metrics.correct}\nWrong: ${metrics.wrong}\nSkipped: ${metrics.skipped}\nBookmarked: ${metrics.bookmarked}\nAccuracy: ${String.format("%.1f", metrics.accuracy)}%\n\nReview filters\nChanged: ${reviewSummary.changedByYou}\nGuess correct: ${reviewSummary.guessedCorrect}\nGuess wrong: ${reviewSummary.guessedWrong}\nSilly mistakes: ${reviewSummary.sillyMistakes}"
+            text = "Completion: " + String.format("%.1f", completion) + "%\n\n" +
+                "Total: " + metrics.total + "\n" +
+                "Attempted: " + metrics.attempted + "\n" +
+                "Correct: " + metrics.correct + "\n" +
+                "Wrong: " + metrics.wrong + "\n" +
+                "Skipped: " + metrics.skipped + "\n" +
+                "Unanswered: " + metrics.unanswered + "\n" +
+                "Bookmarked: " + metrics.bookmarked + "\n" +
+                "Accuracy: " + String.format("%.1f", metrics.accuracy) + "%\n\n" +
+                "Changed by you: " + reviewSummary.changedByYou + "\n" +
+                "Guess correct: " + reviewSummary.guessedCorrect + "\n" +
+                "Guess wrong: " + reviewSummary.guessedWrong + "\n" +
+                "Silly mistakes: " + reviewSummary.sillyMistakes
             textSize = 16f
             setPadding(4,18,4,18)
         })
+        box.addView(Button(this).apply {
+            text = "REVIEW QUESTIONS"
+            setOnClickListener { qbank.openReview(); showReview() }
+        })
+        box.addView(Button(this).apply {
+            text = "BACK TO SCORE"
+            setOnClickListener { qbank.openScore(); showScore() }
+        })
         replace(ScrollView(this).apply { addView(box) })
     }
+
+
     private fun showTests() {
         when (state.session.route) {
             MarrowRoute.TEST_INTRO -> showTestIntro()
