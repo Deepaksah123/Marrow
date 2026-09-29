@@ -1,0 +1,143 @@
+package kotlin;
+
+import kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes3.dex */
+@Metadata(d1 = {"\u0000$\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\u0010\b\n\u0000\n\u0002\u0010\t\n\u0000\n\u0002\u0010\u000e\n\u0002\b\t\n\u0002\u0010\u000b\n\u0002\b\u0014\b\u0086\b\u0018\u00002\u00020\u0001BS\u0012\b\b\u0002\u0010\u0003\u001a\u00020\u0002\u0012\b\b\u0002\u0010\u0005\u001a\u00020\u0004\u0012\u0006\u0010\u0007\u001a\u00020\u0006\u0012\u0006\u0010\b\u001a\u00020\u0006\u0012\u0006\u0010\t\u001a\u00020\u0006\u0012\u0006\u0010\n\u001a\u00020\u0006\u0012\u0006\u0010\u000b\u001a\u00020\u0006\u0012\u0006\u0010\f\u001a\u00020\u0006\u0012\u0006\u0010\r\u001a\u00020\u0002¢\u0006\u0004\b\u000e\u0010\u000fJ\u001a\u0010\u0011\u001a\u00020\u00102\b\u0010\u0003\u001a\u0004\u0018\u00010\u0001HÖ\u0003¢\u0006\u0004\b\u0011\u0010\u0012J\u0010\u0010\u0013\u001a\u00020\u0002HÖ\u0001¢\u0006\u0004\b\u0013\u0010\u0014J\u0010\u0010\u0015\u001a\u00020\u0006HÖ\u0001¢\u0006\u0004\b\u0015\u0010\u0016R\u001c\u0010\u001a\u001a\u00020\u00028\u0007@\u0006X\u0086\f¢\u0006\f\n\u0004\b\u0017\u0010\u0018\u001a\u0004\b\u0019\u0010\u0014R\u001c\u0010\u001e\u001a\u00020\u00048\u0007@\u0006X\u0087\f¢\u0006\f\n\u0004\b\u001b\u0010\u001c\u001a\u0004\b\u001b\u0010\u001dR\u001a\u0010!\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b\u001f\u0010 \u001a\u0004\b!\u0010\u0016R\u001a\u0010\u001f\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b\u0019\u0010 \u001a\u0004\b\"\u0010\u0016R\u001a\u0010#\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b\u001a\u0010 \u001a\u0004\b\u001f\u0010\u0016R\u001a\u0010\u001b\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b#\u0010 \u001a\u0004\b#\u0010\u0016R\u001a\u0010$\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b!\u0010 \u001a\u0004\b\u001e\u0010\u0016R\u001a\u0010\u0019\u001a\u00020\u00068\u0007X\u0087\u0004¢\u0006\f\n\u0004\b\u001e\u0010 \u001a\u0004\b\u001a\u0010\u0016R\u001a\u0010\"\u001a\u00020\u00028\u0007X\u0087\u0004¢\u0006\f\n\u0004\b\"\u0010\u0018\u001a\u0004\b$\u0010\u0014"}, d2 = {"Lo/toBundleArrayList;", "", "", "p0", "", "p1", "", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "<init>", "(IJLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V", "", "equals", "(Ljava/lang/Object;)Z", "hashCode", "()I", "toString", "()Ljava/lang/String;", "MediaBrowserCompatCustomActionResultReceiver", "I", "AudioAttributesImplApi21Parcelizer", "AudioAttributesCompatParcelizer", "MediaBrowserCompatItemReceiver", "J", "()J", "read", "IconCompatParcelizer", "Ljava/lang/String;", "RemoteActionCompatParcelizer", "AudioAttributesImplBaseParcelizer", "write", "AudioAttributesImplApi26Parcelizer"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public final /* data */ class toBundleArrayList {
+
+    /* JADX INFO: renamed from: AudioAttributesCompatParcelizer, reason: from kotlin metadata */
+    private final String write;
+
+    /* JADX INFO: renamed from: AudioAttributesImplApi21Parcelizer, reason: from kotlin metadata */
+    private final String IconCompatParcelizer;
+    private final int AudioAttributesImplBaseParcelizer;
+
+    /* JADX INFO: renamed from: IconCompatParcelizer, reason: from kotlin metadata */
+    private final String RemoteActionCompatParcelizer;
+
+    /* JADX INFO: renamed from: MediaBrowserCompatCustomActionResultReceiver, reason: from kotlin metadata */
+    private int AudioAttributesCompatParcelizer;
+
+    /* JADX INFO: renamed from: MediaBrowserCompatItemReceiver, reason: from kotlin metadata */
+    private long read;
+
+    /* JADX INFO: renamed from: RemoteActionCompatParcelizer, reason: from kotlin metadata */
+    private final String AudioAttributesImplApi26Parcelizer;
+
+    /* JADX INFO: renamed from: read, reason: from kotlin metadata */
+    private final String AudioAttributesImplApi21Parcelizer;
+
+    /* JADX INFO: renamed from: write, reason: from kotlin metadata */
+    private final String MediaBrowserCompatItemReceiver;
+
+    public toBundleArrayList(int i, long j, String str, String str2, String str3, String str4, String str5, String str6, int i2) {
+        toMagicModuleMetaRepoModel.write(str, "");
+        toMagicModuleMetaRepoModel.write(str2, "");
+        toMagicModuleMetaRepoModel.write(str3, "");
+        toMagicModuleMetaRepoModel.write(str4, "");
+        toMagicModuleMetaRepoModel.write(str5, "");
+        toMagicModuleMetaRepoModel.write(str6, "");
+        this.AudioAttributesCompatParcelizer = i;
+        this.read = j;
+        this.RemoteActionCompatParcelizer = str;
+        this.IconCompatParcelizer = str2;
+        this.write = str3;
+        this.MediaBrowserCompatItemReceiver = str4;
+        this.AudioAttributesImplApi26Parcelizer = str5;
+        this.AudioAttributesImplApi21Parcelizer = str6;
+        this.AudioAttributesImplBaseParcelizer = i2;
+    }
+
+    /* JADX INFO: renamed from: AudioAttributesImplApi21Parcelizer, reason: from getter */
+    public final int getAudioAttributesCompatParcelizer() {
+        return this.AudioAttributesCompatParcelizer;
+    }
+
+    /* JADX INFO: renamed from: MediaBrowserCompatItemReceiver, reason: from getter */
+    public final long getRead() {
+        return this.read;
+    }
+
+    /* JADX INFO: renamed from: RemoteActionCompatParcelizer, reason: from getter */
+    public final String getRemoteActionCompatParcelizer() {
+        return this.RemoteActionCompatParcelizer;
+    }
+
+    /* JADX INFO: renamed from: AudioAttributesImplBaseParcelizer, reason: from getter */
+    public final String getIconCompatParcelizer() {
+        return this.IconCompatParcelizer;
+    }
+
+    /* JADX INFO: renamed from: IconCompatParcelizer, reason: from getter */
+    public final String getWrite() {
+        return this.write;
+    }
+
+    /* JADX INFO: renamed from: write, reason: from getter */
+    public final String getMediaBrowserCompatItemReceiver() {
+        return this.MediaBrowserCompatItemReceiver;
+    }
+
+    /* JADX INFO: renamed from: read, reason: from getter */
+    public final String getAudioAttributesImplApi26Parcelizer() {
+        return this.AudioAttributesImplApi26Parcelizer;
+    }
+
+    /* JADX INFO: renamed from: AudioAttributesCompatParcelizer, reason: from getter */
+    public final String getAudioAttributesImplApi21Parcelizer() {
+        return this.AudioAttributesImplApi21Parcelizer;
+    }
+
+    /* JADX INFO: renamed from: AudioAttributesImplApi26Parcelizer, reason: from getter */
+    public final int getAudioAttributesImplBaseParcelizer() {
+        return this.AudioAttributesImplBaseParcelizer;
+    }
+
+    public final boolean equals(Object p0) {
+        if (this == p0) {
+            return true;
+        }
+        if (!(p0 instanceof toBundleArrayList)) {
+            return false;
+        }
+        toBundleArrayList tobundlearraylist = (toBundleArrayList) p0;
+        return this.AudioAttributesCompatParcelizer == tobundlearraylist.AudioAttributesCompatParcelizer && this.read == tobundlearraylist.read && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.RemoteActionCompatParcelizer, (Object) tobundlearraylist.RemoteActionCompatParcelizer) && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.IconCompatParcelizer, (Object) tobundlearraylist.IconCompatParcelizer) && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.write, (Object) tobundlearraylist.write) && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.MediaBrowserCompatItemReceiver, (Object) tobundlearraylist.MediaBrowserCompatItemReceiver) && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.AudioAttributesImplApi26Parcelizer, (Object) tobundlearraylist.AudioAttributesImplApi26Parcelizer) && toMagicModuleMetaRepoModel.RemoteActionCompatParcelizer((Object) this.AudioAttributesImplApi21Parcelizer, (Object) tobundlearraylist.AudioAttributesImplApi21Parcelizer) && this.AudioAttributesImplBaseParcelizer == tobundlearraylist.AudioAttributesImplBaseParcelizer;
+    }
+
+    public final int hashCode() {
+        return (((((((((((((((Integer.hashCode(this.AudioAttributesCompatParcelizer) * 31) + Long.hashCode(this.read)) * 31) + this.RemoteActionCompatParcelizer.hashCode()) * 31) + this.IconCompatParcelizer.hashCode()) * 31) + this.write.hashCode()) * 31) + this.MediaBrowserCompatItemReceiver.hashCode()) * 31) + this.AudioAttributesImplApi26Parcelizer.hashCode()) * 31) + this.AudioAttributesImplApi21Parcelizer.hashCode()) * 31) + Integer.hashCode(this.AudioAttributesImplBaseParcelizer);
+    }
+
+    public final String toString() {
+        int i = this.AudioAttributesCompatParcelizer;
+        long j = this.read;
+        String str = this.RemoteActionCompatParcelizer;
+        String str2 = this.IconCompatParcelizer;
+        String str3 = this.write;
+        String str4 = this.MediaBrowserCompatItemReceiver;
+        String str5 = this.AudioAttributesImplApi26Parcelizer;
+        String str6 = this.AudioAttributesImplApi21Parcelizer;
+        int i2 = this.AudioAttributesImplBaseParcelizer;
+        StringBuilder sb = new StringBuilder("toBundleArrayList(AudioAttributesCompatParcelizer=");
+        sb.append(i);
+        sb.append(", read=");
+        sb.append(j);
+        sb.append(", RemoteActionCompatParcelizer=");
+        sb.append(str);
+        sb.append(", IconCompatParcelizer=");
+        sb.append(str2);
+        sb.append(", write=");
+        sb.append(str3);
+        sb.append(", MediaBrowserCompatItemReceiver=");
+        sb.append(str4);
+        sb.append(", AudioAttributesImplApi26Parcelizer=");
+        sb.append(str5);
+        sb.append(", AudioAttributesImplApi21Parcelizer=");
+        sb.append(str6);
+        sb.append(", AudioAttributesImplBaseParcelizer=");
+        sb.append(i2);
+        sb.append(")");
+        return sb.toString();
+    }
+}
