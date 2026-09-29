@@ -18,7 +18,7 @@ jobs:
           TMP="${RUNNER_TEMP}/webrepo"
           git clone --depth 1 --filter=blob:none --sparse https://github.com/sunday2212/WEBREPLITX5.git "$TMP"
           cd "$TMP"
-          git sparse-checkout set "frontend/quizx/Brain/Marrow/Edition 8 qBank"
+          git sparse-checkout set --no-cone "frontend/quizx/Brain/Marrow/Edition 8 qBank/**"
           cd "$GITHUB_WORKSPACE"
           SRC="$TMP/frontend/quizx/Brain/Marrow/Edition 8 qBank"
           DST="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
