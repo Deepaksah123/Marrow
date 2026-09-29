@@ -13,16 +13,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TMP="${RUNNER_TEMP}/webrepo"
-          git clone --depth 1 --filter=blob:none --sparse https://github.com/sunday2212/WEBREPLITX5.git "$TMP"
-          cd "$TMP"
-          git sparse-checkout set --no-cone "frontend/quizx/Brain/Marrow/Edition 8 qBank/**"
           cd "$GITHUB_WORKSPACE"
-          SRC="$TMP/frontend/quizx/Brain/Marrow/Edition 8 qBank"
+          bash scripts/sync_marrow_source.sh
+          SRC="/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank"
           DST="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
           python3 - <<'PY'
           import json, pathlib, hashlib
-          src=pathlib.Path("frontend/quizx/Brain/Marrow/Edition 8 qBank")
+          src=pathlib.Path("/tmp/marrow-source/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank")
           dst=pathlib.Path("app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank")
           def scan(root):
               files={}; questions=0; image_tags=0; image_fields=0; ids=0; subjects={}
