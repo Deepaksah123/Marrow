@@ -453,7 +453,19 @@ class MainActivity : Activity() {
         })
         box.addView(TextView(this).apply {
             text = "Source-backed lesson introduction state. The recovered ViewModel is lesson-specific; no generic subject-level content is invented here."
-            setPadding(4, 4, 4, 18)
+            setPadding(4, 4, 4, 12)
+        })
+        box.addView(ImageView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                120
+            ).apply {
+                topMargin = 4
+                bottomMargin = 16
+            }
+            setImageResource(R.drawable.ic_pc_intro_bottom)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            contentDescription = "Question Bank"
         })
         box.addView(Button(this).apply {
             text = "CONTINUE"
