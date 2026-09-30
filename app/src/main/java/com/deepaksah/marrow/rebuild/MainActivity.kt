@@ -8,6 +8,9 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.graphics.Typeface
+import android.graphics.BitmapFactory
+import android.util.Base64
+import java.io.ByteArrayInputStream
 import android.text.Html
 import android.text.Spanned
 import android.view.LayoutInflater
@@ -516,11 +519,13 @@ class MainActivity : Activity() {
         if (question == null) {
             questionView.text = "No supplied MCQ payload is loaded for this module."
         } else {
-            questionView.text = question.text
+            questionView.text = formatRichContent(question.text)
+            val questionMedia = v.findViewById<LinearLayout>(R.id.questionMedia)
+            renderContentImages(questionMedia, question.questionImages)
             val existing = state.session.answers[question.id]
             question.choices.forEach { choice ->
                 optionContainer.addView(Button(this).apply {
-                    text = choice.text
+                    text = formatRichContent(choice.text)
                     isEnabled = existing?.locked != true
                     if (existing?.locked == true) {
                         if (choice.id == question.correctChoiceId) {
@@ -600,6 +605,46 @@ class MainActivity : Activity() {
                 showScore()
             }
         }
+    }
+
+    private fun renderContentImages(container: LinearLayout, sources: List<String>) {
+        container.removeAllViews()
+        sources.forEach { source ->
+            val image = decodeContentImage(source) ?: return@forEach
+            container.addView(ImageView(this).apply {
+                setImageBitmap(image)
+                adjustViewBounds = true
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                setPadding(0, 8, 0, 8)
+                contentDescription = "Question content image"
+            }, LinearLayout.LayoutParams(-1, -2))
+        }
+    }
+
+    private fun decodeContentImage(source: String): android.graphics.Bitmap? {
+        val value = source.trim()
+        if (value.isBlank()) return null
+        return runCatching {
+            when {
+                value.startsWith("data:image", ignoreCase = true) -> {
+                    val comma = value.indexOf(',')
+                    if (comma < 0) null else {
+                        val bytes = Base64.decode(value.substring(comma + 1), Base64.DEFAULT)
+                        BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
+                    }
+                }
+                value.startsWith("base64:", ignoreCase = true) -> {
+                    val bytes = Base64.decode(value.substringAfter(':'), Base64.DEFAULT)
+                    BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
+                }
+                else -> {
+                    val assetPath = if (value.startsWith("file:///android_asset/")) {
+                        value.removePrefix("file:///android_asset/")
+                    } else value
+                    assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
+                }
+            }
+        }.getOrNull()
     }
 
     private fun formatRichContent(value: String): Spanned {
