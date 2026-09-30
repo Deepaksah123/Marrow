@@ -339,20 +339,114 @@ class MainActivity : Activity() {
     }
 
     private fun showPearls() {
-        val web = WebView(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-            settings.allowFileAccess = true
-            settings.allowContentAccess = true
-            settings.builtInZoomControls = false
-            settings.displayZoomControls = false
-            loadUrl("file:///android_asset/Marrow_pearls.html")
+        data class PearlSource(val title: String, val url: String, val alternateUrl: String)
+
+        // Source: Marrow_Pearls_Standalone.html -> LECTURE_DATA.
+        // The custom HTML wrapper/player layer is intentionally not used in the native app.
+        val pearls = listOf(
+            PearlSource("Anatomy pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/tYc8h1Hwan9ZJvcHxV378w?type=download", "https://webx.afrahtafreeh.site/prepare/6ph9m1017cfhaWEN90wnUg?type=download"),
+            PearlSource("Physio pearls marrow .pdf", "https://web.afrahtafreeh.site/prepare/5PzSPnV9tMnl9eOyEB0Gpw?type=download", "https://webx.afrahtafreeh.site/prepare/AY7DY6lh3wLPFHeSLwae3w?type=download"),
+            PearlSource("Marrow anesthesia Pearls.pdf", "https://web.afrahtafreeh.site/prepare/UddWM1i_jX2yc337p7nv2w?type=download", "https://webx.afrahtafreeh.site/prepare/31EusIPYfQ255TcOSUQKuw?type=download"),
+            PearlSource("Marrow Psm pearls.pdf", "https://web.afrahtafreeh.site/prepare/03wMK6g6O1qFcekGdCjJnQ?type=download", "https://webx.afrahtafreeh.site/prepare/HUbYBqPb8TOn6pJZtH-luA?type=download"),
+            PearlSource("Ortho marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/ln9cSWzlSUNSCSAA_TqjOA?type=download", "https://webx.afrahtafreeh.site/prepare/l38HqpV3ANvmz6FwP3BLfw?type=download"),
+            PearlSource("Optha marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/z5vqIQB_-oS3P64VOuPSNw?type=download", "https://webx.afrahtafreeh.site/prepare/BQEydJkhfvJSsaiN8DCvXw?type=download"),
+            PearlSource("Biochem marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/cWVwwZk9zi7AMdgX-hsoJA?type=download", "https://webx.afrahtafreeh.site/prepare/JXBYvRh_EcWl7Dk6bnYVnQ?type=download"),
+            PearlSource("Derma pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/S58VksiphMd1AV1xi48igQ?type=download", "https://webx.afrahtafreeh.site/prepare/VYep_8XK58xbuoaWZ8kJnQ?type=download"),
+            PearlSource("ECG Marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/L0dnzWX0nn-7lnC7hWig2g?type=download", "https://webx.afrahtafreeh.site/prepare/3Ax5hbDA8a_13NLvIGmX7w?type=download"),
+            PearlSource("Psy pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/2nw3q_oYtlOE5ezNM-MvWA?type=download", "https://webx.afrahtafreeh.site/prepare/gPW2Kourd0dgKm8qjF1ghQ?type=download"),
+            PearlSource("radio pearl only neet pg notes 2020 .pdf", "https://web.afrahtafreeh.site/prepare/4EN5Vr1b9o_YZdKptiYT6A?type=download", "https://webx.afrahtafreeh.site/prepare/hf4SKrsegzLJOpwMg03HUw?type=download"),
+            PearlSource("Marrow Micro Pearls.pdf", "https://web.afrahtafreeh.site/prepare/jQWOvsf0_GjJPtjcsuOvpQ?type=download", "https://webx.afrahtafreeh.site/prepare/t5wpfT-3cyD1rsFlwDY0tA?type=download"),
+            PearlSource("Patho Pearls nd Treasure.pdf", "https://web.afrahtafreeh.site/prepare/tWn_D-8wLghXlSvWt1oyBw?type=download", "https://webx.afrahtafreeh.site/prepare/SHUFrirszceT5fKuh9ahzA?type=download")
+        )
+
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
         }
-        replace(web)
+        root.addView(TextView(this).apply {
+            text = "Pearls"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        root.addView(TextView(this).apply {
+            text = "Verified Pearl resources · ${pearls.size}"
+            textSize = 13f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(4, 4, 4, 14)
+        })
+
+        val search = EditText(this).apply {
+            hint = "Search Pearls"
+            isSingleLine = true
+        }
+        root.addView(search)
+
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(list)
+
+        fun openPearl(source: PearlSource) {
+            runCatching {
+                startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(source.url)))
+            }.onFailure {
+                runCatching {
+                    startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(source.alternateUrl)))
+                }.onFailure {
+                    Toast.makeText(this, "Pearl source could not be opened.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        fun render(filter: String) {
+            list.removeAllViews()
+            val q = filter.trim().lowercase()
+            pearls.filter { q.isBlank() || it.title.lowercase().contains(q) }
+                .forEachIndexed { index, source ->
+                    val row = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(14, 12, 14, 12)
+                        setBackgroundColor(getColor(R.color.marrow_surface))
+                        setOnClickListener { openPearl(source) }
+                    }
+                    row.addView(TextView(this@MainActivity).apply {
+                        text = "${index + 1}. ${source.title}"
+                        textSize = 16f
+                        setTypeface(typeface, Typeface.BOLD)
+                        setTextColor(getColor(R.color.marrow_text))
+                    })
+                    row.addView(TextView(this@MainActivity).apply {
+                        text = "Marrow Pearls · PDF resource"
+                        textSize = 12f
+                        setTextColor(getColor(R.color.marrow_muted))
+                        setPadding(0, 5, 0, 0)
+                    })
+                    list.addView(row)
+                    addDivider(list)
+                }
+            if (list.childCount == 0) {
+                list.addView(TextView(this@MainActivity).apply {
+                    text = "No matching Pearls."
+                    setPadding(4, 24, 4, 24)
+                })
+            }
+        }
+
+        search.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                render(s?.toString().orEmpty())
+            }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
+
+        render("")
+        root.addView(Button(this).apply {
+            text = "BACK TO HOME"
+            setOnClickListener {
+                state.navigate(MarrowRoute.HOME)
+                showHome()
+            }
+        })
+        replace(ScrollView(this).apply { addView(root) })
     }
     private fun showBookmarks() {
         val root = LinearLayout(this).apply {
@@ -497,8 +591,7 @@ class MainActivity : Activity() {
                     showLessons(s)
                 }
             }
-            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
-            row.addView(LinearLayout(this).apply {
+            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })            row.addView(LinearLayout(this).apply {
                 orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
                 addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
                 addView(TextView(this@MainActivity).apply { text="$" + "{moduleIds.size} modules  ·  $" + "{questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
@@ -997,8 +1090,7 @@ class MainActivity : Activity() {
                         val bytes = Base64.decode(value.substring(comma + 1), Base64.DEFAULT)
                         BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
                     }
-                }
-                value.startsWith("base64:", ignoreCase = true) -> {
+                }                value.startsWith("base64:", ignoreCase = true) -> {
                     val bytes = Base64.decode(value.substringAfter(':'), Base64.DEFAULT)
                     BitmapFactory.decodeStream(ByteArrayInputStream(bytes))
                 }
@@ -1497,8 +1589,7 @@ class MainActivity : Activity() {
             textSize = 24f
             setTypeface(typeface, Typeface.BOLD)
         })
-        box.addView(TextView(this).apply {
-            text = "Completion: ${String.format("%.1f", analytics.completionPercent)}%\nAccuracy: ${String.format("%.1f", analytics.accuracyPercent)}%\n\nTotal: ${m.total}\nAttempted: ${m.attempted}\nCorrect: ${m.correct}\nWrong: ${m.wrong}\nSkipped: ${m.skipped}\nUnanswered: ${m.unanswered}\n\nBookmarked: ${analytics.bookmarked}\nGuessed: ${analytics.guessed}\nChanged by you: ${analytics.changedByYou}"
+        box.addView(TextView(this).apply {            text = "Completion: ${String.format("%.1f", analytics.completionPercent)}%\nAccuracy: ${String.format("%.1f", analytics.accuracyPercent)}%\n\nTotal: ${m.total}\nAttempted: ${m.attempted}\nCorrect: ${m.correct}\nWrong: ${m.wrong}\nSkipped: ${m.skipped}\nUnanswered: ${m.unanswered}\n\nBookmarked: ${analytics.bookmarked}\nGuessed: ${analytics.guessed}\nChanged by you: ${analytics.changedByYou}"
             textSize = 16f
             setPadding(4,18,4,18)
         })
