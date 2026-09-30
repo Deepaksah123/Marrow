@@ -35,3 +35,6 @@ The HTML reconstruction is a reference/prototype and is not treated as the final
 ## Source-of-truth rule
 
 Use original APK resources/decompiled source and verified maps first. Do not invent missing APK behavior or backend responses. Screenshots are QA references only.
+
+
+<!-- CI install smoke trigger -->
