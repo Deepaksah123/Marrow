@@ -598,6 +598,13 @@ class MainActivity : Activity() {
         }
         sourceCard("Previous Year Question Papers","Question paper modules") { state.navigate(MarrowRoute.PYQ); showPyq() }
         sourceCard("Schema","Collection of important and repeatedly asked topics from all modules") { state.navigate(MarrowRoute.SCHEMA); showSchemaList() }
+        sourceCard("QBank Manifesto","Recovered manifesto surface") {
+            AlertDialog.Builder(this)
+                .setTitle("QBank Manifesto")
+                .setMessage("The original app exposes a QBank Manifesto surface. Its live/account-backed payload is not present in the local reconstruction, so no manifesto text is fabricated.")
+                .setPositiveButton("OK", null)
+                .show()
+        }
     }
     private fun showQBankIntroduction() {
         val lessonId = state.session.moduleId ?: state.session.subjectId ?: ""
@@ -1754,29 +1761,47 @@ class MainActivity : Activity() {
     private fun showCustom() {
         val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
         val stages=listOf("Mode","Subjects","Topics","Tags","Add-ons","Creation","Join by Code","Play","Score")
+        fun go(stage: Int) {
+            customStage = stage
+            state.navigate(
+                when (stage) {
+                    0 -> MarrowRoute.CUSTOM_MODE
+                    1 -> MarrowRoute.CUSTOM_SUBJECTS
+                    2 -> MarrowRoute.CUSTOM_TOPICS
+                    3 -> MarrowRoute.CUSTOM_TAGS
+                    4 -> MarrowRoute.CUSTOM_ADDONS
+                    5 -> MarrowRoute.CUSTOM_CREATION
+                    6 -> MarrowRoute.CUSTOM_JOIN
+                    7 -> MarrowRoute.CUSTOM_PLAY
+                    8 -> MarrowRoute.CUSTOM_SCORE
+                    else -> MarrowRoute.CUSTOM_MODULE
+                }
+            )
+            showCustom()
+        }
         root.addView(TextView(this).apply { text="Custom Module"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
         root.addView(TextView(this).apply {
             text="Step " + (customStage+1) + "/" + stages.size + ": " + stages[customStage]
             setPadding(4,14,4,14)
         })
         when(customStage) {
-            0 -> root.addView(Button(this).apply { text="QBank mode"; setOnClickListener { customStage=1; showCustom() } })
+            0 -> root.addView(Button(this).apply { text="QBank mode"; setOnClickListener { go(1) } })
             1 -> subjects.forEach { s ->
-                root.addView(Button(this).apply { text=s; setOnClickListener { customSubject=s; customStage=2; showCustom() } })
+                root.addView(Button(this).apply { text=s; setOnClickListener { customSubject=s; go(2) } })
             }
             2 -> {
                 val modules=state.contentRegistry.moduleIds().filter { it.contains(customSubject,true) }
                 if(modules.isEmpty()) root.addView(TextView(this).apply { text="No verified local topic payload for $customSubject."; setPadding(4,12,4,12) })
                 modules.take(30).forEach { moduleId ->
-                    root.addView(Button(this).apply { text=moduleId; setOnClickListener { customTopic=moduleId; customStage=3; showCustom() } })
+                    root.addView(Button(this).apply { text=moduleId; setOnClickListener { customTopic=moduleId; go(3) } })
                 }
             }
             3 -> {
                 val input=EditText(this).apply { hint="Tags (optional)" }
                 root.addView(input)
-                root.addView(Button(this).apply { text="CONTINUE"; setOnClickListener { customTags=input.text.toString(); customStage=4; showCustom() } })
+                root.addView(Button(this).apply { text="CONTINUE"; setOnClickListener { customTags=input.text.toString(); go(4) } })
             }
-            4 -> root.addView(Button(this).apply { text="USE DEFAULT ADD-ONS"; setOnClickListener { customStage=5; showCustom() } })
+            4 -> root.addView(Button(this).apply { text="USE DEFAULT ADD-ONS"; setOnClickListener { go(5) } })
             5 -> {
                 root.addView(TextView(this).apply {
                     text="Creation summary\n\nMode: QBank\nSubject: ${if(customSubject.isBlank()) "Not selected" else customSubject}\nTopic: ${if(customTopic.isBlank()) "Not selected" else customTopic}\nTags: ${if(customTags.isBlank()) "None supplied" else customTags}\nAdd-ons: Default"
@@ -1786,7 +1811,7 @@ class MainActivity : Activity() {
                     text="The recovered APK uses a server-backed Magic Module creation flow. No verified local creation response/module ID is available here, so generation is not fabricated."
                     setPadding(4,4,4,16)
                 })
-                root.addView(Button(this).apply { text="CONTINUE TO JOIN"; setOnClickListener { customStage=6; showCustom() } })
+                root.addView(Button(this).apply { text="CONTINUE TO JOIN"; setOnClickListener { go(6) } })
             }
             6 -> {
                 val code=EditText(this).apply { hint="Join code" }
@@ -1795,18 +1820,18 @@ class MainActivity : Activity() {
                     text="JOIN"
                     setOnClickListener { Toast.makeText(this@MainActivity,"Join-by-code requires the original server endpoint; no fake join result is created.",Toast.LENGTH_SHORT).show() }
                 })
-                root.addView(Button(this).apply { text="SKIP"; setOnClickListener { customStage=7; showCustom() } })
+                root.addView(Button(this).apply { text="SKIP"; setOnClickListener { go(7) } })
             }
             7 -> {
                 root.addView(TextView(this).apply { text="Generated module payload is server-backed. Local verified QBank content remains available."; setPadding(4,12,4,12) })
                 root.addView(Button(this).apply { text="OPEN QBANK"; setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() } })
-                root.addView(Button(this).apply { text="SCORE"; setOnClickListener { customStage=8; showCustom() } })
+                root.addView(Button(this).apply { text="SCORE"; setOnClickListener { go(8) } })
             }
             else -> {
                 root.addView(TextView(this).apply { text="Score uses only locally loaded QBank answers. Server score/rank data is not fabricated."; setPadding(4,12,4,12) })
                 root.addView(Button(this).apply {
                     text="RESET"
-                    setOnClickListener { customStage=0; customSubject=""; customTopic=""; customTags=""; showCustom() }
+                    setOnClickListener { customStage=0; customSubject=""; customTopic=""; customTags=""; go(0) }
                 })
             }
         }
