@@ -400,7 +400,11 @@ class MainActivity : Activity() {
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
                 orientation=LinearLayout.HORIZONTAL; setPadding(14,12,14,12); gravity=android.view.Gravity.CENTER_VERTICAL
-                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
+                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener {
+                    qbank.openSubject(s)
+                    state.navigate(MarrowRoute.QBANK_MODULE)
+                    showLessons(s)
+                }
             }
             row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
             row.addView(LinearLayout(this).apply {
@@ -501,6 +505,7 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_lessons, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.lessonTitle).text = if (subject.isBlank()) "QBank" else subject
+        v.findViewById<TextView>(R.id.lessonSource).text = "Modules · All · Paused · Completed · Unattempted · Free"
         v.findViewById<TextView>(R.id.lessonBack).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
 
         val c = v.findViewById<LinearLayout>(R.id.lessonContainer)
@@ -519,8 +524,12 @@ class MainActivity : Activity() {
                     setPadding(14,12,14,12)
                     setBackgroundColor(getColor(R.color.marrow_surface))
                     setOnClickListener {
-                        qbank.openModule(subject, ids)
-                        showPlayer()
+                        state.session.moduleId = moduleId
+                        state.session.subjectId = subject
+                        state.session.mcqIds = ids.toMutableList()
+                        state.session.currentMcqIndex = 0
+                        state.navigate(MarrowRoute.QBANK_LESSON)
+                        showLessonDetail(subject, moduleId, ids)
                     }
                 }
                 row.addView(TextView(this).apply {
@@ -539,6 +548,103 @@ class MainActivity : Activity() {
                 addDivider(c)
             }
         }
+    }
+
+    private fun showLessonDetail(subject: String, moduleId: String, ids: List<String>) {
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 24)
+        }
+        root.addView(TextView(this).apply {
+            text = subject
+            textSize = 14f
+            setTextColor(getColor(R.color.marrow_primary))
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        root.addView(TextView(this).apply {
+            text = moduleId.removePrefix("$" + "subject/")
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(0, 6, 0, 8)
+        })
+        root.addView(TextView(this).apply {
+            text = "Module"
+            textSize = 13f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(0, 0, 0, 18)
+        })
+        val solved = ids.count { state.session.answers[it]?.locked == true }
+        root.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(14, 14, 14, 14)
+            setBackgroundColor(getColor(R.color.marrow_surface))
+            addView(TextView(this@MainActivity).apply {
+                text = ids.size.toString() + " MCQs"
+                textSize = 17f
+                setTypeface(typeface, Typeface.BOLD)
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = if (solved >= ids.size && ids.isNotEmpty()) "All completed" else solved.toString() + "/" + ids.size + " completed"
+                textSize = 13f
+                setTextColor(getColor(R.color.marrow_muted))
+                setPadding(0, 5, 0, 0)
+            })
+        })
+        root.addView(Button(this).apply {
+            text = "SOLVE"
+            isEnabled = ids.isNotEmpty()
+            setOnClickListener {
+                qbank.openModule(subject, ids)
+                state.navigate(MarrowRoute.QBANK_PLAY)
+                showPlayer()
+            }
+        })
+        val bookmarked = ids.count { state.session.answers[it]?.isStarred == true }
+        root.addView(TextView(this).apply {
+            text = "🔖  " + bookmarked + " Bookmarks"
+            textSize = 15f
+            setPadding(14, 16, 14, 16)
+        })
+        root.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(14, 16, 14, 16)
+            addView(TextView(this@MainActivity).apply {
+                text = "◉  Schema"
+                textSize = 16f
+                setTypeface(typeface, Typeface.BOLD)
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "Schema is a curated list of important and repeatedly asked topics."
+                textSize = 13f
+                setTextColor(getColor(R.color.marrow_muted))
+                setPadding(0, 5, 0, 12)
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "Source-backed schema surface; live schema payload is not fabricated locally."
+                textSize = 13f
+                setTextColor(getColor(R.color.marrow_muted))
+            })
+        })
+        root.addView(TextView(this).apply {
+            text = "Module progress"
+            textSize = 17f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(4, 22, 4, 8)
+        })
+        root.addView(TextView(this).apply {
+            text = if (ids.isEmpty()) "No verified local MCQs are attached to this module." else "You have solved " + solved + " of " + ids.size + " MCQs in this local session."
+            textSize = 14f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(4, 0, 4, 18)
+        })
+        root.addView(Button(this).apply {
+            text = "BACK TO " + subject
+            setOnClickListener {
+                state.navigate(MarrowRoute.QBANK_MODULE)
+                showLessons(subject)
+            }
+        })
+        replace(ScrollView(this).apply { addView(root) })
     }
 
     private fun currentQuestion(): McqContent? {
