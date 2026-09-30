@@ -478,23 +478,59 @@ class MainActivity : Activity() {
             setTypeface(typeface, Typeface.BOLD)
         })
         box.addView(TextView(this).apply {
-            text = "Current loaded QBank session"
+            text = "Progress and completion"
             textSize = 13f
-            setPadding(0, 6, 0, 20)
+            setPadding(0, 6, 0, 16)
         })
-        listOf("Total questions" to metrics.total, "Attempted" to metrics.attempted, "Correct" to metrics.correct, "Wrong" to metrics.wrong, "Skipped" to metrics.skipped, "Bookmarked" to metrics.bookmarked).forEach { (label, value) ->
-            box.addView(TextView(this).apply {
-                text = label + "    " + value
-                textSize = 17f
-                setPadding(8, 14, 8, 14)
+
+        val summary = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(12, 12, 12, 12)
+            setBackgroundColor(getColor(R.color.marrow_surface))
+        }
+        listOf(
+            "Total questions" to metrics.total,
+            "Attempted" to metrics.attempted,
+            "Correct" to metrics.correct,
+            "Wrong" to metrics.wrong,
+            "Skipped" to metrics.skipped,
+            "Bookmarked" to metrics.bookmarked
+        ).forEach { (label, value) ->
+            summary.addView(TextView(this).apply {
+                text = "$label    $value"
+                textSize = 16f
+                setPadding(4, 8, 4, 8)
             })
         }
-        box.addView(TextView(this).apply {
+        summary.addView(TextView(this).apply {
             text = "Accuracy    " + String.format("%.1f", metrics.accuracy) + "%"
-            textSize = 18f
+            textSize = 17f
             setTypeface(typeface, Typeface.BOLD)
-            setPadding(8, 18, 8, 18)
+            setPadding(4, 10, 4, 6)
         })
+        box.addView(summary)
+
+        box.addView(TextView(this).apply {
+            text = "Subject progress"
+            textSize = 19f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(4, 22, 4, 10)
+        })
+
+        subjects.forEach { subject ->
+            val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$subject/") || it == subject }
+            val total = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
+            val answered = moduleIds.sumOf { module ->
+                state.contentRegistry.questionIds(module).count { state.session.answers[it]?.selectedAnswer != null || state.session.answers[it]?.skipped == true }
+            }
+            val percent = if (total == 0) 0 else (answered * 100 / total)
+            box.addView(TextView(this).apply {
+                text = "$subject    $answered/$total   ·   $percent%"
+                textSize = 15f
+                setPadding(8, 10, 8, 10)
+            })
+        }
+
         box.addView(Button(this).apply {
             text = "BACK TO QBANK"
             setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
