@@ -1279,9 +1279,7 @@ class MainActivity : Activity() {
                     text = "No questions in this filter."
                     setPadding(4,12,4,12)
                 })
-                return
-            }
-            ids.forEachIndexed { index, id ->
+            } else ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(state.session.moduleId, id)
                 val answerState = state.session.answers[id]
                 val item = LinearLayout(this).apply {
