@@ -860,6 +860,10 @@ class MainActivity : Activity() {
             qbank.openReview()
             showReview()
         }
+        v.findViewById<Button>(R.id.analyticsButton).setOnClickListener {
+            state.navigate(MarrowRoute.QBANK_ANALYTICS)
+            showAnalytics()
+        }
         v.findViewById<Button>(R.id.reviewLessonButton).setOnClickListener {
             state.navigate(MarrowRoute.QBANK_MODULE)
             showLessons(state.session.subjectId ?: "")
