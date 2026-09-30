@@ -1296,23 +1296,34 @@ class MainActivity : Activity() {
             MarrowRoute.VIDEO_SUBJECT -> showVideoLessons()
             MarrowRoute.VIDEO_PLAYER -> showVideoPlayer()
             else -> {
-                val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-                root.addView(TextView(this).apply { text = "Videos"; textSize = 26f; setTypeface(typeface, Typeface.BOLD) })
-                root.addView(TextView(this).apply { text = "Recovered native video landing. Remote lesson/video payload is not fabricated."; setPadding(4,12,4,18) })
-                listOf("VIDEO LESSONS","REVISION VIDEOS","SAMPLE VIDEOS","DOWNLOADED VIDEOS","VIDEO NOTES").forEachIndexed { i, title ->
-                    root.addView(Button(this).apply {
-                        text = title
+                val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+                root.addView(TextView(this).apply { text="Videos"; textSize=26f; setTypeface(typeface,Typeface.BOLD) })
+                val topRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
+                listOf("Downloaded","Sample Videos").forEach { title ->
+                    topRow.addView(Button(this).apply {
+                        text=title
                         setOnClickListener {
-                            when (i) {
-                                0 -> { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() }
-                                1 -> showVideoInfo("Revision Videos", "Recovered revision flow supports subject tabs, index filtering, expandable subjects and lesson-video navigation. Live payload is unavailable locally.")
-                                2 -> showVideoInfo("Sample Videos", "Recovered sample-video surface exists. Live sample payload is unavailable locally.")
-                                3 -> showVideoInfo("Downloaded Videos", "Recovered downloaded-video state exists. No downloaded video payload is bundled in this reconstruction.")
-                                else -> showVideoInfo("Video Notes", "Recovered video-notes flow exists. Remote note payload is unavailable locally.")
-                            }
+                            if(title=="Downloaded") showVideoInfo("Downloaded","Downloaded videos surface recovered; no verified downloaded payload is bundled locally.")
+                            else showVideoInfo("Sample Videos","Sample-video surface recovered; no verified sample payload is bundled locally.")
                         }
-                    })
+                    },LinearLayout.LayoutParams(0,-2,1f))
                 }
+                root.addView(topRow)
+                root.addView(Button(this).apply {
+                    text="World of Revision   ›"
+                    setOnClickListener { showVideoInfo("World of Revision","Recovered World of Revision navigation surface. Remote lesson payload is not fabricated locally.") }
+                })
+                root.addView(TextView(this).apply {
+                    text="SUBJECTS"; textSize=16f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8)
+                })
+                root.addView(TextView(this).apply {
+                    text="Video subject catalog is server-backed; no verified local subject payload is bundled."
+                    setPadding(4,8,4,18)
+                })
+                root.addView(Button(this).apply {
+                    text="OPEN VIDEO SUBJECTS"
+                    setOnClickListener { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() }
+                })
                 root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
                 replace(ScrollView(this).apply { addView(root) })
             }
