@@ -401,22 +401,33 @@ class MainActivity : Activity() {
             val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$s/") || it == s }
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(16,14,16,14)
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(14,12,14,12)
+                gravity = android.view.Gravity.CENTER_VERTICAL
                 setBackgroundColor(getColor(R.color.marrow_surface))
                 setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
             }
-            row.addView(TextView(this).apply {
-                text = s
-                textSize = 17f
-                setTypeface(typeface, Typeface.BOLD)
-                setTextColor(getColor(R.color.marrow_text))
+            row.addView(ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(52, 52).apply { marginEnd = 12 }
+                setImageResource(R.drawable.ic_pc_circle_including_logo)
+                scaleType = ImageView.ScaleType.CENTER_INSIDE
+                contentDescription = "Question Bank"
             })
-            row.addView(TextView(this).apply {
-                text = moduleIds.size.toString() + " modules  ·  " + questionCount + " questions"
-                textSize = 13f
-                setPadding(0,5,0,0)
-                setTextColor(getColor(R.color.marrow_muted))
+            row.addView(LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                addView(TextView(this@MainActivity).apply {
+                    text = s
+                    textSize = 17f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setTextColor(getColor(R.color.marrow_text))
+                })
+                addView(TextView(this@MainActivity).apply {
+                    text = moduleIds.size.toString() + " modules  ·  " + questionCount + " questions"
+                    textSize = 13f
+                    setPadding(0,5,0,0)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
             })
             c.addView(row)
             addDivider(c)
