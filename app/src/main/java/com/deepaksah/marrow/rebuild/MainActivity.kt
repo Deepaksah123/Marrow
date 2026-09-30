@@ -339,9 +339,9 @@ class MainActivity : Activity() {
     private fun showUnresolvedSurface(route: MarrowRoute) {
         val evidence = when (route) {
             MarrowRoute.QBANK_TRACKER -> "recovery/base_apk_Decompiler.com/sources/com/marrow2/ui/qbank/tracker/QbankTrackerViewModel.java"
-            MarrowRoute.PYQ -> "Recovered QBank/PYQ surface is present in the APK inventory; dedicated reconstruction is not yet wired."
+            MarrowRoute.PYQ -> "Recovered QBank/PYQ surface is present in the APK inventory; local PYQ-tagged content is shown only when verified in the content registry."
             MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW ->
-                "Recovered QBank schema resources are present; dedicated reconstruction is not yet wired."
+                "Recovered Schema resources and ViewModels are wired through the local navigation surface; live schema payload remains server-backed."
             MarrowRoute.PROFILE, MarrowRoute.SETTINGS, MarrowRoute.THEME ->
                 "recovery/base_apk_Decompiler.com/sources/com/marrow2/ui/profile/viewmodel/ProfileEditViewModel.java"
             else -> "No recovered evidence mapping has been registered for this route."
@@ -967,7 +967,7 @@ class MainActivity : Activity() {
                 isAllCaps = false
                 setOnClickListener {
                     state.navigate(MarrowRoute.SCHEMA)
-                    showSchema(subject)
+                    showSchemaList()
                 }
             })
         })
