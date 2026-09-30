@@ -21,6 +21,8 @@ git sparse-checkout set \
 
 cd "$ROOT"
 mkdir -p "$DEST/Brain/Marrow" "$DEST/quizx/marrow" "$DEST/1234xxx/marrow" "$DEST/datax/marrow" "$DEST/srcx/platforms/marrow"
+# Keep the user-supplied Marrow Pearls HTML as a local, offline Android asset.
+cp "$ROOT/Marrow_pearls.html" "$ROOT/app/src/main/assets/Marrow_pearls.html"
 cp -a "$TMP_DIR/repo/frontend/quizx/Brain/Marrow/." "$DEST/Brain/Marrow/"
 cp -a "$TMP_DIR/repo/frontend/quizx/marrow/." "$DEST/quizx/marrow/"
 cp -a "$TMP_DIR/repo/frontend/1234xxx/marrow/." "$DEST/1234xxx/marrow/"
