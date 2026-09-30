@@ -75,6 +75,7 @@ class MainActivity : Activity() {
     }
 
     private fun renderCurrent() {
+        updateBottomNavigation()
         when (state.session.route) {
             MarrowRoute.HOME -> showHome()
             MarrowRoute.QBANK -> showQBank()
@@ -101,6 +102,26 @@ class MainActivity : Activity() {
             MarrowRoute.CUSTOM_MODULE, MarrowRoute.CUSTOM_INTRO, MarrowRoute.CUSTOM_CREATION, MarrowRoute.CUSTOM_MODE,
             MarrowRoute.CUSTOM_SUBJECTS, MarrowRoute.CUSTOM_TOPICS, MarrowRoute.CUSTOM_TAGS, MarrowRoute.CUSTOM_ADDONS,
             MarrowRoute.CUSTOM_JOIN, MarrowRoute.CUSTOM_PLAY, MarrowRoute.CUSTOM_SCORE -> showCustom()
+        }
+    }
+
+    private fun updateBottomNavigation() {
+        val route = state.session.route
+        val selected = when (route) {
+            MarrowRoute.QBANK, MarrowRoute.QBANK_INTRO, MarrowRoute.QBANK_TRACKER, MarrowRoute.QBANK_MODULE,
+            MarrowRoute.QBANK_LESSON, MarrowRoute.QBANK_PLAY, MarrowRoute.QBANK_SCORE, MarrowRoute.QBANK_REVIEW,
+            MarrowRoute.QBANK_ANALYTICS, MarrowRoute.PYQ, MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL,
+            MarrowRoute.SCHEMA_REVIEW, MarrowRoute.BOOKMARKS, MarrowRoute.SEARCH -> R.id.navQBank
+            MarrowRoute.TESTS, MarrowRoute.TEST_INTRO, MarrowRoute.TEST_PLAY, MarrowRoute.TEST_SCORE,
+            MarrowRoute.TEST_REVIEW, MarrowRoute.TEST_ANALYTICS, MarrowRoute.GT_ANALYTICS -> R.id.navTests
+            MarrowRoute.VIDEOS, MarrowRoute.VIDEO_SUBJECT, MarrowRoute.VIDEO_PLAYER -> R.id.navVideos
+            else -> R.id.navHome
+        }
+        listOf(R.id.navHome, R.id.navQBank, R.id.navTests, R.id.navVideos).forEach { id ->
+            findViewById<TextView>(id)?.apply {
+                setTextColor(if (id == selected) getColor(R.color.marrow_primary) else getColor(R.color.marrow_muted))
+                alpha = if (id == selected) 1f else 0.72f
+            }
         }
     }
 
@@ -318,14 +339,16 @@ class MainActivity : Activity() {
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }; root.addView(list)
         fun render(allContent: Boolean) {
             list.removeAllViews()
-            val ids = if (allContent) state.contentRegistry.allQuestions().keys.filter { state.session.answers[it]?.isStarred == true } else BookmarkNavigationModel.ids(state)
+            val ids = if (allContent) state.contentRegistry.moduleIds().flatMap { module -> state.contentRegistry.questionIds(module).filter { id -> state.session.answers[id]?.isStarred == true }.map { module to it } } else BookmarkNavigationModel.ids(state).map { (state.session.moduleId ?: "") to it }
             list.addView(TextView(this).apply { text = if (allContent) "All loaded QBank bookmarks · " + ids.size else "Current module bookmarks · " + ids.size; setPadding(4,10,4,12) })
             if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No bookmarked questions."; setPadding(4,20,4,20) }); return }
-            ids.forEachIndexed { index, id ->
-                val q = state.contentRegistry.question(id)
+            ids.forEachIndexed { index, pair ->
+                val module = pair.first
+                val id = pair.second
+                val q = state.contentRegistry.question(module, id)
                 val row = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,8,4,8) }
                 row.addView(TextView(this@MainActivity).apply { text = (index + 1).toString() + ". " + (q?.text ?: "Question " + (index + 1)); textSize = 16f })
-                row.addView(Button(this@MainActivity).apply { text = "OPEN"; setOnClickListener { val module = state.contentRegistry.findModuleForQuestion(id); if (module != null) { val idsForModule = state.contentRegistry.questionIds(module); state.selectModule(module, idsForModule); state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0)); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } } })
+                row.addView(Button(this@MainActivity).apply { text = "OPEN"; setOnClickListener { if (module.isNotBlank()) { val idsForModule = state.contentRegistry.questionIds(module); state.selectModule(module, idsForModule); state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0)); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } } })
                 row.addView(Button(this@MainActivity).apply { text = "REMOVE BOOKMARK"; setOnClickListener { QBankSession(state).toggleBookmark(id); render(allContent) } })
                 list.addView(row); addDivider(list)
             }
