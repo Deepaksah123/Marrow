@@ -1224,6 +1224,7 @@ class MainActivity : Activity() {
         })
         var showAnswer = false
         var activeFilter = ReviewFilter.ALL
+        var renderReview: (ReviewFilter) -> Unit = {}
         val filterRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 0, 0, 8)
@@ -1239,7 +1240,7 @@ class MainActivity : Activity() {
             filterRow.addView(Button(this).apply {
                 text = label
                 isAllCaps = false
-                setOnClickListener { render(filter) }
+                setOnClickListener { renderReview(filter) }
             }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         }
         root.addView(ScrollView(this).apply {
@@ -1251,14 +1252,14 @@ class MainActivity : Activity() {
             isChecked = false
             setOnCheckedChangeListener { _, checked ->
                 showAnswer = checked
-                render(activeFilter)
+                renderReview(activeFilter)
             }
         }
         root.addView(answerToggle)
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(list)
 
-        fun render(filter: ReviewFilter = activeFilter) {
+        renderReview = { filter ->
             activeFilter = filter
             list.removeAllViews()
             val ids = ReviewEngine.filter(
@@ -1336,14 +1337,10 @@ class MainActivity : Activity() {
             }
         }
 
-        answerToggle.setOnCheckedChangeListener { _, checked ->
-            showAnswer = checked
-            render()
-        }
         ReviewFilter.values().forEach { filter ->
             root.addView(Button(this).apply {
                 text = filter.name.replace('_', ' ')
-                setOnClickListener { render(filter) }
+                setOnClickListener { renderReview(filter) }
             })
         }
         root.addView(Button(this).apply {
@@ -1353,7 +1350,7 @@ class MainActivity : Activity() {
                 showScore()
             }
         })
-        render()
+        renderReview(activeFilter)
         replace(ScrollView(this).apply { addView(root) })
     }
 
