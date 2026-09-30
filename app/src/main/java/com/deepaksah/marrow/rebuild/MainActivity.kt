@@ -2,6 +2,8 @@ package com.deepaksah.marrow.rebuild
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.UiModeManager
+import android.os.Build
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -34,6 +36,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         state.restore(savedInstanceState)
+        applySavedThemeMode()
         setContentView(R.layout.activity_main)
         content = findViewById(R.id.content)
         findViewById<TextView>(R.id.navHome).setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() }
@@ -51,7 +54,10 @@ class MainActivity : Activity() {
                 MarrowJsonImporter(assets).loadEdition8QBank()
             }.getOrElse { emptyMap() }
             runOnUiThread {
-                if (imported.isNotEmpty()) state.importContent(imported)
+                if (imported.isNotEmpty()) {
+                    state.importContent(imported)
+                    state.rehydrateAfterContentImport()
+                }
                 Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 350L)
             }
         }.start()
@@ -101,7 +107,7 @@ class MainActivity : Activity() {
     private fun showHome() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
         replace(v)
-        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show() }
+        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { showHomeMenu(v.findViewById(R.id.homeMenu)) }
         v.findViewById<TextView>(R.id.homeSearch).setOnClickListener {
             state.navigate(MarrowRoute.SEARCH)
             showSearch()
@@ -1350,12 +1356,52 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(root) })
     }
 
+    private fun applySavedThemeMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val manager = getSystemService(UiModeManager::class.java)
+            manager?.setApplicationNightMode(
+                if (MarrowTheme.isDark(this)) UiModeManager.MODE_NIGHT_YES else UiModeManager.MODE_NIGHT_NO
+            )
+        }
+    }
+
+    private fun setDarkTheme(enabled: Boolean) {
+        MarrowTheme.setDark(this, enabled)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getSystemService(UiModeManager::class.java)?.setApplicationNightMode(
+                if (enabled) UiModeManager.MODE_NIGHT_YES else UiModeManager.MODE_NIGHT_NO
+            )
+        }
+        recreate()
+    }
+
+    private fun showHomeMenu(anchor: View) {
+        PopupMenu(this, anchor).apply {
+            menu.add("Search")
+            menu.add("Bookmarks")
+            menu.add("Profile")
+            menu.add("Settings")
+            menu.add("Custom Module")
+            setOnMenuItemClickListener {
+                when (it.title.toString()) {
+                    "Search" -> { state.navigate(MarrowRoute.SEARCH); showSearch(); true }
+                    "Bookmarks" -> { state.navigate(MarrowRoute.BOOKMARKS); showBookmarks(); true }
+                    "Profile" -> { state.navigate(MarrowRoute.PROFILE); showProfile(); true }
+                    "Settings" -> { state.navigate(MarrowRoute.SETTINGS); showSettings(); true }
+                    "Custom Module" -> { customStage = 0; state.navigate(MarrowRoute.CUSTOM_MODULE); showCustom(); true }
+                    else -> false
+                }
+            }
+            show()
+        }
+    }
+
     private fun showTheme() {
         val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
         root.addView(TextView(this).apply { text="Theme"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply { text="Theme selection is local; no account or paid-plan state is used."; setPadding(4,18,4,18) })
-        root.addView(Button(this).apply { text="LIGHT"; setOnClickListener { window.decorView.systemUiVisibility=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR; Toast.makeText(this@MainActivity,"Light theme selected",Toast.LENGTH_SHORT).show() } })
-        root.addView(Button(this).apply { text="DARK"; setOnClickListener { window.decorView.systemUiVisibility=0; Toast.makeText(this@MainActivity,"Dark theme selected",Toast.LENGTH_SHORT).show() } })
+        root.addView(TextView(this).apply { text="Theme selection is stored locally and applied to the app."; setPadding(4,18,4,18) })
+        root.addView(Button(this).apply { text="LIGHT"; setOnClickListener { setDarkTheme(false) } })
+        root.addView(Button(this).apply { text="DARK"; setOnClickListener { setDarkTheme(true) } })
         root.addView(Button(this).apply { text="BACK SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
         replace(ScrollView(this).apply { addView(root) })
     }
