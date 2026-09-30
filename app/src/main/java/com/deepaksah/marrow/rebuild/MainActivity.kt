@@ -539,6 +539,42 @@ class MainActivity : Activity() {
             }
         }
 
+        val surfaceSwitch = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 0, 0, 8)
+        }
+        surfaceSwitch.addView(Button(this).apply {
+            text = "QUESTIONS"
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setOnClickListener { render(true) }
+        })
+        surfaceSwitch.addView(Button(this).apply {
+            text = "VIDEO"
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setOnClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Bookmarked Videos")
+                    .setMessage("The recovered APK has a dedicated bookmark-video surface. No verified local video bookmark payload is bundled, so no video entries are fabricated.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        })
+        surfaceSwitch.addView(Button(this).apply {
+            text = "TIMELINE"
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setOnClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Bookmark Timeline")
+                    .setMessage("The recovered APK exposes a bookmark timeline surface. Its account/server timeline payload is unavailable locally, so no timeline entries are fabricated.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        })
+        root.addView(surfaceSwitch)
+
         val switch = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 0, 0, 12)
@@ -555,7 +591,7 @@ class MainActivity : Activity() {
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             setOnClickListener { render(false) }
         })
-        root.addView(switch, 2)
+        root.addView(switch)
         render(true)
         replace(ScrollView(this).apply { addView(root) })
     }
@@ -1846,8 +1882,30 @@ class MainActivity : Activity() {
         val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
         root.addView(TextView(this).apply { text="Profile"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
         root.addView(TextView(this).apply { text="Recovered profile surface. Account identity is not fabricated locally."; setPadding(4,18,4,20) })
+        root.addView(Button(this).apply { text="EDIT PROFILE"; setOnClickListener { showProfileEdit() } })
         root.addView(Button(this).apply { text="SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
         root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
+        replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showProfileEdit() {
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
+        }
+        root.addView(TextView(this).apply {
+            text = "Edit Profile"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        root.addView(TextView(this).apply {
+            text = "The recovered APK has a dedicated profile-edit/update surface. Account profile data and the remote update response are not bundled locally, so editable identity values are not fabricated."
+            setPadding(4, 18, 4, 20)
+        })
+        root.addView(Button(this).apply {
+            text = "BACK TO PROFILE"
+            setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() }
+        })
         replace(ScrollView(this).apply { addView(root) })
     }
 
