@@ -5,20 +5,35 @@ class ContentRegistry(
 ) {
     private val modules = LinkedHashMap<String, List<String>>()
     private val questions = LinkedHashMap<String, McqContent>()
+    private val questionsByModule = LinkedHashMap<String, Map<String, McqContent>>()
 
     fun registerModule(moduleId: String, sourceQuestions: List<McqContent>): ContentValidationResult {
         val moduleResult = ContentValidator.validateModule(moduleId, sourceQuestions)
         if (!moduleResult.valid) return moduleResult
-        sourceQuestions.forEach { questions[it.id] = it }
+
+        val moduleQuestions = LinkedHashMap<String, McqContent>()
+        sourceQuestions.forEach { question ->
+            moduleQuestions[question.id] = question
+            questions.putIfAbsent(question.id, question)
+        }
+        questionsByModule[moduleId] = moduleQuestions
         modules[moduleId] = sourceQuestions.map { it.id }
         return ContentValidationResult(true, emptyList())
     }
 
     fun question(id: String): McqContent? = questions[id]
+
+    fun question(moduleId: String?, id: String): McqContent? =
+        moduleId?.let { questionsByModule[it]?.get(id) } ?: questions[id]
+
     fun questionIds(moduleId: String): List<String> = modules[moduleId].orEmpty()
+
     fun moduleIds(): List<String> = modules.keys.toList()
 
     fun allQuestions(): Map<String, McqContent> = questions.toMap()
+
+    fun allQuestions(moduleId: String?): Map<String, McqContent> =
+        moduleId?.let { questionsByModule[it].orEmpty() } ?: allQuestions()
 
     fun search(query: String): List<McqContent> {
         val needle = query.trim().lowercase()
