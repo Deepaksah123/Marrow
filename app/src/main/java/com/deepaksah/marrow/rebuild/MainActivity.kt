@@ -647,7 +647,7 @@ class MainActivity : Activity() {
                 val q = state.contentRegistry.question(id)
                 val item = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,6,4,10) }
                 item.addView(TextView(this@MainActivity).apply { text = "${index + 1}. " + (q?.text ?: "Question ${index + 1}"); textSize = 16f; setTypeface(typeface, Typeface.BOLD) })
-                if (showAnswer && q != null) item.addView(TextView(this@MainActivity).apply { val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text; text = "Answer: " + (answer ?: "Not available") + if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""; setPadding(8,8,8,8) })
+                if (showAnswer && q != null) item.addView(TextView(this@MainActivity).apply { val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text; text = formatRichContent("Answer: " + (answer ?: "Not available") + if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""); setPadding(8,8,8,8) })
                 item.setOnClickListener { val questionIndex = state.session.mcqIds.indexOf(id); if (questionIndex >= 0) { state.moveQuestion(questionIndex); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
                 list.addView(item); addDivider(list)
             }
