@@ -64,10 +64,17 @@ class MarrowStateStore {
         )
     }
 
-    fun startQBankTimer(nowMs: Long = System.currentTimeMillis()) {
+    /**
+     * Starts a QBank timer only when a verified duration is supplied by the caller.
+     *
+     * The recovered APK proves timer state/controls exist, but the local content
+     * contract does not contain an authoritative per-session duration. A guessed
+     * fixed duration would violate the reconstruction evidence boundary.
+     */
+    fun startQBankTimer(durationMs: Long?, nowMs: Long = System.currentTimeMillis()) {
         if (!session.qbank.timerEnabled || session.qbank.timerExpired) return
+        val duration = durationMs?.takeIf { it > 0L } ?: return
         if (session.qbank.timerEndAtMs == null) {
-            val duration = if (session.qbank.timerDouble) 60_000L else 30_000L
             session = session.copy(qbank = session.qbank.copy(timerEndAtMs = nowMs + duration))
         }
     }
