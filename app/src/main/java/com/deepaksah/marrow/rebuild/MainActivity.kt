@@ -40,10 +40,29 @@ class MainActivity : Activity() {
         applySavedThemeMode()
         setContentView(R.layout.activity_main)
         content = findViewById(R.id.content)
-        findViewById<TextView>(R.id.navHome).setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() }
-        findViewById<TextView>(R.id.navQBank).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
-        findViewById<TextView>(R.id.navTests).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
-        findViewById<TextView>(R.id.navVideos).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
+        val navHome = findViewById<TextView>(R.id.navHome)
+        val navQBank = findViewById<TextView>(R.id.navQBank)
+        val navTests = findViewById<TextView>(R.id.navTests)
+        val navVideos = findViewById<TextView>(R.id.navVideos)
+        fun renderBottomNav() {
+            val active = when (state.session.route) {
+                MarrowRoute.QBANK, MarrowRoute.QBANK_INTRO, MarrowRoute.QBANK_TRACKER, MarrowRoute.QBANK_MODULE,
+                MarrowRoute.QBANK_LESSON, MarrowRoute.QBANK_PLAY, MarrowRoute.QBANK_SCORE, MarrowRoute.QBANK_REVIEW,
+                MarrowRoute.QBANK_ANALYTICS, MarrowRoute.PYQ, MarrowRoute.SCHEMA, MarrowRoute.SCHEMA_DETAIL, MarrowRoute.SCHEMA_REVIEW -> navQBank
+                MarrowRoute.TESTS, MarrowRoute.TEST_INTRO, MarrowRoute.TEST_PLAY, MarrowRoute.TEST_SCORE,
+                MarrowRoute.TEST_REVIEW, MarrowRoute.TEST_ANALYTICS, MarrowRoute.GT_ANALYTICS -> navTests
+                MarrowRoute.VIDEOS, MarrowRoute.VIDEO_SUBJECT, MarrowRoute.VIDEO_PLAYER -> navVideos
+                else -> navHome
+            }
+            listOf(navHome, navQBank, navTests, navVideos).forEach {
+                it.setTextColor(if (it == active) getColor(R.color.marrow_primary) else getColor(R.color.marrow_muted))
+            }
+        }
+        navHome.setOnClickListener { state.navigate(MarrowRoute.HOME); renderBottomNav(); showHome() }
+        navQBank.setOnClickListener { state.navigate(MarrowRoute.QBANK); renderBottomNav(); showQBank() }
+        navTests.setOnClickListener { state.navigate(MarrowRoute.TESTS); renderBottomNav(); showTests() }
+        navVideos.setOnClickListener { state.navigate(MarrowRoute.VIDEOS); renderBottomNav(); showVideos() }
+        renderBottomNav()
         loadMarrowContentThenHome()
     }
 
