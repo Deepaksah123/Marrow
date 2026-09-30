@@ -493,13 +493,30 @@ class MainActivity : Activity() {
             })
         } else {
             moduleIds.forEach { moduleId ->
-                c.addView(Button(this).apply {
-                    text = moduleId.removePrefix("$subject/")
+                val ids = state.contentRegistry.questionIds(moduleId)
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(14,12,14,12)
+                    setBackgroundColor(getColor(R.color.marrow_surface))
                     setOnClickListener {
-                        qbank.openModule(subject, state.contentRegistry.questionIds(moduleId))
+                        qbank.openModule(subject, ids)
                         showPlayer()
                     }
+                }
+                row.addView(TextView(this).apply {
+                    text = moduleId.removePrefix("$subject/")
+                    textSize = 16f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setTextColor(getColor(R.color.marrow_text))
                 })
+                row.addView(TextView(this).apply {
+                    text = ids.size.toString() + " questions"
+                    textSize = 13f
+                    setPadding(0,4,0,0)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+                c.addView(row)
+                addDivider(c)
             }
         }
     }
