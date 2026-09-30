@@ -949,78 +949,23 @@ class MainActivity : Activity() {
             MarrowRoute.TEST_REVIEW -> showTestReview()
             MarrowRoute.TEST_ANALYTICS -> showTestAnalytics()
             else -> {
-                val box = LinearLayout(this).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(20,20,20,20)
-                }
-                box.addView(TextView(this).apply {
-                    text = "Tests"
-                    textSize = 26f
-                    setTypeface(typeface, Typeface.BOLD)
-                })
-
-                val tabs = listOf("ALL TESTS", "GRAND TEST", "SUBJECT TESTS")
-                val tabRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-                tabs.forEachIndexed { index, tab ->
-                    tabRow.addView(Button(this).apply {
-                        text = tab
-                        setOnClickListener {
-                            tests.selectConfiguredTab(tab)
-                            Toast.makeText(this@MainActivity, "Selected $tab", Toast.LENGTH_SHORT).show()
-                        }
-                    }, LinearLayout.LayoutParams(0,-2,1f))
-                }
+                val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+                box.addView(TextView(this).apply { text="Tests"; textSize=26f; setTypeface(typeface,Typeface.BOLD) })
+                val tabs=listOf("Grand Tests","Mini Tests","Subject Tests")
+                val tabRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
+                tabs.forEach { tab -> tabRow.addView(Button(this).apply {
+                    text=tab
+                    setOnClickListener { tests.selectConfiguredTab(tab); Toast.makeText(this@MainActivity,"Selected $tab",Toast.LENGTH_SHORT).show() }
+                },LinearLayout.LayoutParams(0,-2,1f)) }
                 box.addView(tabRow)
-
-                box.addView(TextView(this).apply {
-                    text = "Test year"
-                    textSize = 16f
-                    setTypeface(typeface, Typeface.BOLD)
-                    setPadding(4,20,4,8)
-                })
-                val yearRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-                listOf("2026","2025","2024").forEach { year ->
-                    yearRow.addView(Button(this).apply {
-                        text = year
-                        setOnClickListener {
-                            Toast.makeText(this@MainActivity, "Year $year selected", Toast.LENGTH_SHORT).show()
-                        }
-                    }, LinearLayout.LayoutParams(0,-2,1f))
-                }
-                box.addView(yearRow)
-
-                box.addView(TextView(this).apply {
-                    text = "Configured test list"
-                    textSize = 18f
-                    setTypeface(typeface, Typeface.BOLD)
-                    setPadding(4,20,4,8)
-                })
-                val testCard = LinearLayout(this).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(12,12,12,12)
-                }
-                testCard.addView(TextView(this).apply {
-                    text = "Source-backed test selection"
-                    textSize = 17f
-                })
-                testCard.addView(TextView(this).apply {
-                    text = "The recovered landing ViewModel exposes configured tabs, year selection, test-list state, GT analytics/nudge state. No remote test catalog is fabricated here."
-                    setPadding(0,8,0,12)
-                })
-                testCard.addView(Button(this).apply {
-                    text = "OPEN TEST INTRO"
-                    setOnClickListener { tests.openIntro("source-test"); showTests() }
-                })
-                box.addView(testCard)
-
-                box.addView(Button(this).apply {
-                    text = "GRAND TEST ANALYTICS"
-                    setOnClickListener { state.navigate(MarrowRoute.GT_ANALYTICS); showGTAnalytics() }
-                })
-                box.addView(Button(this).apply {
-                    text = "LAST TEST ANALYTICS"
-                    setOnClickListener { tests.openAnalytics(); showTests() }
-                })
+                box.addView(TextView(this).apply { text="Tests"; textSize=18f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8) })
+                val testList=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(12,12,12,12) }
+                testList.addView(TextView(this).apply { text="Test list"; textSize=16f; setTypeface(typeface,Typeface.BOLD) })
+                testList.addView(Button(this).apply { text="OPEN TEST INTRO"; setOnClickListener { tests.openIntro("source-test"); showTests() } })
+                box.addView(testList)
+                box.addView(TextView(this).apply { text="Previous Year Tests"; textSize=18f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8) })
+                box.addView(Button(this).apply { text="Previous Year Tests   ›"; setOnClickListener { tests.openIntro("previous-year"); showTests() } })
+                box.addView(Button(this).apply { text="Test Analytics   ›"; setOnClickListener { tests.openAnalytics(); showTests() } })
                 replace(ScrollView(this).apply { addView(box) })
             }
         }
