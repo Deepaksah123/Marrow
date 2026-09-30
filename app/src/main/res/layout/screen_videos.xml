@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Videos / Lessons" android:textSize="28sp" android:textStyle="bold"/>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="16dp" android:paddingBottom="24dp">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Videos / Lessons" android:textSize="24sp" android:textStyle="bold"/>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Landing → subject → lesson → player. Backend/DRM URLs are not fabricated."/>
 </LinearLayout></ScrollView>
