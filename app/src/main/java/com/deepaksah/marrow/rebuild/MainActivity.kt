@@ -497,7 +497,9 @@ class MainActivity : Activity() {
                 return
             }
 
-            pairs.forEachIndexed { index, pair ->                val module = pair.first                val id = pair.second
+            pairs.forEachIndexed { index, pair ->
+                val module = pair.first
+                val id = pair.second
                 val q = state.contentRegistry.question(module, id)
                 val row = LinearLayout(this).apply {
                     orientation = LinearLayout.VERTICAL
