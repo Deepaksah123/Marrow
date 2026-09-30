@@ -5,12 +5,10 @@ plugins {
 
 android {
     namespace = "com.deepaksah.marrow.rebuild"
-
     compileSdk = 35
 
     defaultConfig {
-        // Deliberately unique from the original Marrow package so both apps can coexist.
-        applicationId = "com.deepaksah.marrow.rebuild.app"
+        applicationId = "com.deepaksah.marrow.rebuild"
         minSdk = 29
         targetSdk = 35
         versionCode = 1
