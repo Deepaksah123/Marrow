@@ -353,30 +353,119 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
     private fun showBookmarks() {
-        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        root.addView(TextView(this).apply { text = "Bookmarks"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
-        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }; root.addView(list)
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
+        }
+        root.addView(TextView(this).apply {
+            text = "Bookmarks"
+            textSize = 24f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        root.addView(TextView(this).apply {
+            text = "Saved questions"
+            textSize = 13f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(0, 5, 0, 18)
+        })
+
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(list)
+
         fun render(allContent: Boolean) {
             list.removeAllViews()
-            val ids = if (allContent) state.contentRegistry.moduleIds().flatMap { module -> state.contentRegistry.questionIds(module).filter { id -> state.session.answers[id]?.isStarred == true }.map { module to it } } else BookmarkNavigationModel.ids(state).map { (state.session.moduleId ?: "") to it }
-            list.addView(TextView(this).apply { text = if (allContent) "All loaded QBank bookmarks · " + ids.size else "Current module bookmarks · " + ids.size; setPadding(4,10,4,12) })
-            if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No bookmarked questions."; setPadding(4,20,4,20) }); return }
-            ids.forEachIndexed { index, pair ->
+            val pairs = if (allContent) {
+                state.contentRegistry.moduleIds().flatMap { module ->
+                    state.contentRegistry.questionIds(module)
+                        .filter { id -> state.session.answers[id]?.isStarred == true }
+                        .map { module to it }
+                }
+            } else {
+                BookmarkNavigationModel.ids(state).map { (state.session.moduleId ?: "") to it }
+            }
+
+            list.addView(TextView(this).apply {
+                text = if (allContent) "All loaded bookmarks · " + pairs.size else "Current module bookmarks · " + pairs.size
+                textSize = 14f
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(4, 8, 4, 12)
+            })
+
+            if (pairs.isEmpty()) {
+                list.addView(TextView(this).apply {
+                    text = "No bookmarked questions."
+                    textSize = 15f
+                    setPadding(4, 18, 4, 18)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+                return
+            }
+
+            pairs.forEachIndexed { index, pair ->
                 val module = pair.first
                 val id = pair.second
                 val q = state.contentRegistry.question(module, id)
-                val row = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,8,4,8) }
-                row.addView(TextView(this@MainActivity).apply { text = (index + 1).toString() + ". " + (q?.text ?: "Question " + (index + 1)); textSize = 16f })
-                row.addView(Button(this@MainActivity).apply { text = "OPEN"; setOnClickListener { if (module.isNotBlank()) { val idsForModule = state.contentRegistry.questionIds(module); state.selectModule(module, idsForModule); state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0)); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } } })
-                row.addView(Button(this@MainActivity).apply { text = "REMOVE BOOKMARK"; setOnClickListener { QBankSession(state).toggleBookmark(id); render(allContent) } })
-                list.addView(row); addDivider(list)
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(14, 12, 14, 12)
+                    setBackgroundColor(getColor(R.color.marrow_surface))
+                }
+                row.addView(TextView(this@MainActivity).apply {
+                    text = (index + 1).toString() + ". " + (q?.text ?: "Question " + (index + 1))
+                    textSize = 16f
+                    setTextColor(getColor(R.color.marrow_text))
+                })
+                row.addView(TextView(this@MainActivity).apply {
+                    text = module
+                    textSize = 12f
+                    setTextColor(getColor(R.color.marrow_muted))
+                    setPadding(0, 5, 0, 8)
+                })
+                row.addView(Button(this@MainActivity).apply {
+                    text = "OPEN"
+                    setOnClickListener {
+                        if (module.isNotBlank()) {
+                            val idsForModule = state.contentRegistry.questionIds(module)
+                            state.selectModule(module, idsForModule)
+                            state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0))
+                            state.navigate(MarrowRoute.QBANK_PLAY)
+                            showPlayer()
+                        }
+                    }
+                })
+                row.addView(Button(this@MainActivity).apply {
+                    text = "REMOVE BOOKMARK"
+                    setOnClickListener {
+                        QBankSession(state).toggleBookmark(id)
+                        render(allContent)
+                    }
+                })
+                list.addView(row)
+                addDivider(list)
             }
         }
-        root.addView(Button(this).apply { text = "ALL LOADED BOOKMARKS"; setOnClickListener { render(true) } })
-        root.addView(Button(this).apply { text = "CURRENT MODULE"; setOnClickListener { render(false) } })
+
+        val switch = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 0, 0, 12)
+        }
+        switch.addView(Button(this).apply {
+            text = "ALL LOADED"
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setOnClickListener { render(true) }
+        })
+        switch.addView(Button(this).apply {
+            text = "CURRENT MODULE"
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setOnClickListener { render(false) }
+        })
+        root.addView(switch, 2)
         render(true)
         replace(ScrollView(this).apply { addView(root) })
     }
+
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
         replace(v)
