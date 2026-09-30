@@ -166,6 +166,15 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
         }
+        v.findViewById<View>(R.id.homeRecentCard).setOnClickListener {
+            val modules = state.contentRegistry.moduleIds().size
+            val questions = state.contentRegistry.allQuestions().size
+            AlertDialog.Builder(this)
+                .setTitle("Local Content Status")
+                .setMessage("Verified local Edition 8 QBank content\n\nModules: $modules\nQuestions loaded: $questions\n\nNo remote/account-backed updates are fabricated.")
+                .setPositiveButton("OK", null)
+                .show()
+        }
         v.findViewById<Button>(R.id.homeShare).setOnClickListener { shareCurrentRoute() }
     }
 
@@ -200,36 +209,64 @@ class MainActivity : Activity() {
         box.addView(input)
         val results = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         box.addView(results)
+        fun renderSearch() {
+            results.removeAllViews()
+            val query = input.text.toString().trim()
+            if (query.isBlank()) {
+                results.addView(TextView(this@MainActivity).apply {
+                    text = "Search questions, explanations or tags in loaded QBank content."
+                    setPadding(4, 20, 4, 20)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+                return
+            }
+            val matches = state.contentRegistry.search(query)
+            if (matches.isEmpty()) {
+                results.addView(TextView(this@MainActivity).apply {
+                    text = "No matches in loaded content."
+                    setPadding(4, 20, 4, 20)
+                })
+                return
+            }
+            results.addView(TextView(this@MainActivity).apply {
+                text = "Matches: ${matches.size}"
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(4, 14, 4, 10)
+            })
+            matches.take(100).forEachIndexed { index, q ->
+                val module = state.contentRegistry.findModuleForQuestion(q.id).orEmpty()
+                results.addView(Button(this@MainActivity).apply {
+                    text = "${index + 1}. ${q.text}\n\n$module"
+                    isAllCaps = false
+                    setOnClickListener {
+                        if (module.isNotBlank()) {
+                            val ids = state.contentRegistry.questionIds(module)
+                            state.selectModule(module, ids)
+                            state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0))
+                            state.navigate(MarrowRoute.QBANK_PLAY)
+                            showPlayer()
+                        }
+                    }
+                })
+            }
+            if (matches.size > 100) {
+                results.addView(TextView(this@MainActivity).apply {
+                    text = "Showing first 100 matches."
+                    setPadding(4, 12, 4, 20)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+            }
+        }
+        input.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { renderSearch() }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
         box.addView(Button(this).apply {
             text = "SEARCH"
-            setOnClickListener {
-                results.removeAllViews()
-                val query = input.text.toString().trim()
-                if (query.isBlank()) return@setOnClickListener
-                val matches = state.contentRegistry.search(query)
-                if (matches.isEmpty()) {
-                    results.addView(TextView(this@MainActivity).apply {
-                        text = "No matches in loaded content."
-                        setPadding(4, 20, 4, 20)
-                    })
-                } else {
-                    matches.forEachIndexed { index, q ->
-                        results.addView(Button(this@MainActivity).apply {
-                            text = "${index + 1}. ${q.text}"
-                            setOnClickListener {
-                                state.contentRegistry.findModuleForQuestion(q.id)?.let { moduleId ->
-                                    val ids = state.contentRegistry.questionIds(moduleId)
-                                    state.selectModule(moduleId, ids)
-                                    state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0))
-                                    state.navigate(MarrowRoute.QBANK_PLAY)
-                                    showPlayer()
-                                }
-                            }
-                        })
-                    }
-                }
-            }
+            setOnClickListener { renderSearch() }
         })
+        renderSearch()
         replace(ScrollView(this).apply { addView(box) })
     }
 
@@ -1187,9 +1224,35 @@ class MainActivity : Activity() {
         })
         var showAnswer = false
         var activeFilter = ReviewFilter.ALL
+        val filterRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 0, 0, 8)
+        }
+        listOf(
+            ReviewFilter.ALL to "ALL",
+            ReviewFilter.BOOKMARKED to "BOOKMARKED",
+            ReviewFilter.CORRECT to "CORRECT",
+            ReviewFilter.WRONG to "WRONG",
+            ReviewFilter.SKIPPED to "SKIPPED",
+            ReviewFilter.CHANGED_BY_YOU to "CHANGED"
+        ).forEach { (filter, label) ->
+            filterRow.addView(Button(this).apply {
+                text = label
+                isAllCaps = false
+                setOnClickListener { render(filter) }
+            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        }
+        root.addView(ScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(filterRow)
+        })
         val answerToggle = CheckBox(this).apply {
             text = "Show answer / explanation"
             isChecked = false
+            setOnCheckedChangeListener { _, checked ->
+                showAnswer = checked
+                render(activeFilter)
+            }
         }
         root.addView(answerToggle)
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
@@ -1913,8 +1976,24 @@ class MainActivity : Activity() {
 
     private fun showSettings() {
         val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        val prefs = getSharedPreferences("marrow_preferences", MODE_PRIVATE)
         root.addView(TextView(this).apply { text="Settings"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
+        root.addView(TextView(this).apply {
+            text="App preferences"
+            textSize=13f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(4,8,4,16)
+        })
         root.addView(Button(this).apply { text="THEME"; setOnClickListener { state.navigate(MarrowRoute.THEME); showTheme() } })
+        root.addView(Button(this).apply {
+            text = if (prefs.getBoolean("vibration_enabled", false)) "VIBRATION: ON" else "VIBRATION: OFF"
+            isAllCaps = false
+            setOnClickListener {
+                val next = !prefs.getBoolean("vibration_enabled", false)
+                prefs.edit().putBoolean("vibration_enabled", next).apply()
+                showSettings()
+            }
+        })
         root.addView(Button(this).apply { text="PROFILE"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
         root.addView(Button(this).apply { text="BACK"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
         replace(ScrollView(this).apply { addView(root) })
@@ -1962,10 +2041,14 @@ class MainActivity : Activity() {
 
     private fun showTheme() {
         val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        val dark = MarrowTheme.isDark(this)
         root.addView(TextView(this).apply { text="Theme"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply { text="Theme selection is stored locally and applied to the app."; setPadding(4,18,4,18) })
-        root.addView(Button(this).apply { text="LIGHT"; setOnClickListener { setDarkTheme(false) } })
-        root.addView(Button(this).apply { text="DARK"; setOnClickListener { setDarkTheme(true) } })
+        root.addView(TextView(this).apply {
+            text = "Current theme: " + if (dark) "Dark" else "Light"
+            setPadding(4,18,4,18)
+        })
+        root.addView(Button(this).apply { text="LIGHT"; isEnabled = dark; setOnClickListener { setDarkTheme(false) } })
+        root.addView(Button(this).apply { text="DARK"; isEnabled = !dark; setOnClickListener { setDarkTheme(true) } })
         root.addView(Button(this).apply { text="BACK SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
         replace(ScrollView(this).apply { addView(root) })
     }
