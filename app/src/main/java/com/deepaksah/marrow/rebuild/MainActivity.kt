@@ -1011,7 +1011,7 @@ class MainActivity : Activity() {
         val timerVisible = state.session.qbank.timerEnabled && question != null && state.session.answers[question.id]?.locked != true
         timerView.visibility = if (timerVisible) View.VISIBLE else View.GONE
         if (timerVisible) {
-            state.startQBankTimer()
+            state.startQBankTimer(null)
             val endAt = state.session.qbank.timerEndAtMs ?: (System.currentTimeMillis() + if (state.session.qbank.timerDouble) 60_000L else 30_000L)
             val remainingNow = (endAt - System.currentTimeMillis()).coerceAtLeast(0L)
             val duration = if (state.session.qbank.timerDouble) 60_000L else 30_000L
