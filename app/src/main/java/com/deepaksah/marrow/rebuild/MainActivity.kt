@@ -382,58 +382,36 @@ class MainActivity : Activity() {
         replace(v)
         val tracker = v.findViewById<TextView>(R.id.qbankTracker)
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
-        tracker.text = "Progress  ·  " + metrics.attempted + "/" + metrics.total + " attempted  ·  " + String.format("%.1f", metrics.accuracy) + "% accuracy"
-        tracker.setOnClickListener {
-            state.navigate(MarrowRoute.QBANK_TRACKER)
-            showQBankTracker()
-        }
+        tracker.text = "QBank tracker   ·   " + metrics.attempted + "/" + metrics.total + " attempted   ·   " + String.format("%.1f", metrics.accuracy) + "% accuracy"
+        tracker.setOnClickListener { state.navigate(MarrowRoute.QBANK_TRACKER); showQBankTracker() }
         val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
-        c.addView(Button(this).apply {
-            text = "PYQ"
-            setOnClickListener { state.navigate(MarrowRoute.PYQ); showPyq() }
-        })
-        c.addView(Button(this).apply {
-            text = "SCHEMA"
-            setOnClickListener { state.navigate(MarrowRoute.SCHEMA); showSchemaList() }
-        })
-        addDivider(c)
+        fun sourceCard(label: String, detail: String, action: () -> Unit) {
+            c.addView(LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL; setPadding(14,12,14,12)
+                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener { action() }
+                addView(TextView(this@MainActivity).apply { text=label; textSize=16f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
+                addView(TextView(this@MainActivity).apply { text=detail; textSize=13f; setPadding(0,4,0,0); setTextColor(getColor(R.color.marrow_muted)) })
+            }); addDivider(c)
+        }
+        sourceCard("Bookmarks","Saved questions") { state.navigate(MarrowRoute.BOOKMARKS); showBookmarks() }
+        sourceCard("Custom Module","Customised MCQs") { customStage=0; state.navigate(MarrowRoute.CUSTOM_MODULE); showCustom() }
         subjects.forEach { s ->
             val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$s/") || it == s }
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                setPadding(14,12,14,12)
-                gravity = android.view.Gravity.CENTER_VERTICAL
-                setBackgroundColor(getColor(R.color.marrow_surface))
-                setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
+                orientation=LinearLayout.HORIZONTAL; setPadding(14,12,14,12); gravity=android.view.Gravity.CENTER_VERTICAL
+                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
             }
-            row.addView(ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(52, 52).apply { marginEnd = 12 }
-                setImageResource(R.drawable.ic_pc_circle_including_logo)
-                scaleType = ImageView.ScaleType.CENTER_INSIDE
-                contentDescription = "Question Bank"
-            })
+            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
             row.addView(LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                addView(TextView(this@MainActivity).apply {
-                    text = s
-                    textSize = 17f
-                    setTypeface(typeface, Typeface.BOLD)
-                    setTextColor(getColor(R.color.marrow_text))
-                })
-                addView(TextView(this@MainActivity).apply {
-                    text = moduleIds.size.toString() + " modules  ·  " + questionCount + " questions"
-                    textSize = 13f
-                    setPadding(0,5,0,0)
-                    setTextColor(getColor(R.color.marrow_muted))
-                })
-            })
-            c.addView(row)
-            addDivider(c)
+                orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
+                addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
+                addView(TextView(this@MainActivity).apply { text="$" + "{moduleIds.size} modules  ·  $" + "{questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
+            }); c.addView(row); addDivider(c)
         }
+        sourceCard("Previous Year Question Papers","Question paper modules") { state.navigate(MarrowRoute.PYQ); showPyq() }
+        sourceCard("Schema","Collection of important and repeatedly asked topics from all modules") { state.navigate(MarrowRoute.SCHEMA); showSchemaList() }
     }
-
     private fun showQBankIntroduction() {
         val lessonId = state.session.moduleId ?: state.session.subjectId ?: ""
         val model = QBankIntroductionModel(lessonId = lessonId)
