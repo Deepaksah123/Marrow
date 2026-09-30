@@ -541,23 +541,54 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_lessons, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.lessonTitle).text = if (subject.isBlank()) "QBank" else subject
-        v.findViewById<TextView>(R.id.lessonSource).text = "Modules · All · Paused · Completed · Unattempted · Free"
         v.findViewById<TextView>(R.id.lessonBack).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
 
         val c = v.findViewById<LinearLayout>(R.id.lessonContainer)
         val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$subject/") || it == subject }
-        if (moduleIds.isEmpty()) {
-            c.addView(TextView(this).apply {
-                text = "No supplied module payload is loaded for this subject."
-                textSize = 15f
-                setPadding(16,18,16,18)
-            })
-        } else {
-            moduleIds.forEach { moduleId ->
+        val tabs = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 4, 0, 12)
+        }
+        val tabNames = listOf("All", "Paused", "Completed", "Unattempted", "Free")
+        fun moduleState(ids: List<String>): String {
+            if (ids.isEmpty()) return "unattempted"
+            val answered = ids.count { state.session.answers[it]?.selectedAnswer != null || state.session.answers[it]?.skipped == true }
+            val locked = ids.count { state.session.answers[it]?.locked == true }
+            return when {
+                locked >= ids.size -> "completed"
+                answered > 0 -> "paused"
+                else -> "unattempted"
+            }
+        }
+        fun render(filter: String) {
+            c.removeAllViews()
+            val filtered = moduleIds.filter { module ->
+                val ids = state.contentRegistry.questionIds(module)
+                when (filter) {
+                    "all" -> true
+                    "completed" -> moduleState(ids) == "completed"
+                    "paused" -> moduleState(ids) == "paused"
+                    "unattempted" -> moduleState(ids) == "unattempted"
+                    // No verified local free-module flag exists in the supplied content contract.
+                    "free" -> false
+                    else -> true
+                }
+            }
+            if (filtered.isEmpty()) {
+                c.addView(TextView(this).apply {
+                    text = if (filter == "free") "No verified free-module payload is attached." else "No modules match this filter."
+                    textSize = 15f
+                    setPadding(16, 18, 16, 18)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+                return
+            }
+            filtered.forEach { moduleId ->
                 val ids = state.contentRegistry.questionIds(moduleId)
+                val solved = ids.count { state.session.answers[it]?.locked == true }
                 val row = LinearLayout(this).apply {
                     orientation = LinearLayout.VERTICAL
-                    setPadding(14,12,14,12)
+                    setPadding(14, 12, 14, 12)
                     setBackgroundColor(getColor(R.color.marrow_surface))
                     setOnClickListener {
                         state.session.moduleId = moduleId
@@ -575,15 +606,28 @@ class MainActivity : Activity() {
                     setTextColor(getColor(R.color.marrow_text))
                 })
                 row.addView(TextView(this).apply {
-                    text = ids.size.toString() + " questions"
+                    text = ids.size.toString() + " MCQs  ·  " + solved + "/" + ids.size + " completed"
                     textSize = 13f
-                    setPadding(0,4,0,0)
+                    setPadding(0, 4, 0, 0)
                     setTextColor(getColor(R.color.marrow_muted))
                 })
                 c.addView(row)
                 addDivider(c)
             }
         }
+        tabNames.forEachIndexed { index, name ->
+            tabs.addView(Button(this).apply {
+                text = name
+                isAllCaps = false
+                textSize = 12f
+                setPadding(8, 2, 8, 2)
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                setOnClickListener { render(name.lowercase()) }
+            })
+        }
+        v.findViewById<TextView>(R.id.lessonSource).text = "Modules · All · Paused · Completed · Unattempted · Free"
+        v.findViewById<LinearLayout>(R.id.lessonRoot).addView(tabs, 2)
+        render("all")
     }
 
     private fun showLessonDetail(subject: String, moduleId: String, ids: List<String>) {
