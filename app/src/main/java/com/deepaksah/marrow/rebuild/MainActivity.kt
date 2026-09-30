@@ -634,36 +634,120 @@ class MainActivity : Activity() {
 
     private fun showReview() {
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        root.addView(TextView(this).apply { text = "QBank Review"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
+        root.addView(TextView(this).apply {
+            text = "QBank Review"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
         var showAnswer = false
-        val answerToggle = CheckBox(this).apply { text = "Show answer / explanation"; isChecked = false }
+        var activeFilter = ReviewFilter.ALL
+        val answerToggle = CheckBox(this).apply {
+            text = "Show answer / explanation"
+            isChecked = false
+        }
         root.addView(answerToggle)
         val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(list)
-        fun render(filter: ReviewFilter) {
+
+        fun render(filter: ReviewFilter = activeFilter) {
+            activeFilter = filter
             list.removeAllViews()
             val ids = ReviewEngine.filter(
                 state.session.mcqIds,
                 state.session.answers,
                 state.contentRegistry.allQuestions(state.session.moduleId),
-                filter
+                activeFilter
             )
-            list.addView(TextView(this).apply { text = filter.name.replace('_', ' ') + " · " + ids.size; textSize = 15f; setTypeface(typeface, Typeface.BOLD); setPadding(4,8,4,12) })
-            if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No questions in this filter."; setPadding(4,12,4,12) }); return }
+            list.addView(TextView(this).apply {
+                text = activeFilter.name.replace('_', ' ') + " · " + ids.size
+                textSize = 15f
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(4,8,4,12)
+            })
+            if (ids.isEmpty()) {
+                list.addView(TextView(this).apply {
+                    text = "No questions in this filter."
+                    setPadding(4,12,4,12)
+                })
+                return
+            }
             ids.forEachIndexed { index, id ->
                 val q = state.contentRegistry.question(state.session.moduleId, id)
-                val item = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,6,4,10) }
-                item.addView(TextView(this@MainActivity).apply { text = "${index + 1}. " + (q?.text ?: "Question ${index + 1}"); textSize = 16f; setTypeface(typeface, Typeface.BOLD) })
-                if (showAnswer && q != null) item.addView(TextView(this@MainActivity).apply { val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text; text = formatRichContent("Answer: " + (answer ?: "Not available") + if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""); setPadding(8,8,8,8) })
-                item.setOnClickListener { val questionIndex = state.session.mcqIds.indexOf(id); if (questionIndex >= 0) { state.moveQuestion(questionIndex); state.navigate(MarrowRoute.QBANK_PLAY); showPlayer() } }
-                list.addView(item); addDivider(list)
+                val answerState = state.session.answers[id]
+                val item = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(4,8,4,12)
+                }
+                val status = when {
+                    answerState?.skipped == true -> "Skipped"
+                    answerState?.isRight == true -> "Correct"
+                    answerState?.isRight == false -> "Wrong"
+                    else -> "Unanswered"
+                }
+                item.addView(TextView(this@MainActivity).apply {
+                    text = (index + 1).toString() + ". " + status
+                    textSize = 13f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setPadding(4,2,4,4)
+                })
+                item.addView(TextView(this@MainActivity).apply {
+                    text = q?.text ?: "Question " + (index + 1)
+                    textSize = 16f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setPadding(4,2,4,6)
+                })
+                if (answerState?.selectedAnswer != null) {
+                    val selected = q?.choices?.firstOrNull { it.id == answerState.selectedAnswer }?.text
+                    item.addView(TextView(this@MainActivity).apply {
+                        text = "Your answer: " + (selected ?: answerState.selectedAnswer)
+                        textSize = 14f
+                        setPadding(4,2,4,4)
+                    })
+                }
+                if (showAnswer && q != null) {
+                    val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text
+                    item.addView(TextView(this@MainActivity).apply {
+                        text = formatRichContent(
+                            "Answer: " + (answer ?: "Not available") +
+                                if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""
+                        )
+                        setPadding(8,8,8,8)
+                    })
+                }
+                item.setOnClickListener {
+                    val questionIndex = state.session.mcqIds.indexOf(id)
+                    if (questionIndex >= 0) {
+                        state.moveQuestion(questionIndex)
+                        state.navigate(MarrowRoute.QBANK_PLAY)
+                        showPlayer()
+                    }
+                }
+                list.addView(item)
+                addDivider(list)
             }
         }
-        answerToggle.setOnCheckedChangeListener { _, checked -> showAnswer = checked; render(ReviewFilter.ALL) }
-        ReviewFilter.values().forEach { filter -> root.addView(Button(this).apply { text = filter.name.replace('_', ' '); setOnClickListener { render(filter) } }) }
-        render(ReviewFilter.ALL)
+
+        answerToggle.setOnCheckedChangeListener { _, checked ->
+            showAnswer = checked
+            render()
+        }
+        ReviewFilter.values().forEach { filter ->
+            root.addView(Button(this).apply {
+                text = filter.name.replace('_', ' ')
+                setOnClickListener { render(filter) }
+            })
+        }
+        root.addView(Button(this).apply {
+            text = "BACK TO SCORE"
+            setOnClickListener {
+                qbank.openScore()
+                showScore()
+            }
+        })
+        render()
         replace(ScrollView(this).apply { addView(root) })
     }
+
     private fun showAnalytics() {
         val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
