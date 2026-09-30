@@ -11,13 +11,13 @@ android {
         applicationId = "com.deepaksah.marrow.rebuild"
         minSdk = 23
         targetSdk = 35
-        versionCode = 1
+        versionCode = 154
         versionName = "0.1.0"
     }
 
     signingConfigs {
         getByName("debug") {
-            enableV1Signing = true
+            enableV1Signing = false
             enableV2Signing = true
         }
     }
