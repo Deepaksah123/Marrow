@@ -1317,7 +1317,7 @@ class MainActivity : Activity() {
                     setPadding(4,2,4,4)
                 })
                 item.addView(TextView(this@MainActivity).apply {
-                    text = q?.text ?: "Question " + (index + 1)
+                    text = q?.text ?: "No supplied question payload is loaded."
                     textSize = 16f
                     setTypeface(typeface, Typeface.BOLD)
                     setPadding(4,2,4,6)
@@ -1473,7 +1473,7 @@ class MainActivity : Activity() {
         if (q != null) {
             val existing = state.test.answers[q.id]
             box.addView(Button(this).apply {
-                text = if (existing?.isGuessed == true) "GUESSED ✓" else "MARK GUESSED"
+                text = if (existing?.isGuessed == true) "GUESSED" else "MARK GUESSED"
                 setOnClickListener {
                     TestSession(state).markGuessed(q.id, existing?.isGuessed != true)
                     showTestPlay()
