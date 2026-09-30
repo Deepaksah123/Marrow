@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="marrow_primary">#62C8DF</color><color name="marrow_primary_dark">#55BED5</color>
+    <color name="marrow_primary_light">#83D8EC</color><color name="marrow_primary_shadow">#4E9FB2</color>
+    <color name="marrow_accent">#E6EEF0</color><color name="marrow_background">#101416</color>
+    <color name="marrow_surface">#182023</color><color name="marrow_surface_2">#222B2E</color>
+    <color name="marrow_text">#E6EEF0</color><color name="marrow_muted">#AAB7BA</color><color name="marrow_line">#344145</color>
+</resources>
