@@ -31,15 +31,4 @@ android {
         jvmToolchain(17)
     }
 
-    sourceSets {
-        getByName("main") {
-            assets.exclude("marrow_content/Brain/Marrow/FMGE Mini Test Series/**")
-            assets.exclude("marrow_content/Brain/Marrow/FMGE Test Series/**")
-            assets.exclude("marrow_content/Brain/Marrow/FMGE Test Series subject/**")
-            assets.exclude("marrow_content/Brain/Marrow/NEET PG Mini Test Series/**")
-            assets.exclude("marrow_content/Brain/Marrow/NEET PG Subject Test Series/**")
-            assets.exclude("marrow_content/Brain/Marrow/NEET PG Test Series/**")
-            assets.exclude("marrow_content/Brain/Marrow/Previous Year Question Papers/**")
-        }
-    }
 }
