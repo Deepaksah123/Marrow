@@ -1232,18 +1232,25 @@ class MainActivity : Activity() {
         listOf(
             ReviewFilter.ALL to "ALL",
             ReviewFilter.BOOKMARKED to "BOOKMARKED",
+            ReviewFilter.CHANGED_BY_YOU to "CHANGED",
             ReviewFilter.CORRECT to "CORRECT",
-            ReviewFilter.WRONG to "WRONG",
+            ReviewFilter.GUESS_CORRECT to "GUESS CORRECT",
+            ReviewFilter.GUESS_WRONG to "GUESS WRONG",
+            ReviewFilter.SILLY_MISTAKES to "SILLY",
             ReviewFilter.SKIPPED to "SKIPPED",
-            ReviewFilter.CHANGED_BY_YOU to "CHANGED"
+            ReviewFilter.WRONG to "WRONG",
+            ReviewFilter.SCHEMA_MCQS to "SCHEMA",
+            ReviewFilter.NEW_REVISED to "NEW/REVISED"
         ).forEach { (filter, label) ->
             filterRow.addView(Button(this).apply {
                 text = label
                 isAllCaps = false
+                minWidth = 0
+                setPadding(16, 0, 16, 0)
                 setOnClickListener { renderReview(filter) }
-            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            })
         }
-        root.addView(ScrollView(this).apply {
+        root.addView(HorizontalScrollView(this).apply {
             isHorizontalScrollBarEnabled = false
             addView(filterRow)
         })
@@ -1335,12 +1342,8 @@ class MainActivity : Activity() {
             }
         }
 
-        ReviewFilter.values().forEach { filter ->
-            root.addView(Button(this).apply {
-                text = filter.name.replace('_', ' ')
-                setOnClickListener { renderReview(filter) }
-            })
-        }
+        renderReview(ReviewFilter.ALL)
+
         root.addView(Button(this).apply {
             text = "BACK TO SCORE"
             setOnClickListener {
