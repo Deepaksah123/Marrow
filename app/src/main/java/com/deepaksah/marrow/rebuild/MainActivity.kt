@@ -149,11 +149,11 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
         replace(v)
         v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { showHomeMenu(v.findViewById(R.id.homeMenu)) }
-        v.findViewById<TextView>(R.id.homeSearch).setOnClickListener {
+        v.findViewById<ImageButton>(R.id.homeSearch).setOnClickListener {
             state.navigate(MarrowRoute.SEARCH)
             showSearch()
         }
-        v.findViewById<TextView>(R.id.homeBookmark).setOnClickListener {
+        v.findViewById<ImageButton>(R.id.homeBookmark).setOnClickListener {
             state.navigate(MarrowRoute.BOOKMARKS)
             showBookmarks()
         }
