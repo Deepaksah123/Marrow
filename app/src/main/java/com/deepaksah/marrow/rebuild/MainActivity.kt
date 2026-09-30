@@ -379,13 +379,26 @@ class MainActivity : Activity() {
         })
         addDivider(c)
         subjects.forEach { s ->
-            val row = TextView(this).apply {
-                text = s
-                textSize = 16f
-                setTypeface(typeface, Typeface.BOLD)
-                setPadding(20,22,20,22)
+            val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$s/") || it == s }
+            val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(16,14,16,14)
+                setBackgroundColor(getColor(R.color.marrow_surface))
                 setOnClickListener { qbank.openSubject(s); showQBankIntroduction() }
             }
+            row.addView(TextView(this).apply {
+                text = s
+                textSize = 17f
+                setTypeface(typeface, Typeface.BOLD)
+                setTextColor(getColor(R.color.marrow_text))
+            })
+            row.addView(TextView(this).apply {
+                text = moduleIds.size.toString() + " modules  ·  " + questionCount + " questions"
+                textSize = 13f
+                setPadding(0,5,0,0)
+                setTextColor(getColor(R.color.marrow_muted))
+            })
             c.addView(row)
             addDivider(c)
         }
