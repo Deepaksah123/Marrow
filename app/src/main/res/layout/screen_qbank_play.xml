@@ -25,6 +25,7 @@
             <Button android:id="@+id/qbankJumpButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="JUMP"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/playReport" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="REPORT"/>
             <Button android:id="@+id/playPrevious" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PREVIOUS"/>
             <Button android:id="@+id/playSkip" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="SKIP"/>
             <Button android:id="@+id/playNext" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="NEXT"/>
