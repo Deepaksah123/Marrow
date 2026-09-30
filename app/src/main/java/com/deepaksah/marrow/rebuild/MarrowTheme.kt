@@ -21,10 +21,10 @@ object MarrowTheme {
         return next
     }
 
-    fun background(context: Context): Int = if (isDark(context)) Color.rgb(18,18,18) else Color.rgb(245,245,245)
-    fun surface(context: Context): Int = if (isDark(context)) Color.rgb(30,30,30) else Color.WHITE
-    fun text(context: Context): Int = if (isDark(context)) Color.WHITE else Color.rgb(25,25,25)
-    fun muted(context: Context): Int = if (isDark(context)) Color.rgb(180,180,180) else Color.rgb(100,100,100)
+    fun background(context: Context): Int = if (isDark(context)) Color.rgb(21,36,39) else Color.rgb(247,247,247)
+    fun surface(context: Context): Int = if (isDark(context)) Color.rgb(21,36,39) else Color.WHITE
+    fun text(context: Context): Int = if (isDark(context)) Color.rgb(246,246,246) else Color.rgb(123,129,130)
+    fun muted(context: Context): Int = if (isDark(context)) Color.rgb(170,183,186) else Color.rgb(139,150,152)
 
     fun apply(root: View, context: Context) {
         root.setBackgroundColor(background(context))
