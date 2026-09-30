@@ -8,6 +8,8 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.graphics.Typeface
+import android.text.Html
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -534,7 +536,7 @@ class MainActivity : Activity() {
                 })
             }
             if (existing?.locked == true && question.solution.isNotBlank()) {
-                explanation.text = "Explanation\n\n" + question.solution
+                explanation.text = formatRichContent("Explanation\n\n" + question.solution)
                 explanation.visibility = View.VISIBLE
             } else {
                 explanation.visibility = View.GONE
@@ -596,6 +598,10 @@ class MainActivity : Activity() {
                 showScore()
             }
         }
+    }
+
+    private fun formatRichContent(value: String): Spanned {
+        return Html.fromHtml(value, Html.FROM_HTML_MODE_LEGACY)
     }
 
     private fun showScore() {
