@@ -19,6 +19,8 @@ import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import android.webkit.WebView
+import android.webkit.WebSettings
 
 class MainActivity : Activity() {
     private lateinit var content: FrameLayout
@@ -337,20 +339,20 @@ class MainActivity : Activity() {
     }
 
     private fun showPearls() {
-        val box = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20,20,20,20)
+        val web = WebView(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.allowFileAccess = true
+            settings.allowContentAccess = true
+            settings.builtInZoomControls = false
+            settings.displayZoomControls = false
+            loadUrl("file:///android_asset/Marrow_pearls.html")
         }
-        box.addView(TextView(this).apply {
-            text = "Pearls"
-            textSize = 22f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        box.addView(TextView(this).apply {
-            text = "No verified Pearls content is attached to the current C content layer."
-            setPadding(4,20,4,20)
-        })
-        replace(ScrollView(this).apply { addView(box) })
+        replace(web)
     }
     private fun showBookmarks() {
         val root = LinearLayout(this).apply {
