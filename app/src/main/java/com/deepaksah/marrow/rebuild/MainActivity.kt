@@ -257,9 +257,16 @@ class MainActivity : Activity() {
                 })
             }
         }
+        val searchHandler = Handler(Looper.getMainLooper())
+        var pendingSearch: Runnable? = null
         input.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { renderSearch() }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                pendingSearch?.let(searchHandler::removeCallbacks)
+                pendingSearch = Runnable { renderSearch() }.also {
+                    searchHandler.postDelayed(it, 500L)
+                }
+            }
             override fun afterTextChanged(s: android.text.Editable?) = Unit
         })
         box.addView(Button(this).apply {
