@@ -1,0 +1,60 @@
+name: Android 12 and 13 Installation Verification
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "app/**"
+      - "scripts/sync_marrow_source.sh"
+      - ".github/workflows/android-install-test.yml"
+  workflow_dispatch:
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [31, 33]
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - name: Materialize exact Marrow content
+        run: bash scripts/sync_marrow_source.sh
+      - name: Build signed APK
+        run: gradle :app:assembleDebug --stacktrace
+      - name: Verify APK signature
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk
+      - name: Install and launch on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          disable-animations: true
+          emulator-boot-timeout: 900
+          script: |
+            set -euxo pipefail
+            adb wait-for-device
+            adb shell getprop ro.build.version.sdk
+            adb install -r -t app/build/outputs/apk/debug/app-debug.apk
+            adb shell pm path com.deepaksah.marrow.rebuild
+            adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
+            sleep 5
+            adb shell pidof com.deepaksah.marrow.rebuild
+      - name: Upload diagnostic APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-install-test-api-${{ matrix.api-level }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: ignore
