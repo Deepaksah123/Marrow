@@ -8,6 +8,10 @@
         <item name="android:statusBarColor">@color/marrow_primary_dark</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowBackground">@color/marrow_background</item>
+        <item name="android:textColorPrimary">@color/marrow_text</item>
+        <item name="android:textColorSecondary">@color/marrow_muted</item>
+        <item name="android:buttonStyle">@style/MarrowButton</item>
+        <item name="android:editTextStyle">@style/MarrowEditText</item>
     </style>
     <style name="MarrowNav" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">0dp</item>
@@ -18,5 +22,16 @@
         <item name="android:textColor">@color/marrow_muted</item>
         <item name="android:fontFamily">sans</item>
         <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="MarrowButton" parent="@android:style/Widget.Material.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:textColor">@color/marrow_accent</item>
+    </style>
+    <style name="MarrowEditText" parent="@android:style/Widget.Material.EditText">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/marrow_accent</item>
+        <item name="android:textColorHint">@color/marrow_muted</item>
     </style>
 </resources>
