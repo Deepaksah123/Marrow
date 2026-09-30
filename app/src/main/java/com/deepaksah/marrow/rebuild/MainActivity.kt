@@ -1008,13 +1008,14 @@ class MainActivity : Activity() {
         val timerView = v.findViewById<TextView>(R.id.playTimer)
         val timerEndAt = state.session.qbank.timerEndAtMs
         val timerRemaining = if (timerEndAt != null) (timerEndAt - System.currentTimeMillis()).coerceAtLeast(0L) else 0L
-        val timerVisible = state.session.qbank.timerEnabled && question != null && state.session.answers[question.id]?.locked != true
+        val timerVisible = state.session.qbank.timerEnabled &&
+            state.session.qbank.timerEndAtMs != null &&
+            question != null &&
+            state.session.answers[question.id]?.locked != true
         timerView.visibility = if (timerVisible) View.VISIBLE else View.GONE
         if (timerVisible) {
-            state.startQBankTimer(null)
-            val endAt = state.session.qbank.timerEndAtMs ?: (System.currentTimeMillis() + if (state.session.qbank.timerDouble) 60_000L else 30_000L)
+            val endAt = state.session.qbank.timerEndAtMs ?: return
             val remainingNow = (endAt - System.currentTimeMillis()).coerceAtLeast(0L)
-            val duration = if (state.session.qbank.timerDouble) 60_000L else 30_000L
             timerView.text = "Time left: " + ((remainingNow + 999L) / 1000L) + "s"
             object : CountDownTimer(remainingNow, 250L) {
                 override fun onTick(millisUntilFinished: Long) {
