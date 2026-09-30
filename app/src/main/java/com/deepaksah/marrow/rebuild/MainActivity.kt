@@ -3,6 +3,7 @@ package com.deepaksah.marrow.rebuild
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.UiModeManager
+import android.media.AudioManager
 import android.os.Build
 import android.content.Intent
 import android.os.Bundle
@@ -1295,12 +1296,45 @@ class MainActivity : Activity() {
         root.addView(TextView(this).apply { text="No verified local stream/file is bundled, so playback is not faked."; setPadding(4,8,4,18) })
         val speed=TextView(this).apply { text="Playback speed: 1.0×"; setPadding(4,12,4,8) }; root.addView(speed)
         val speedRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
-        listOf("0.75×","1.0×","1.25×","1.5×","2.0×").forEach { s -> speedRow.addView(Button(this).apply { text=s; setOnClickListener { speed.text="Playback speed: $s" } }, LinearLayout.LayoutParams(0,-2,1f)) }
+        listOf("0.75×","1.0×","1.25×","1.5×","2.0×").forEach { s ->
+            speedRow.addView(Button(this).apply {
+                text=s
+                setOnClickListener { speed.text="Playback speed: $s" }
+            }, LinearLayout.LayoutParams(0,-2,1f))
+        }
         root.addView(speedRow)
         root.addView(TextView(this).apply { text="Brightness"; setPadding(4,18,4,4) })
-        root.addView(SeekBar(this).apply { max=100; progress=50 })
+        val brightness = SeekBar(this).apply {
+            max=100
+            progress=((window.attributes.screenBrightness.takeIf { it >= 0f } ?: 0.5f) * 100f).toInt()
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
+                    if (!fromUser) return
+                    val params=window.attributes
+                    params.screenBrightness=(value.coerceIn(1,100) / 100f)
+                    window.attributes=params
+                }
+                override fun onStartTrackingTouch(bar: SeekBar?) {}
+                override fun onStopTrackingTouch(bar: SeekBar?) {}
+            })
+        }
+        root.addView(brightness)
         root.addView(TextView(this).apply { text="Volume"; setPadding(4,12,4,4) })
-        root.addView(SeekBar(this).apply { max=100; progress=50 })
+        val audioManager=getSystemService(AudioManager::class.java)
+        val maxVolume=audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)?.coerceAtLeast(1) ?: 1
+        val currentVolume=audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
+        val volume = SeekBar(this).apply {
+            max=100
+            progress=(currentVolume * 100 / maxVolume).coerceIn(0,100)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
+                    if (fromUser) audioManager?.setStreamVolume(AudioManager.STREAM_MUSIC, value * maxVolume / 100, 0)
+                }
+                override fun onStartTrackingTouch(bar: SeekBar?) {}
+                override fun onStopTrackingTouch(bar: SeekBar?) {}
+            })
+        }
+        root.addView(volume)
         root.addView(Button(this).apply { text="DOWNLOAD"; setOnClickListener { Toast.makeText(this@MainActivity,"No verified video file available.",Toast.LENGTH_SHORT).show() } })
         root.addView(Button(this).apply { text="NOTES"; setOnClickListener { showVideoInfo("Video Notes","Native notes flow recovered; remote note content is unavailable locally.") } })
         root.addView(Button(this).apply { text="BACK TO LESSONS"; setOnClickListener { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() } })
