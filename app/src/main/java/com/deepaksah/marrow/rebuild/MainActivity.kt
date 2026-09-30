@@ -574,9 +574,13 @@ class MainActivity : Activity() {
             }
             if (existing?.locked == true && (question.solution.isNotBlank() || question.explanationImages.isNotEmpty())) {
                 explanation.text = formatRichContent("Explanation\n\n" + question.solution)
-                explanation.visibility = View.VISIBLE
+                explanation.visibility = if (question.solution.isNotBlank()) View.VISIBLE else View.GONE
+                val explanationMedia = v.findViewById<LinearLayout>(R.id.explanationMedia)
+                renderContentImages(explanationMedia, question.explanationImages)
+                explanationMedia.visibility = if (question.explanationImages.isNotEmpty()) View.VISIBLE else View.GONE
             } else {
                 explanation.visibility = View.GONE
+                v.findViewById<LinearLayout>(R.id.explanationMedia).visibility = View.GONE
             }
             v.findViewById<TextView>(R.id.playBookmark).text =
                 if (existing?.isStarred == true) "★" else "☆"
