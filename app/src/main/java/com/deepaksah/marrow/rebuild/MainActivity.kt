@@ -957,15 +957,18 @@ class MainActivity : Activity() {
                 setTypeface(typeface, Typeface.BOLD)
             })
             addView(TextView(this@MainActivity).apply {
-                text = "Schema is a curated list of important and repeatedly asked topics."
+                text = "Schema"
                 textSize = 13f
                 setTextColor(getColor(R.color.marrow_muted))
                 setPadding(0, 5, 0, 12)
             })
-            addView(TextView(this@MainActivity).apply {
-                text = "Source-backed schema surface; live schema payload is not fabricated locally."
-                textSize = 13f
-                setTextColor(getColor(R.color.marrow_muted))
+            addView(Button(this@MainActivity).apply {
+                text = "OPEN SCHEMA"
+                isAllCaps = false
+                setOnClickListener {
+                    state.navigate(MarrowRoute.SCHEMA)
+                    showSchema(subject)
+                }
             })
         })
         root.addView(TextView(this).apply {
