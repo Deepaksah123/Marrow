@@ -912,7 +912,7 @@ class MainActivity : Activity() {
             setTypeface(typeface, Typeface.BOLD)
         })
         root.addView(TextView(this).apply {
-            text = moduleId.removePrefix("$" + "subject/")
+            text = moduleId.removePrefix("$subject/")
             textSize = 22f
             setTypeface(typeface, Typeface.BOLD)
             setPadding(0, 6, 0, 8)
