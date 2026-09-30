@@ -746,6 +746,16 @@ class MainActivity : Activity() {
             question?.let { QBankSession(state).toggleBookmark(it.id); showPlayer() }
         }
 
+        val reportButton = Button(this).apply {
+            text = "REPORT"
+            setOnClickListener {
+                Toast.makeText(this@MainActivity, "Report action recorded for this local reconstruction.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        v.findViewById<LinearLayout>(R.id.optionContainer).post {
+            (v as ViewGroup).addView(reportButton, v.childCount.coerceAtMost(v.childCount))
+        }
+
         val jumpInput = v.findViewById<EditText>(R.id.qbankJumpInput)
         v.findViewById<Button>(R.id.qbankJumpButton).setOnClickListener {
             val target = jumpInput.text.toString().toIntOrNull()
