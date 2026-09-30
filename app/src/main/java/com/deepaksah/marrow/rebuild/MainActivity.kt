@@ -461,7 +461,9 @@ class MainActivity : Activity() {
     private fun currentQuestion(): McqContent? {
         val ids = state.session.mcqIds
         val index = state.session.currentMcqIndex
-        return if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
+        return if (index in ids.indices) {
+            state.contentRegistry.question(state.session.moduleId, ids[index])
+        } else null
     }
 
     private fun showPlayer() {
@@ -640,11 +642,16 @@ class MainActivity : Activity() {
         root.addView(list)
         fun render(filter: ReviewFilter) {
             list.removeAllViews()
-            val ids = ReviewEngine.filter(state.session.mcqIds, state.session.answers, state.contentRegistry.allQuestions(), filter)
+            val ids = ReviewEngine.filter(
+                state.session.mcqIds,
+                state.session.answers,
+                state.contentRegistry.allQuestions(state.session.moduleId),
+                filter
+            )
             list.addView(TextView(this).apply { text = filter.name.replace('_', ' ') + " · " + ids.size; textSize = 15f; setTypeface(typeface, Typeface.BOLD); setPadding(4,8,4,12) })
             if (ids.isEmpty()) { list.addView(TextView(this).apply { text = "No questions in this filter."; setPadding(4,12,4,12) }); return }
             ids.forEachIndexed { index, id ->
-                val q = state.contentRegistry.question(id)
+                val q = state.contentRegistry.question(state.session.moduleId, id)
                 val item = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(4,6,4,10) }
                 item.addView(TextView(this@MainActivity).apply { text = "${index + 1}. " + (q?.text ?: "Question ${index + 1}"); textSize = 16f; setTypeface(typeface, Typeface.BOLD) })
                 if (showAnswer && q != null) item.addView(TextView(this@MainActivity).apply { val answer = q.choices.firstOrNull { it.id == q.correctChoiceId }?.text; text = formatRichContent("Answer: " + (answer ?: "Not available") + if (q.solution.isNotBlank()) "\n\nExplanation:\n" + q.solution else ""); setPadding(8,8,8,8) })
