@@ -11,7 +11,11 @@ object MarrowTheme {
     fun isDark(context: Context): Boolean =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(DARK, false)
 
-    fun setDark(context: Context, enabled: Boolean) {\n        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(DARK, enabled).apply()\n    }\n\n    fun toggle(context: Context): Boolean {
+    fun setDark(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(DARK, enabled).apply()
+    }
+
+    fun toggle(context: Context): Boolean {
         val next = !isDark(context)
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(DARK, next).apply()
         return next
