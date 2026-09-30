@@ -497,8 +497,7 @@ class MainActivity : Activity() {
                 return
             }
 
-            pairs.forEachIndexed { index, pair ->
-                val module = pair.first
+            pairs.forEachIndexed { index, pair ->                val module = pair.first
                 val id = pair.second
                 val q = state.contentRegistry.question(module, id)
                 val row = LinearLayout(this).apply {
@@ -591,7 +590,8 @@ class MainActivity : Activity() {
                     showLessons(s)
                 }
             }
-            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })            row.addView(LinearLayout(this).apply {
+            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
+            row.addView(LinearLayout(this).apply {
                 orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
                 addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
                 addView(TextView(this@MainActivity).apply { text="$" + "{moduleIds.size} modules  ·  $" + "{questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
@@ -775,10 +775,8 @@ class MainActivity : Activity() {
                     setPadding(14, 12, 14, 12)
                     setBackgroundColor(getColor(R.color.marrow_surface))
                     setOnClickListener {
-                        state.session.moduleId = moduleId
-                        state.session.subjectId = subject
-                        state.session.mcqIds = ids.toMutableList()
-                        state.session.currentMcqIndex = 0
+                        state.selectSubject(subject)
+                        state.selectModule(moduleId, ids)
                         state.navigate(MarrowRoute.QBANK_LESSON)
                         showLessonDetail(subject, moduleId, ids)
                     }
@@ -997,8 +995,7 @@ class MainActivity : Activity() {
                 explanation.visibility = if (question.solution.isNotBlank()) View.VISIBLE else View.GONE
                 val explanationMedia = v.findViewById<LinearLayout>(R.id.explanationMedia)
                 renderContentImages(explanationMedia, question.explanationImages)
-                explanationMedia.visibility = if (question.explanationImages.isNotEmpty()) View.VISIBLE else View.GONE
-            } else {
+                explanationMedia.visibility = if (question.explanationImages.isNotEmpty()) View.VISIBLE else View.GONE            } else {
                 explanation.visibility = View.GONE
                 v.findViewById<LinearLayout>(R.id.explanationMedia).visibility = View.GONE
             }
@@ -1497,8 +1494,7 @@ class MainActivity : Activity() {
             text = "ANALYTICS"
             setOnClickListener { tests.openAnalytics(); showTests() }
         })
-        box.addView(Button(this).apply {
-            text = "BACK TO TESTS"
+        box.addView(Button(this).apply {            text = "BACK TO TESTS"
             setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         })
         replace(ScrollView(this).apply { addView(box) })
