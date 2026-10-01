@@ -57,38 +57,15 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            set -eu
-            APK=/tmp/marrow-debug.apk
             echo "EMULATOR_SCRIPT_STARTED=1" > /tmp/emulator-script-started.txt
-            test -f "$APK"
+            test -f /tmp/marrow-debug.apk
             adb wait-for-device
             adb devices -l > /tmp/adb-devices.txt
             adb shell getprop > /tmp/device-props.txt
             adb shell pm list packages -f > /tmp/packages-before.txt
             adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
-
-            set +e
-            adb install -r -d --no-incremental "$APK" > /tmp/install.txt 2>&1
-            INSTALL_RC=$?
-            set -e
-            echo "INSTALL_RC=$INSTALL_RC" >> /tmp/install.txt
-
-            adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true
-            adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true
-            adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true
-
-            if [ "$INSTALL_RC" -eq 0 ]; then
-              adb shell am force-stop com.deepaksah.marrow.rebuild || true
-              adb shell monkey -p com.deepaksah.marrow.rebuild 1 > /tmp/launch.txt 2>&1 || true
-              sleep 8
-              adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true
-              adb shell dumpsys meminfo com.deepaksah.marrow.rebuild > /tmp/meminfo.txt 2>&1 || true
-              adb exec-out screencap -p > /tmp/screen.png || true
-            fi
-
-            adb logcat -d > /tmp/logcat.txt || true
-            exit "$INSTALL_RC"
+            adb install -r -d --no-incremental /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?; echo "INSTALL_RC=$RC" >> /tmp/install.txt; adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true; adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true; adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true; if [ "$RC" -eq 0 ]; then adb shell am force-stop com.deepaksah.marrow.rebuild || true; adb shell monkey -p com.deepaksah.marrow.rebuild 1 > /tmp/launch.txt 2>&1 || true; sleep 8; adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true; adb shell dumpsys meminfo com.deepaksah.marrow.rebuild > /tmp/meminfo.txt 2>&1 || true; adb exec-out screencap -p > /tmp/screen.png || true; fi; adb logcat -d > /tmp/logcat.txt || true; exit "$RC"
 
       - name: Upload install diagnostics
         if: always()
