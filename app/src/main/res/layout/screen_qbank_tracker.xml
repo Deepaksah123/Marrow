@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<LinearLayout android:id="@+id/qbankTrackerRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<LinearLayout android:id="@+id/qbankTrackerHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@color/marrow_surface" android:padding="16dp">
+<TextView android:id="@+id/qbankTrackerTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="QBank Tracker" android:textSize="24sp" android:textStyle="bold"/>
+<TextView android:id="@+id/qbankTrackerMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="Progress and completion" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<LinearLayout android:id="@+id/qbankTrackerSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@color/marrow_surface" android:padding="14dp" android:layout_marginTop="10dp"/>
+<TextView android:id="@+id/qbankTrackerSubjectTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Subject progress" android:textSize="18sp" android:textStyle="bold" android:paddingTop="18dp" android:paddingBottom="8dp"/>
+<LinearLayout android:id="@+id/qbankTrackerSubjects" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+<Button android:id="@+id/qbankTrackerBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="BACK TO QBANK" android:textAllCaps="false"/>
+</LinearLayout></ScrollView>
