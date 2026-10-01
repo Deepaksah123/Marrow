@@ -9,7 +9,11 @@ SOURCE_API="https://api.github.com/repos/sunday2212/WEBREPLITX5/git/trees/HEAD?r
 APP_API="https://api.github.com/repos/Deepaksah123/Marrow/git/trees/HEAD?recursive=1"
 
 def api(url):
-    req=urllib.request.Request(url,headers={"Accept":"application/vnd.github+json","User-Agent":"Marrow-Edition8-Audit"})
+    headers={"Accept":"application/vnd.github+json","User-Agent":"Marrow-Edition8-Audit"}
+    token=os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"]=f"Bearer {token}"
+    req=urllib.request.Request(url,headers=headers)
     with urllib.request.urlopen(req,timeout=60) as f: return json.load(f)
 
 def app_scan(root):
