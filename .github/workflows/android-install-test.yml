@@ -44,9 +44,29 @@ jobs:
           emulator-boot-timeout: 900
           script: |
             set -euxo pipefail
-            adb wait-for-device
+            set +e
+            for attempt in $(seq 1 30); do
+              state="$(adb get-state 2>/dev/null || true)"
+              boot="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+              echo "ADB attempt $attempt: state=$state boot=$boot"
+              if [ "$state" = "device" ] && [ "$boot" = "1" ]; then
+                break
+              fi
+              adb reconnect offline 2>/dev/null || true
+              sleep 5
+            done
+            set -e
+            test "$(adb get-state)" = "device"
+            test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
             adb shell getprop ro.build.version.sdk
-            adb install -r -t app/build/outputs/apk/debug/app-debug.apk
+            for attempt in $(seq 1 5); do
+              if adb install -r -t app/build/outputs/apk/debug/app-debug.apk; then
+                break
+              fi
+              adb reconnect offline 2>/dev/null || true
+              sleep 5
+              if [ "$attempt" = "5" ]; then exit 1; fi
+            done
             adb shell pm path com.deepaksah.marrow.rebuild
             adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
             sleep 5
