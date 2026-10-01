@@ -68,7 +68,6 @@ class MainActivity : Activity() {
         navQBank.setOnClickListener { state.navigate(MarrowRoute.QBANK); renderBottomNav(); showQBank() }
         navTests.setOnClickListener { state.navigate(MarrowRoute.TESTS); renderBottomNav(); showTests() }
         navVideos.setOnClickListener { state.navigate(MarrowRoute.VIDEOS); renderBottomNav(); showVideos() }
-        renderBottomNav()
         loadMarrowContentThenHome()
     }
 
@@ -131,6 +130,7 @@ class MainActivity : Activity() {
     }
 
     private fun updateBottomNavigation() {
+        findViewById<LinearLayout>(R.id.bottomNavigation)?.visibility = View.VISIBLE
         val route = state.session.route
         val selected = when (route) {
             MarrowRoute.QBANK, MarrowRoute.QBANK_INTRO, MarrowRoute.QBANK_TRACKER, MarrowRoute.QBANK_MODULE,
