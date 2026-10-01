@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout android:id="@+id/videoPlayerRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<LinearLayout android:id="@+id/videoPlayerHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/marrow_surface" android:padding="14dp" android:orientation="vertical">
+<TextView android:id="@+id/videoPlayerTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Video Player" android:textSize="22sp" android:textStyle="bold"/>
+<TextView android:id="@+id/videoPlayerSubject" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<TextView android:id="@+id/videoPlayerState" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textSize="14sp" android:textColor="@color/marrow_muted"/>
+<LinearLayout android:id="@+id/videoSpeedRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="10dp"/>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Brightness" android:textSize="14sp" android:paddingTop="16dp"/>
+<SeekBar android:id="@+id/videoBrightness" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+<Button android:id="@+id/videoPlayerBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="BACK" android:textAllCaps="false"/>
+</LinearLayout></ScrollView>
