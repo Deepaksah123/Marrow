@@ -59,7 +59,7 @@ jobs:
             cat > /tmp/run-install-test.sh <<'SH'
             set -u
             APK=/tmp/marrow-debug.apk
-            PKG=com.deepaksah.marrow.installtest
+            PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
             adb wait-for-device
             adb devices -l > /tmp/adb-devices.txt
@@ -95,9 +95,8 @@ jobs:
             SH
             sh /tmp/run-install-test.sh
 
-      # deterministic retrigger marker
       - name: Smoke-test marker
-        run: echo "install-smoke-deterministic-check"
+        run: echo "install-smoke-production-package"
 
       - name: Upload install diagnostics
         if: always()
