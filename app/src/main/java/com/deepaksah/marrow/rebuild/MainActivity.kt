@@ -675,7 +675,7 @@ class MainActivity : Activity() {
             row.addView(LinearLayout(this).apply {
                 orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
                 addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
-                addView(TextView(this@MainActivity).apply { text="$" + "{moduleIds.size} modules  ·  $" + "{questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
+                addView(TextView(this@MainActivity).apply { text="${moduleIds.size} modules  ·  ${questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
             }); c.addView(row); addDivider(c)
         }
         sourceCard("Previous Year Question Papers","Question paper modules") { state.navigate(MarrowRoute.PYQ); showPyq() }
