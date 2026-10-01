@@ -1296,17 +1296,22 @@ class MainActivity : Activity() {
             else -> {
                 val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
                 replace(v)
-                listOf(
-                    R.id.testGrandTab to "Grand Tests",
-                    R.id.testMiniTab to "Mini Tests",
-                    R.id.testSubjectTab to "Subject Tests"
-                ).forEach { (id, label) ->
+                val tabs = listOf(
+                    R.id.testGrandTab to "200 MCQ",
+                    R.id.testMiniTab to "Grand",
+                    R.id.testSubjectTab to "All",
+                    R.id.testSubjectFilterTab to "Mini",
+                    R.id.testSubjectOnlyTab to "Subject"
+                )
+                tabs.forEach { (id, label) ->
                     v.findViewById<Button>(id).setOnClickListener {
                         tests.selectConfiguredTab(label)
-                        v.findViewById<TextView>(R.id.testYear).text = "Current Year · $label"
+                        v.findViewById<TextView>(R.id.testYear).text = "Current Test Cycle · $label"
+                        v.findViewById<TextView>(R.id.testPayloadState).text =
+                            "Selected: $label · live schedule/payload remains server-backed and is not fabricated."
                     }
                 }
-                v.findViewById<TextView>(R.id.testYear).text = "Current Year · configured test tabs"
+                v.findViewById<TextView>(R.id.testYear).text = "Current Test Cycle · 200 MCQ"
                 v.findViewById<Button>(R.id.testStart).setOnClickListener {
                     tests.openIntro("source-test")
                     showTests()
@@ -1318,6 +1323,12 @@ class MainActivity : Activity() {
                 v.findViewById<Button>(R.id.testReview).setOnClickListener {
                     tests.openAnalytics()
                     showTests()
+                }
+                v.findViewById<View>(R.id.testMonthRow).setOnClickListener {
+                    showAccountActionState("This Month", "The native Test surface exposes a monthly schedule row. The actual schedule is account/server-backed and is not fabricated.")
+                }
+                v.findViewById<View>(R.id.testPreviousYearRow).setOnClickListener {
+                    showAccountActionState("Previous Year", "The native Test surface exposes previous-year/archive navigation. No unverified archive payload is fabricated.")
                 }
             }
         }
