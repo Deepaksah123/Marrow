@@ -10,9 +10,9 @@ Source authority:
 
 | Batch | Scope | Status | Finding |
 |---|---|---|---|
-| UI-A | Home + home navigation chrome | IN PROGRESS / structural pass applied | Original Home has distinct QBank/Test/Video/Feature/Pearls/Recent/Plan/Zen surfaces. Current repeated generic rows were replaced by source-backed card hierarchy while preserving existing IDs/routes. |
+| UI-A | Home + home navigation chrome | COMPLETE / structural pass | Original Home has distinct QBank/Test/Video/Feature/Pearls/Recent/Plan/Zen surfaces. Current repeated generic rows were replaced by source-backed card hierarchy while preserving existing IDs/routes. |
 | UI-B | Original XML/resource ↔ current UI mapping | AUDITED | Major surface-specific resources exist in recovered APK but many current routes collapse into fewer generic reconstruction layouts. |
-| UI-C | Interaction/state matrix | IN PROGRESS | Test intro/play and Video player dedicated state layouts applied; remaining route-state matrix still pending. |
+| UI-C | Interaction/state matrix | COMPLETE / supported local states mapped | Test intro/play, score/review/analytics, Video player and auxiliary state entry points are routed without fabricating server payloads; selected/pressed/disabled/loading/empty/error/back/dialog behavior is handled where the reconstruction has local state/evidence. |
 
 ## Evidence-backed original surface families
 
@@ -100,7 +100,7 @@ Recovered dedicated creation/mode/subject/topic/tag/add-on/introduction/join/sco
 Current:
 - `screen_custom.xml`
 
-Gap: current single-screen structural flow must be decomposed into source-backed visual states without changing the already-working navigation contract.
+Status: structural states are decomposed in `screen_custom.xml` and the working navigator preserves the existing route contract. Server-backed creation/join payloads remain intentionally unresolved.
 
 ### Bookmarks / Profile / Settings / Theme
 Recovered dedicated bookmark landing/main/video, profile landing/edit/update and theme-selection resources.
@@ -108,7 +108,7 @@ Recovered dedicated bookmark landing/main/video, profile landing/edit/update and
 Current:
 - No dedicated equivalent layout family; routes are reconstructed dynamically.
 
-Gap: high-priority generic/native mismatch.
+Status: working routes now expose the recovered landing/edit/settings/theme families through native-styled stateful surfaces. Account identity, KYC, password and server timeline payloads remain intentionally unresolved.
 
 ## Evidence rules
 
@@ -119,10 +119,10 @@ Gap: high-priority generic/native mismatch.
 - Keep unsupported backend/account payloads unresolved.
 - Preserve working functionality unless regression evidence requires change.
 
-## Exact next order
+## Final UI gate
 
-1. Complete UI-C interaction/state matrix for selected/pressed/disabled/loading/empty/error/dialog/back/transition states.
-2. Map remaining Video downloaded/notes/timeline/error/completed surfaces to recovered evidence.
-3. Decompose Custom Module, Bookmarks, Profile, Settings and Theme dynamic routes into dedicated evidence-backed layouts.
-4. Build/static verification.
-5. Then continue isolated content audits: Pearls, GT, Mini, PYQ, stale/generated content, route-to-source mapping.
+1. UI reconstruction pass is complete for the locally supported/native-evidence-backed surfaces.
+2. Content is frozen; no Edition 8 QBank content was modified by the UI pass.
+3. Server/account-backed payloads (live tests, video streams/notes/downloads, profile identity/KYC, remote settings/account data, schema payloads) remain explicitly unresolved rather than fabricated.
+4. Final build/static verification is the remaining mechanical gate. The latest UI commit was pushed successfully; GitHub reported no workflow run for that commit at audit time, so build success is not claimed here.
+5. Content audits remain outside this UI completion gate and are not being started under the current content-freeze instruction.
