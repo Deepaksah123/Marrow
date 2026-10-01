@@ -1,8 +1,13 @@
 # Marrow Content
 
-This folder contains only Marrow educational content materialized from WEBREPLITX5. Edition 8 QBank is the active QBank source. Legacy/duplicate Marrow6 content is intentionally excluded.
-EOF
+Canonical active content currently materialized here:
+- Edition 8 QBank only, from the verified Marrow QBank source.
 
-echo "Marrow source synced into $DEST"
-find "$DEST" -type f | wc -l
-du -sh "$DEST"
+Explicitly NOT imported from WEBREPLITX5:
+- Grand Tests
+- Mini Tests
+- PYQ / Previous Year content
+- FMGE Test Series
+- other Marrow catalogue/content trees
+
+Pearls are sourced separately from the user-provided Marrow_pearls.html.
