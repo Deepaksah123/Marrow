@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<LinearLayout android:id="@+id/testIntroRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<LinearLayout android:id="@+id/testIntroHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/marrow_surface" android:padding="16dp" android:orientation="vertical">
+<TextView android:id="@+id/testIntroTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Test Introduction" android:textSize="24sp" android:textStyle="bold" android:textColor="@color/marrow_text"/>
+<TextView android:id="@+id/testIntroMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Instructions · test configuration" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<TextView android:id="@+id/testIntroPayload" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:textSize="15sp" android:textColor="@color/marrow_muted" android:padding="4dp"/>
+<Button android:id="@+id/testIntroBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="BACK" android:textAllCaps="false"/>
+</LinearLayout></ScrollView>
