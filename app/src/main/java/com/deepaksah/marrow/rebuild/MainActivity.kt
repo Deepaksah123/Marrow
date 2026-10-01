@@ -46,7 +46,11 @@ class MainActivity : Activity() {
         val navQBank = findViewById<TextView>(R.id.navQBank)
         val navTests = findViewById<TextView>(R.id.navTests)
         val navVideos = findViewById<TextView>(R.id.navVideos)
+        val bottomNavigation = findViewById<LinearLayout>(R.id.bottomNavigation)
+        bottomNavigation.visibility = View.GONE
+
         fun renderBottomNav() {
+            bottomNavigation.visibility = View.VISIBLE
             val active = when (state.session.route) {
                 MarrowRoute.QBANK, MarrowRoute.QBANK_INTRO, MarrowRoute.QBANK_TRACKER, MarrowRoute.QBANK_MODULE,
                 MarrowRoute.QBANK_LESSON, MarrowRoute.QBANK_PLAY, MarrowRoute.QBANK_SCORE, MarrowRoute.QBANK_REVIEW,
