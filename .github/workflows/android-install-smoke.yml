@@ -56,11 +56,15 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
+            adb start-server || true
+            sleep 2
             cat > /tmp/run-install-test.sh <<'SH'
             set -u
             APK=/tmp/marrow-debug.apk
             PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
+            adb start-server || true
+            sleep 2
             adb wait-for-device
             adb devices -l > /tmp/adb-devices.txt
             adb shell getprop > /tmp/device-props.txt
