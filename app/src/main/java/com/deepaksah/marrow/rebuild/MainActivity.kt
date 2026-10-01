@@ -1471,144 +1471,40 @@ class MainActivity : Activity() {
     }
 
     private fun showTestIntro() {
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24,24,24,24) }
-        box.addView(TextView(this).apply { text = "Test Introduction"; textSize = 24f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply { text = "No verified test payload is attached to the current C content layer."; setPadding(4,20,4,20) })
-        box.addView(Button(this).apply { text = "BACK"; setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() } })
-        replace(ScrollView(this).apply { addView(box) })
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_test_intro, content, false)
+        replace(v)
+        v.findViewById<TextView>(R.id.testIntroPayload).text = "No verified test payload is attached to the current C content layer."
+        v.findViewById<Button>(R.id.testIntroBack).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
     }
 
     private fun showTestPlay() {
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_test_play, content, false)
+        replace(v)
         val ids = state.test.mcqIds
         val index = state.test.currentIndex
         val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
-
         state.startTestTimer()
+        v.findViewById<TextView>(R.id.testPlayPosition).text = "Test · \${index + 1} / \${ids.size}"
         val remaining = state.test.remainingTimeMs
-        box.addView(TextView(this).apply {
-            text = "Test · ${index + 1} / ${ids.size}"
-            textSize = 16f
-        })
-        if (remaining != null) {
-            box.addView(TextView(this).apply {
-                text = "Time remaining: " + ((remaining + 999L) / 1000L) + "s"
-                setPadding(0, 6, 0, 12)
-            })
-        }
-        box.addView(TextView(this).apply {
-            text = q?.text ?: "No supplied test MCQ payload is loaded."
-            textSize = 20f
-            setTypeface(typeface, Typeface.BOLD)
-            setPadding(0,18,0,18)
-        })
+        v.findViewById<TextView>(R.id.testPlayTimer).text = if (remaining != null) "Time remaining: " + ((remaining + 999L) / 1000L) + "s" else ""
+        v.findViewById<TextView>(R.id.testPlayQuestion).text = q?.text ?: "No supplied test MCQ payload is loaded."
+        val stateView = v.findViewById<TextView>(R.id.testPlayState)
+        val actions = v.findViewById<LinearLayout>(R.id.testPlayActions)
+        val options = v.findViewById<LinearLayout>(R.id.testPlayOptions)
+        val nav = v.findViewById<LinearLayout>(R.id.testPlayNav)
+        actions.removeAllViews(); options.removeAllViews(); nav.removeAllViews()
         if (q != null) {
             val existing = state.test.answers[q.id]
-            box.addView(Button(this).apply {
-                text = if (existing?.isGuessed == true) "GUESSED" else "MARK GUESSED"
-                setOnClickListener {
-                    TestSession(state).markGuessed(q.id, existing?.isGuessed != true)
-                    showTestPlay()
-                }
-            })
-            box.addView(Button(this).apply {
-                text = if (existing?.isStarred == true) "★ BOOKMARKED" else "☆ BOOKMARK"
-                setOnClickListener {
-                    TestSession(state).toggleBookmark(q.id)
-                    showTestPlay()
-                }
-            })
-            q.choices.forEach { choice ->
-                box.addView(Button(this).apply {
-                    text = choice.text
-                    isEnabled = !state.test.timedOut
-                    if (existing?.locked == true) {
-                        when {
-                            choice.id == q.correctChoiceId -> {
-                                setBackgroundColor(0xFF2E7D32.toInt())
-                                setTextColor(0xFFFFFFFF.toInt())
-                            }
-                            choice.id == existing.selectedAnswer -> {
-                                setBackgroundColor(0xFFC62828.toInt())
-                                setTextColor(0xFFFFFFFF.toInt())
-                            }
-                        }
-                    }
-                    setOnClickListener {
-                        TestSession(state).answer(q.id, choice.id, q.correctChoiceId)
-                        showTestPlay()
-                    }
-                })
-            }
-            if (existing?.locked == true && q.solution.isNotBlank()) {
-                box.addView(TextView(this).apply {
-                    text = "Explanation\n\n" + q.solution
-                    textSize = 14f
-                    setPadding(8,16,8,16)
-                })
-            }
-        }
-        val jumpRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        val jumpInput = EditText(this).apply { hint = "Question no."; inputType = android.text.InputType.TYPE_CLASS_NUMBER }
-        jumpRow.addView(jumpInput, LinearLayout.LayoutParams(0, -2, 1f))
-        jumpRow.addView(Button(this).apply {
-            text = "JUMP"
-            setOnClickListener {
-                val target = jumpInput.text.toString().toIntOrNull()
-                if (target != null && target in 1..ids.size) {
-                    state.moveTestQuestion(target - 1)
-                    showTestPlay()
-                }
-            }
-        })
-        box.addView(jumpRow)
-
-        val nav = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        if (index > 0) {
-            nav.addView(Button(this).apply {
-                text = "PREVIOUS"
-                setOnClickListener { state.moveTestQuestion(index - 1); showTestPlay() }
-            }, LinearLayout.LayoutParams(0, -2, 1f))
-        }
-        val navStatus = state.test.navigationButtonStatus
-        nav.addView(Button(this).apply {
-            text = if (navStatus == NavigationButtonStatus.COMPLETE) "SUBMIT" else "NEXT"
-            setOnClickListener {
-                if (navStatus == NavigationButtonStatus.COMPLETE) {
-                    state.confirmTestSubmission()
-                    tests.openScore()
-                    showTests()
-                } else {
-                    state.moveTestQuestion(index + 1)
-                    showTestPlay()
-                }
-            }
-        }, LinearLayout.LayoutParams(0, -2, 1f))
-        box.addView(nav)
-        box.addView(Button(this).apply {
-            text = "SKIP"
-            isEnabled = !state.test.timedOut
-            setOnClickListener {
-                q?.let { TestSession(state).skip(it.id) }
-                if (index + 1 < ids.size) {
-                    state.moveTestQuestion(index + 1)
-                    showTestPlay()
-                } else {
-                    state.confirmTestSubmission()
-                    tests.openScore()
-                    showTests()
-                }
-            }
-        })
-        box.addView(Button(this).apply {
-            text = "SUBMIT / SCORE"
-            setOnClickListener {
-                state.confirmTestSubmission()
-                tests.openScore()
-                showTests()
-            }
-        })
-        replace(ScrollView(this).apply { addView(box) })
+            stateView.text = when { state.test.timedOut -> "Timed out"; existing?.locked == true -> "Answer locked"; else -> "Select an option" }
+            actions.addView(Button(this).apply { text = if (existing?.isGuessed == true) "GUESSED" else "MARK GUESSED"; isAllCaps=false; setOnClickListener { TestSession(state).markGuessed(q.id, existing?.isGuessed != true); showTestPlay() } }, LinearLayout.LayoutParams(0,-2,1f))
+            actions.addView(Button(this).apply { text = if (existing?.isStarred == true) "★ BOOKMARKED" else "☆ BOOKMARK"; isAllCaps=false; setOnClickListener { TestSession(state).toggleBookmark(q.id); showTestPlay() } }, LinearLayout.LayoutParams(0,-2,1f))
+            q.choices.forEach { choice -> options.addView(Button(this).apply { text=choice.text; isAllCaps=false; isEnabled=!state.test.timedOut; if(existing?.locked==true){ when { choice.id==q.correctChoiceId->{setBackgroundColor(0xFF2E7D32.toInt());setTextColor(0xFFFFFFFF.toInt())}; choice.id==existing.selectedAnswer->{setBackgroundColor(0xFFC62828.toInt());setTextColor(0xFFFFFFFF.toInt())} } }; setOnClickListener{TestSession(state).answer(q.id,choice.id,q.correctChoiceId);showTestPlay()} }) }
+            if(existing?.locked==true && q.solution.isNotBlank()) options.addView(TextView(this).apply{text="Explanation\n\n"+q.solution;textSize=14f;setPadding(8,16,8,16)})
+        } else stateView.text="No verified local question payload."
+        nav.addView(Button(this).apply{text="PREVIOUS";isAllCaps=false;isEnabled=index>0;setOnClickListener{if(index>0){state.moveTestQuestion(index-1);showTestPlay()}}},LinearLayout.LayoutParams(0,-2,1f))
+        val navStatus=state.test.navigationButtonStatus
+        nav.addView(Button(this).apply{text=if(navStatus==NavigationButtonStatus.COMPLETE)"SUBMIT" else "NEXT";isAllCaps=false;setOnClickListener{if(navStatus==NavigationButtonStatus.COMPLETE){state.confirmTestSubmission();tests.openScore();showTests()}else{state.moveTestQuestion(index+1);showTestPlay()}}},LinearLayout.LayoutParams(0,-2,1f))
+        (v.findViewById<LinearLayout>(R.id.testPlayRoot)).addView(Button(this).apply{text="SKIP";isAllCaps=false;isEnabled=!state.test.timedOut;setOnClickListener{q?.let{TestSession(state).skip(it.id)};if(index+1<ids.size){state.moveTestQuestion(index+1);showTestPlay()}else{state.confirmTestSubmission();tests.openScore();showTests()}}})
     }
 
     private fun showTestScore() {
