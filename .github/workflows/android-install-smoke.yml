@@ -39,7 +39,6 @@ jobs:
           APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
           test -f "$APK"
           cp "$APK" /tmp/marrow-debug.apk
-          test -f /tmp/marrow-debug.apk
           BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           "$BUILD_TOOLS/aapt2" dump badging "$APK" > /tmp/aapt-badging.txt
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
@@ -57,29 +56,34 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            echo "EMULATOR_SCRIPT_STARTED=1" > /tmp/emulator-script-started.txt
-            test -f /tmp/marrow-debug.apk
+            cat > /tmp/run-install-test.sh <<'SH'
+            set -u
+            APK=/tmp/marrow-debug.apk
+            PKG=com.deepaksah.marrow.installtest
+            test -f "$APK"
             adb wait-for-device
             adb devices -l > /tmp/adb-devices.txt
             adb shell getprop > /tmp/device-props.txt
-            adb shell pm list packages -f > /tmp/packages-before.txt
-            adb shell pm path com.deepaksah.marrow.installtest > /tmp/pm-path-before.txt 2>&1 || true
+            adb shell pm path "$PKG" > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
-            adb install -r /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?; echo "INSTALL_COMMAND=adb install -r /tmp/marrow-debug.apk" >> /tmp/install.txt; echo "INSTALL_RC=$RC" >> /tmp/install.txt
-            RC=$(sed -n 's/^INSTALL_RC=//p' /tmp/install.txt | tail -1)
-            adb shell pm path com.deepaksah.marrow.installtest > /tmp/pm-path-after.txt 2>&1 || true
-            adb shell dumpsys package com.deepaksah.marrow.installtest > /tmp/package-dump.txt 2>&1 || true
-            adb shell pm list packages -f | grep com.deepaksah.marrow.installtest > /tmp/package-list.txt 2>&1 || true
+            adb install -r "$APK" > /tmp/install.txt 2>&1
+            RC=$?
+            printf '\nINSTALL_COMMAND=adb install -r %s\nINSTALL_RC=%s\n' "$APK" "$RC" >> /tmp/install.txt
+            adb shell pm path "$PKG" > /tmp/pm-path-after.txt 2>&1 || true
+            adb shell dumpsys package "$PKG" > /tmp/package-dump.txt 2>&1 || true
+            adb shell pm list packages -f | grep "$PKG" > /tmp/package-list.txt 2>&1 || true
             if [ "$RC" -eq 0 ]; then
-              adb shell am force-stop com.deepaksah.marrow.installtest || true
-              adb shell monkey -p com.deepaksah.marrow.installtest 1 > /tmp/launch.txt 2>&1 || true
+              adb shell am force-stop "$PKG" || true
+              adb shell monkey -p "$PKG" 1 > /tmp/launch.txt 2>&1 || true
               sleep 8
               adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true
-              adb shell dumpsys meminfo com.deepaksah.marrow.installtest > /tmp/meminfo.txt 2>&1 || true
+              adb shell dumpsys meminfo "$PKG" > /tmp/meminfo.txt 2>&1 || true
               adb exec-out screencap -p > /tmp/screen.png || true
             fi
             adb logcat -d > /tmp/logcat.txt || true
-            if [ "$RC" -ne 0 ]; then exit "$RC"; fi
+            exit "$RC"
+            SH
+            sh /tmp/run-install-test.sh
 
       - name: Upload install diagnostics
         if: always()
