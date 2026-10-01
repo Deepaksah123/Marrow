@@ -661,6 +661,19 @@ class MainActivity : Activity() {
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
         tracker.text = "QBank tracker   ·   " + metrics.attempted + "/" + metrics.total + " attempted   ·   " + String.format("%.1f", metrics.accuracy) + "% accuracy"
         tracker.setOnClickListener { state.navigate(MarrowRoute.QBANK_TRACKER); showQBankTracker() }
+        v.findViewById<Button>(R.id.qbankSearchAction).setOnClickListener {
+            state.navigate(MarrowRoute.SEARCH)
+            showSearch()
+        }
+        v.findViewById<Button>(R.id.qbankBookmarkAction).setOnClickListener {
+            state.navigate(MarrowRoute.BOOKMARKS)
+            showBookmarks()
+        }
+        v.findViewById<Button>(R.id.qbankCustomAction).setOnClickListener {
+            customStage = 0
+            state.navigate(MarrowRoute.CUSTOM_MODULE)
+            showCustom()
+        }
         val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
         fun sourceCard(label: String, detail: String, action: () -> Unit) {
             c.addView(LinearLayout(this).apply {
