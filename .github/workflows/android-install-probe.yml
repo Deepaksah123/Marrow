@@ -1,0 +1,104 @@
+name: Android Install Probe
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  ultra-minimal-probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Replace app with true native install probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf app/src/main
+          mkdir -p app/src/main/java/com/deepaksah/marrow/installprobe
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar"
+                  android:label="Marrow Install Probe"
+                  android:allowBackup="false"
+                  android:supportsRtl="true">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+          cat > app/src/main/java/com/deepaksah/marrow/installprobe/MainActivity.java <<'EOF'
+          package com.deepaksah.marrow.installprobe;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.widget.TextView;
+          public final class MainActivity extends Activity {
+              @Override protected void onCreate(Bundle state) {
+                  super.onCreate(state);
+                  TextView view = new TextView(this);
+                  view.setText("Marrow Install Probe\n\nNative Android install test");
+                  view.setTextSize(20);
+                  view.setPadding(48, 48, 48, 48);
+                  setContentView(view);
+              }
+          }
+          EOF
+
+      - name: Configure isolated package
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's/applicationId = "[^"]*"/applicationId = "com.deepaksah.marrow.installprobe"/' app/build.gradle.kts
+          sed -i 's/namespace = "[^"]*"/namespace = "com.deepaksah.marrow.installprobe"/' app/build.gradle.kts
+          sed -i 's/versionCode = [0-9]*/versionCode = 1/' app/build.gradle.kts
+          sed -i 's/versionName = "[^"]*"/versionName = "1.0-probe"/' app/build.gradle.kts
+
+      - name: Assemble probe
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Validate probe APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+          "$BUILD_TOOLS/zipalign" -c -v 4 "$APK"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" | tee probe-apksigner.txt
+          "$BUILD_TOOLS/aapt2" dump badging "$APK" | tee probe-badging.txt
+          sha256sum "$APK" | tee probe-sha256.txt
+          stat -c '%s' "$APK" | tee probe-size.txt
+          unzip -t "$APK" > probe-zip-test.txt
+
+      - name: Upload true install probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-true-native-install-probe
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Upload probe report
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-true-native-install-probe-report
+          path: |
+            probe-apksigner.txt
+            probe-badging.txt
+            probe-sha256.txt
+            probe-size.txt
+            probe-zip-test.txt
+          if-no-files-found: error
