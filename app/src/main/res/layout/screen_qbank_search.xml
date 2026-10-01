@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<LinearLayout android:id="@+id/qbankSearchRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<TextView android:id="@+id/qbankSearchTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Search" android:textSize="24sp" android:textStyle="bold"/>
+<EditText android:id="@+id/qbankSearchInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Search loaded QBank content" android:singleLine="true"/>
+<Button android:id="@+id/qbankSearchButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="SEARCH" android:textAllCaps="false"/>
+<TextView android:id="@+id/qbankSearchState" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="14dp" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+<LinearLayout android:id="@+id/qbankSearchResults" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="6dp"/>
+</LinearLayout></ScrollView>
