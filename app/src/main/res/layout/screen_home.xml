@@ -20,7 +20,7 @@
 </LinearLayout>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Suggestions" android:textColor="@color/marrow_text" android:textSize="13sp" android:textStyle="bold" android:paddingStart="4dp" android:paddingTop="6dp" android:paddingBottom="6dp"/>
 <LinearLayout android:id="@+id/homeQBankCard" android:layout_width="match_parent" android:layout_height="88dp" android:layout_marginBottom="10dp" android:background="@drawable/bg_home_card" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp" android:paddingTop="12dp" android:paddingBottom="12dp">
-<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_home" android:contentDescription="@null"/>
+<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_qbank" android:contentDescription="@null"/>
 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Question Bank" android:textColor="@color/marrow_text" android:textSize="16sp" android:textStyle="bold"/>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Suggested QBank" android:textColor="@color/marrow_muted" android:textSize="12sp"/>
@@ -28,7 +28,7 @@
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textColor="@color/marrow_muted" android:textSize="28sp"/>
 </LinearLayout>
 <LinearLayout android:id="@+id/homeTestCard" android:layout_width="match_parent" android:layout_height="88dp" android:layout_marginBottom="10dp" android:background="@drawable/bg_home_card" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp" android:paddingTop="12dp" android:paddingBottom="12dp">
-<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_home" android:contentDescription="@null"/>
+<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_tests" android:contentDescription="@null"/>
 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tests" android:textColor="@color/marrow_text" android:textSize="16sp" android:textStyle="bold"/>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Suggested test" android:textColor="@color/marrow_muted" android:textSize="12sp"/>
@@ -36,7 +36,7 @@
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textColor="@color/marrow_muted" android:textSize="28sp"/>
 </LinearLayout>
 <LinearLayout android:id="@+id/homeVideoCard" android:layout_width="match_parent" android:layout_height="88dp" android:layout_marginBottom="10dp" android:background="@drawable/bg_home_card" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp" android:paddingTop="12dp" android:paddingBottom="12dp">
-<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_home" android:contentDescription="@null"/>
+<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_videos" android:contentDescription="@null"/>
 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Videos" android:textColor="@color/marrow_text" android:textSize="16sp" android:textStyle="bold"/>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Suggested video" android:textColor="@color/marrow_muted" android:textSize="12sp"/>
@@ -53,7 +53,7 @@
 </LinearLayout>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="More from Home" android:textColor="@color/marrow_text" android:textSize="13sp" android:textStyle="bold" android:paddingStart="4dp" android:paddingTop="6dp" android:paddingBottom="6dp"/>
 <LinearLayout android:id="@+id/homePearlsCard" android:layout_width="match_parent" android:layout_height="88dp" android:layout_marginBottom="10dp" android:background="@drawable/bg_home_card" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp" android:paddingTop="12dp" android:paddingBottom="12dp">
-<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_home_tab_home" android:contentDescription="@null"/>
+<ImageView android:layout_width="36dp" android:layout_height="36dp" android:layout_marginEnd="14dp" android:src="@drawable/ic_marrow_bookmark" android:contentDescription="@null"/>
 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pearls" android:textColor="@color/marrow_text" android:textSize="16sp" android:textStyle="bold"/>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Pearl information" android:textColor="@color/marrow_muted" android:textSize="12sp"/>
