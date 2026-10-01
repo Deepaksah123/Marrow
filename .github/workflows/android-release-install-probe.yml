@@ -1,0 +1,142 @@
+name: Android Release Install Probe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Create isolated native release probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf app/src/main app/build
+          mkdir -p app/src/main/java/com/deepaksah/marrow/installprobe3
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar"
+                  android:label="Marrow Release Install Probe"
+                  android:allowBackup="false"
+                  android:supportsRtl="true">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+          cat > app/src/main/java/com/deepaksah/marrow/installprobe3/MainActivity.java <<'EOF'
+          package com.deepaksah.marrow.installprobe3;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.widget.TextView;
+          public final class MainActivity extends Activity {
+              @Override protected void onCreate(Bundle state) {
+                  super.onCreate(state);
+                  TextView view = new TextView(this);
+                  view.setText("Marrow Release Install Probe\n\nNon-debug native APK");
+                  view.setTextSize(20);
+                  view.setPadding(48, 48, 48, 48);
+                  setContentView(view);
+              }
+          }
+          EOF
+
+      - name: Generate signing key and isolated Gradle project
+        shell: bash
+        run: |
+          set -euo pipefail
+          keytool -genkeypair -v             -keystore probe-release.jks             -storepass changeit             -keypass changeit             -alias probe             -keyalg RSA             -keysize 2048             -validity 10000             -dname "CN=Marrow Release Probe, O=OpenAI Test, C=US"
+          cat > app/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+          }
+          android {
+              namespace = "com.deepaksah.marrow.installprobe3"
+              compileSdk = 35
+              defaultConfig {
+                  applicationId = "com.deepaksah.marrow.installprobe3"
+                  minSdk = 23
+                  targetSdk = 35
+                  versionCode = 1
+                  versionName = "1.0-release-probe"
+              }
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              signingConfigs {
+                  create("probeRelease") {
+                      storeFile = file("../probe-release.jks")
+                      storePassword = "changeit"
+                      keyAlias = "probe"
+                      keyPassword = "changeit"
+                      enableV1Signing = true
+                      enableV2Signing = true
+                  }
+              }
+              buildTypes {
+                  getByName("release") {
+                      isMinifyEnabled = false
+                      isDebuggable = false
+                      signingConfig = signingConfigs.getByName("probeRelease")
+                  }
+              }
+          }
+          EOF
+
+      - name: Build non-debug release probe
+        run: gradle clean :app:assembleRelease --stacktrace
+
+      - name: Validate manifest, signing and package
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/app-release.apk"
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+          "$BUILD_TOOLS/zipalign" -c -v 4 "$APK"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" | tee release-apksigner.txt
+          "$BUILD_TOOLS/aapt2" dump badging "$APK" | tee release-badging.txt
+          if grep -q "application-debuggable" release-badging.txt; then
+            echo "ERROR: release APK is still debuggable"
+            exit 1
+          fi
+          if grep -q "testOnly" release-badging.txt; then
+            echo "ERROR: release APK is testOnly"
+            exit 1
+          fi
+          sha256sum "$APK" | tee release-sha256.txt
+          stat -c '%s' "$APK" | tee release-size.txt
+          unzip -t "$APK" | tee release-zip-test.txt
+
+      - name: Upload non-debug release probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-native-release-install-probe
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+
+      - name: Upload release probe report
+        uses: actions/upload-artifact@v4
+        with:
+          name: marrow-native-release-install-probe-report
+          path: |
+            release-apksigner.txt
+            release-badging.txt
+            release-sha256.txt
+            release-size.txt
+            release-zip-test.txt
+          if-no-files-found: error
