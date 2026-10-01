@@ -61,6 +61,7 @@ class MainActivity : Activity() {
                 else -> navHome
             }
             listOf(navHome, navQBank, navTests, navVideos).forEach {
+                it.isSelected = it == active
                 it.setTextColor(if (it == active) getColor(R.color.marrow_primary) else getColor(R.color.marrow_muted))
             }
         }
@@ -151,6 +152,7 @@ class MainActivity : Activity() {
         }
         listOf(R.id.navHome, R.id.navQBank, R.id.navTests, R.id.navVideos).forEach { id ->
             findViewById<TextView>(id)?.apply {
+                isSelected = id == selected
                 setTextColor(if (id == selected) getColor(R.color.marrow_primary) else getColor(R.color.marrow_muted))
                 alpha = if (id == selected) 1f else 0.72f
             }
