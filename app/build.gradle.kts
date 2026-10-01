@@ -5,14 +5,15 @@ plugins {
 
 android {
     namespace = "com.deepaksah.marrow.rebuild"
+
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.deepaksah.marrow.rebuild"
+        applicationId = "com.deepaksah.marrow.installtest"
         minSdk = 23
         targetSdk = 35
-        versionCode = 155
-        versionName = "0.1.0"
+        versionCode = 100155
+        versionName = "0.1.0-installtest"
     }
 
     signingConfigs {
