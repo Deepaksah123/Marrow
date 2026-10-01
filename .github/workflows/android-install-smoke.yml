@@ -29,7 +29,8 @@ jobs:
       - name: Static APK diagnostics
         run: |
           set -eu
-          APK=app/build/outputs/apk/debug/app-debug.apk
+          APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
+          test -f "$APK"
           BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           "$BUILD_TOOLS/aapt2" dump badging "$APK" > /tmp/aapt-badging.txt
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
@@ -47,7 +48,8 @@ jobs:
           emulator-boot-timeout: 900
           script: |
             set -eu
-            APK=app/build/outputs/apk/debug/app-debug.apk
+            APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
+            test -f "$APK"
             adb wait-for-device
             adb devices -l > /tmp/adb-devices.txt
             adb shell getprop > /tmp/device-props.txt
