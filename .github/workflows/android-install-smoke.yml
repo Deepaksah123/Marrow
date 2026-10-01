@@ -65,9 +65,8 @@ jobs:
             adb shell pm list packages -f > /tmp/packages-before.txt
             adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
-            adb install -r /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?
-            echo "INSTALL_COMMAND=adb install -r /tmp/marrow-debug.apk" >> /tmp/install.txt
-            echo "INSTALL_RC=$RC" >> /tmp/install.txt
+            adb install -r /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?; echo "INSTALL_COMMAND=adb install -r /tmp/marrow-debug.apk" >> /tmp/install.txt; echo "INSTALL_RC=$RC" >> /tmp/install.txt
+            RC=$(sed -n 's/^INSTALL_RC=//p' /tmp/install.txt | tail -1)
             adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true
             adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true
             adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true
@@ -80,7 +79,7 @@ jobs:
               adb exec-out screencap -p > /tmp/screen.png || true
             fi
             adb logcat -d > /tmp/logcat.txt || true
-            exit "$RC"
+            if [ "$RC" -ne 0 ]; then exit "$RC"; fi
 
       - name: Upload install diagnostics
         if: always()
