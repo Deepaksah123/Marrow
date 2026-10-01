@@ -1961,9 +1961,19 @@ class MainActivity : Activity() {
         root.addView(TextView(this).apply { text="Profile"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
         root.addView(TextView(this).apply { text="Recovered profile surface. Account identity is not fabricated locally."; setPadding(4,18,4,20) })
         root.addView(Button(this).apply { text="EDIT PROFILE"; setOnClickListener { showProfileEdit() } })
+        root.addView(Button(this).apply { text="CHANGE PASSWORD"; setOnClickListener { showAccountActionState("Change Password", "The recovered Profile Landing flow exposes a change-password action. The password reset/update response is account/server-backed and is not fabricated locally.") } })
+        root.addView(Button(this).apply { text="KYC"; setOnClickListener { showAccountActionState("KYC", "The recovered Profile Landing flow exposes KYC navigation. KYC document/name/upload states are server/account-backed and are not fabricated locally.") } })
         root.addView(Button(this).apply { text="SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
         root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
         replace(ScrollView(this).apply { addView(root) })
+    }
+
+    private fun showAccountActionState(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun showProfileEdit() {
