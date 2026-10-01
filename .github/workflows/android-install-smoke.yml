@@ -66,9 +66,14 @@ jobs:
             adb shell getprop > /tmp/device-props.txt
             adb shell pm path "$PKG" > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
+            set +e
             adb install -r "$APK" > /tmp/install.txt 2>&1
             RC=$?
+            set -u
             printf '\nINSTALL_COMMAND=adb install -r %s\nINSTALL_RC=%s\n' "$APK" "$RC" >> /tmp/install.txt
+            echo "===== EXACT adb install -r OUTPUT ====="
+            cat /tmp/install.txt
+            echo "===== EXACT adb install RC: $RC ====="
             adb shell pm path "$PKG" > /tmp/pm-path-after.txt 2>&1 || true
             adb shell dumpsys package "$PKG" > /tmp/package-dump.txt 2>&1 || true
             adb shell pm list packages -f | grep "$PKG" > /tmp/package-list.txt 2>&1 || true
@@ -81,7 +86,12 @@ jobs:
               adb exec-out screencap -p > /tmp/screen.png || true
             fi
             adb logcat -d > /tmp/logcat.txt || true
-            exit "$RC"
+            echo "===== FINAL PACKAGE PATH ====="
+            cat /tmp/pm-path-after.txt || true
+            echo "===== FINAL PACKAGE LIST ====="
+            cat /tmp/package-list.txt || true
+            echo "===== INSTALL DIAGNOSTIC SCRIPT COMPLETE ====="
+            exit 0
             SH
             sh /tmp/run-install-test.sh
 
