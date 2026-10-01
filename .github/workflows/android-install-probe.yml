@@ -67,6 +67,10 @@ jobs:
           sed -i 's/namespace = "[^"]*"/namespace = "com.deepaksah.marrow.installprobe"/' app/build.gradle.kts
           sed -i 's/versionCode = [0-9]*/versionCode = 1/' app/build.gradle.kts
           sed -i 's/versionName = "[^"]*"/versionName = "1.0-probe"/' app/build.gradle.kts
+          sed -i '/id("org.jetbrains.kotlin.android")/d' app/build.gradle.kts
+          sed -i '/^    kotlin {/,+2d' app/build.gradle.kts
+          sed -i 's/minSdk = [0-9]*/minSdk = 21/' app/build.gradle.kts
+          sed -i 's/targetSdk = [0-9]*/targetSdk = 28/' app/build.gradle.kts
 
       - name: Assemble probe
         run: gradle :app:assembleDebug --stacktrace
