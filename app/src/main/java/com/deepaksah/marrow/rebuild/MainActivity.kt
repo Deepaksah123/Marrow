@@ -222,7 +222,7 @@ class MainActivity : Activity() {
         }, "Share"))
     }
 
-    private fun showSearch({
+    private fun showSearch() {
  val v=LayoutInflater.from(this).inflate(R.layout.screen_qbank_search,content,false);replace(v)
  val input=v.findViewById<EditText>(R.id.qbankSearchInput);val results=v.findViewById<LinearLayout>(R.id.qbankSearchResults);val st=v.findViewById<TextView>(R.id.qbankSearchState)
  fun renderSearch(){results.removeAllViews();val query=input.text.toString().trim();if(query.isBlank()){st.text="Search questions, explanations or tags in loaded QBank content.";return};val matches=state.contentRegistry.search(query);st.text=if(matches.isEmpty())"No matches in loaded content." else "Matches: "+matches.size;matches.take(100).forEachIndexed{index,q->val module=state.contentRegistry.findModuleForQuestion(q.id).orEmpty();results.addView(Button(this).apply{text=(index+1).toString()+". "+q.text+"\n\n"+module;isAllCaps=false;setOnClickListener{if(module.isNotBlank()){val ids=state.contentRegistry.questionIds(module);state.selectModule(module,ids);state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0));state.navigate(MarrowRoute.QBANK_PLAY);showPlayer()}}})}}
@@ -257,7 +257,7 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
 
-    private fun showSchemaList({
+    private fun showSchemaList() {
         val v=LayoutInflater.from(this).inflate(R.layout.screen_schema,content,false);replace(v)
         v.findViewById<TextView>(R.id.schemaState).text="Recovered native Schema flow: Listing → Detail → Review. Live schema payload is not present in the local content registry."
         v.findViewById<LinearLayout>(R.id.schemaActions).addView(Button(this).apply{text="OPEN SCHEMA DETAIL";isAllCaps=false;setOnClickListener{selectedSchemaTitle="Schema";state.navigate(MarrowRoute.SCHEMA_DETAIL);showSchemaDetail()}})
@@ -677,7 +677,7 @@ class MainActivity : Activity() {
         })
         replace(ScrollView(this).apply { addView(box) })
     }
-    private fun showQBankTracker({
+    private fun showQBankTracker() {
         val v=LayoutInflater.from(this).inflate(R.layout.screen_qbank_tracker,content,false); replace(v)
         val m=QBankMetrics.from(state.session.mcqIds,state.session.answers); val sum=v.findViewById<LinearLayout>(R.id.qbankTrackerSummary)
         listOf("Total questions" to m.total,"Attempted" to m.attempted,"Correct" to m.correct,"Wrong" to m.wrong,"Skipped" to m.skipped,"Bookmarked" to m.bookmarked).forEach{(l,x)->sum.addView(TextView(this).apply{text="$l    $x";textSize=15f;setPadding(4,7,4,7)})}
@@ -1547,11 +1547,11 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
 
-    private fun showVideos({
+    private fun showVideos() {
         when(state.session.route){MarrowRoute.VIDEO_SUBJECT->showVideoLessons();MarrowRoute.VIDEO_PLAYER->showVideoPlayer();else->{val v=LayoutInflater.from(this).inflate(R.layout.screen_videos,content,false);replace(v);v.findViewById<Button>(R.id.videoDownloaded).setOnClickListener{showVideoInfo("Downloaded Videos","The recovered APK exposes a downloaded-video surface. No verified downloaded payload is bundled locally.")};v.findViewById<Button>(R.id.videoSample).setOnClickListener{showVideoInfo("Sample Videos","The recovered APK exposes a sample-video surface. No verified sample payload is bundled locally.")};v.findViewById<Button>(R.id.videoRevision).setOnClickListener{showVideoInfo("World of Revision","The recovered APK exposes revision-video navigation. Remote lesson payload is not fabricated locally.")};v.findViewById<Button>(R.id.videoNotes).setOnClickListener{showVideoInfo("Video Notes","The recovered APK exposes a video-notes surface. Remote note payload is not fabricated locally.")};v.findViewById<Button>(R.id.videoSubjects).setOnClickListener{state.navigate(MarrowRoute.VIDEO_SUBJECT);showVideoLessons()}}}
     }
 
-    private fun showVideoLessons({
+    private fun showVideoLessons() {
         val v=LayoutInflater.from(this).inflate(R.layout.screen_video_lessons,content,false);replace(v);val c=v.findViewById<LinearLayout>(R.id.videoSubjectContainer);val f=v.findViewById<LinearLayout>(R.id.videoLessonFilters)
         listOf("All","Sort","Filter").forEach{n->f.addView(Button(this).apply{text=n;isAllCaps=false;layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f);setOnClickListener{renderVideoSubjects(c,"All")}})}
         v.findViewById<Button>(R.id.videoLessonsBack).setOnClickListener{state.navigate(MarrowRoute.VIDEOS);showVideos()};renderVideoSubjects(c,"All")
