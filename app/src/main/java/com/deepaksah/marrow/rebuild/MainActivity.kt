@@ -396,25 +396,7 @@ class MainActivity : Activity() {
     }
 
     private fun showPearls() {
-        data class PearlSource(val title: String, val url: String, val alternateUrl: String)
-
-        // Source: Marrow_Pearls_Standalone.html -> LECTURE_DATA.
-        // The custom HTML wrapper/player layer is intentionally not used in the native app.
-        val pearls = listOf(
-            PearlSource("Anatomy pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/tYc8h1Hwan9ZJvcHxV378w?type=download", "https://webx.afrahtafreeh.site/prepare/6ph9m1017cfhaWEN90wnUg?type=download"),
-            PearlSource("Physio pearls marrow .pdf", "https://web.afrahtafreeh.site/prepare/5PzSPnV9tMnl9eOyEB0Gpw?type=download", "https://webx.afrahtafreeh.site/prepare/AY7DY6lh3wLPFHeSLwae3w?type=download"),
-            PearlSource("Marrow anesthesia Pearls.pdf", "https://web.afrahtafreeh.site/prepare/UddWM1i_jX2yc337p7nv2w?type=download", "https://webx.afrahtafreeh.site/prepare/31EusIPYfQ255TcOSUQKuw?type=download"),
-            PearlSource("Marrow Psm pearls.pdf", "https://web.afrahtafreeh.site/prepare/03wMK6g6O1qFcekGdCjJnQ?type=download", "https://webx.afrahtafreeh.site/prepare/HUbYBqPb8TOn6pJZtH-luA?type=download"),
-            PearlSource("Ortho marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/ln9cSWzlSUNSCSAA_TqjOA?type=download", "https://webx.afrahtafreeh.site/prepare/l38HqpV3ANvmz6FwP3BLfw?type=download"),
-            PearlSource("Optha marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/z5vqIQB_-oS3P64VOuPSNw?type=download", "https://webx.afrahtafreeh.site/prepare/BQEydJkhfvJSsaiN8DCvXw?type=download"),
-            PearlSource("Biochem marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/cWVwwZk9zi7AMdgX-hsoJA?type=download", "https://webx.afrahtafreeh.site/prepare/JXBYvRh_EcWl7Dk6bnYVnQ?type=download"),
-            PearlSource("Derma pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/S58VksiphMd1AV1xi48igQ?type=download", "https://webx.afrahtafreeh.site/prepare/VYep_8XK58xbuoaWZ8kJnQ?type=download"),
-            PearlSource("ECG Marrow pearl .pdf", "https://web.afrahtafreeh.site/prepare/L0dnzWX0nn-7lnC7hWig2g?type=download", "https://webx.afrahtafreeh.site/prepare/3Ax5hbDA8a_13NLvIGmX7w?type=download"),
-            PearlSource("Psy pearl marrow .pdf", "https://web.afrahtafreeh.site/prepare/2nw3q_oYtlOE5ezNM-MvWA?type=download", "https://webx.afrahtafreeh.site/prepare/gPW2Kourd0dgKm8qjF1ghQ?type=download"),
-            PearlSource("radio pearl only neet pg notes 2020 .pdf", "https://web.afrahtafreeh.site/prepare/4EN5Vr1b9o_YZdKptiYT6A?type=download", "https://webx.afrahtafreeh.site/prepare/hf4SKrsegzLJOpwMg03HUw?type=download"),
-            PearlSource("Marrow Micro Pearls.pdf", "https://web.afrahtafreeh.site/prepare/jQWOvsf0_GjJPtjcsuOvpQ?type=download", "https://webx.afrahtafreeh.site/prepare/t5wpfT-3cyD1rsFlwDY0tA?type=download"),
-            PearlSource("Patho Pearls nd Treasure.pdf", "https://web.afrahtafreeh.site/prepare/tWn_D-8wLghXlSvWt1oyBw?type=download", "https://webx.afrahtafreeh.site/prepare/SHUFrirszceT5fKuh9ahzA?type=download")
-        )
+        val pearls = runCatching { PearlsAssetLoader(assets).load() }.getOrDefault(emptyList())
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
