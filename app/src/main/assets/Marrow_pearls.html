@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Marrow Pearls</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;
+  --line:#e5e9f2;--accent:#2563eb;--accent2:#1d4ed8;
+  --success:#16a34a;--nav:#fff;--shadow:0 5px 18px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{padding-bottom:78px}
+header{
+ position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#0f172a,#172554);
+ color:#fff;padding:16px max(16px,env(safe-area-inset-left)) 14px;
+ box-shadow:0 3px 14px rgba(0,0,0,.16)
+}
+.top{display:flex;align-items:center;gap:12px;max-width:920px;margin:auto}
+.back{border:0;background:rgba(255,255,255,.1);color:#fff;width:40px;height:40px;
+border-radius:12px;font-size:20px;cursor:pointer}
+.brand{font-size:21px;font-weight:800;letter-spacing:.2px;flex:1}
+.count{font-size:12px;background:rgba(255,255,255,.12);padding:6px 9px;border-radius:999px}
+.search{
+ max-width:920px;margin:12px auto 0;position:relative
+}
+.search input{
+ width:100%;height:46px;border:0;border-radius:13px;padding:0 15px 0 43px;
+ font-size:15px;outline:none;background:#fff;color:#111827;box-shadow:0 2px 8px rgba(0,0,0,.12)
+}
+.search span{position:absolute;left:15px;top:12px;color:#64748b;font-size:19px}
+main{max-width:920px;margin:0 auto;padding:18px 14px}
+.section-title{font-size:13px;color:var(--muted);font-weight:700;margin:3px 3px 11px;text-transform:uppercase;letter-spacing:.7px}
+.list{display:grid;gap:12px}
+.card{
+ position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;
+ padding:17px 58px 16px 17px;box-shadow:var(--shadow);transition:.18s transform,.18s box-shadow
+}
+.card:active{transform:scale(.995)}
+.title{font-size:16px;line-height:1.35;font-weight:750;margin:0 0 13px}
+.meta{font-size:12px;color:var(--muted);margin-bottom:13px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+button.action{
+ border:0;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:700;cursor:pointer
+}
+.open{background:var(--accent);color:#fff}
+.download{background:#eaf7ee;color:#15803d}
+.complete{
+ position:absolute;right:15px;top:15px;width:34px;height:34px;border-radius:50%;
+ border:2px solid #d7dee9;background:#fff;display:grid;place-items:center;cursor:pointer;
+ color:transparent;font-size:15px
+}
+.complete.done{background:var(--success);border-color:var(--success);color:#fff}
+.empty{text-align:center;padding:50px 15px;color:var(--muted)}
+nav{
+ position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--nav);
+ border-top:1px solid var(--line);display:flex;justify-content:center;
+ padding:7px 8px max(7px,env(safe-area-inset-bottom));box-shadow:0 -4px 15px rgba(0,0,0,.07)
+}
+nav button{flex:1;max-width:180px;border:0;background:transparent;color:#64748b;padding:7px 4px;
+font-size:11px;cursor:pointer;border-radius:10px}
+nav button.active{color:var(--accent);background:#eff6ff}
+nav .ico{display:block;font-size:18px;margin-bottom:2px}
+.overlay{position:fixed;inset:0;background:rgba(2,6,23,.78);z-index:100;display:none;
+align-items:center;justify-content:center;padding:12px}
+.overlay.show{display:flex}
+.player{
+ width:min(960px,100%);height:min(88vh,760px);background:#fff;border-radius:16px;
+ overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 70px rgba(0,0,0,.4)
+}
+.player-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.player-title{font-weight:750;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{border:0;background:#f1f5f9;border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:17px}
+.frame{flex:1;background:#0b0f17;position:relative}
+.frame iframe{width:100%;height:100%;border:0}
+.player-foot{padding:10px 13px;display:flex;gap:9px;align-items:center;border-top:1px solid var(--line)}
+.player-foot a{font-size:13px;color:var(--accent);font-weight:700;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(15px);
+background:#111827;color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-color-scheme:dark){
+ :root{--bg:#0b1120;--card:#111827;--text:#eef2ff;--muted:#9aa6ba;--line:#263246;--nav:#0f172a}
+ .search input{background:#fff;color:#111827}
+ .download{background:#12301e;color:#6ee7a0}
+ .complete{background:#111827;border-color:#334155}
+ nav button.active{background:#172554}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <button class="back" id="backBtn" aria-label="Back">‹</button>
+    <div class="brand">Marrow Pearls</div>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="search">
+    <span>⌕</span>
+    <input id="search" type="search" placeholder="Search lectures..." autocomplete="off">
+  </div>
+</header>
+
+<main>
+  <div class="section-title">Pearls / PDF Library</div>
+  <div class="list" id="list"></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="player">
+    <div class="player-head">
+      <div class="player-title" id="playerTitle">Lecture</div>
+      <button class="icon-btn" id="refreshBtn" title="Refresh">↻</button>
+      <button class="icon-btn" id="closeBtn" title="Close">×</button>
+    </div>
+    <div class="frame"><iframe id="frame" allowfullscreen referrerpolicy="no-referrer"></iframe></div>
+    <div class="player-foot">
+      <a id="downloadLink" href="#" target="_blank" rel="noopener">Open / Download source</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <button class="active"><span class="ico">⌂</span>Home</button>
+  <button id="pdfNav"><span class="ico">▣</span>Pearls</button>
+  <button id="searchNav"><span class="ico">⌕</span>Search</button>
+</nav>
+
+<script>
+const LECTURE_DATA = {"subjectName":"marrowpearls","lectures":[{"title":"Anatomy pearl marrow .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/tYc8h1Hwan9ZJvcHxV378w?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/6ph9m1017cfhaWEN90wnUg?type=download"},{"title":"Physio pearls marrow .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/5PzSPnV9tMnl9eOyEB0Gpw?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/AY7DY6lh3wLPFHeSLwae3w?type=download"},{"title":"Marrow anesthesia Pearls.pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/UddWM1i_jX2yc337p7nv2w?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/31EusIPYfQ255TcOSUQKuw?type=download"},{"title":"Marrow Psm pearls.pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/03wMK6g6O1qFcekGdCjJnQ?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/HUbYBqPb8TOn6pJZtH-luA?type=download"},{"title":"Ortho marrow pearl .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/ln9cSWzlSUNSCSAA_TqjOA?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/l38HqpV3ANvmz6FwP3BLfw?type=download"},{"title":"Optha marrow pearl .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/z5vqIQB_-oS3P64VOuPSNw?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/BQEydJkhfvJSsaiN8DCvXw?type=download"},{"title":"Biochem marrow pearl .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/cWVwwZk9zi7AMdgX-hsoJA?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/JXBYvRh_EcWl7Dk6bnYVnQ?type=download"},{"title":"Derma pearl marrow .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/S58VksiphMd1AV1xi48igQ?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/VYep_8XK58xbuoaWZ8kJnQ?type=download"},{"title":"ECG Marrow pearl .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/L0dnzWX0nn-7lnC7hWig2g?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/3Ax5hbDA8a_13NLvIGmX7w?type=download"},{"title":"Psy pearl marrow .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/2nw3q_oYtlOE5ezNM-MvWA?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/gPW2Kourd0dgKm8qjF1ghQ?type=download"},{"title":"radio pearl only neet pg notes 2020 .pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/4EN5Vr1b9o_YZdKptiYT6A?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/hf4SKrsegzLJOpwMg03HUw?type=download"},{"title":"Marrow Micro Pearls.pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/jQWOvsf0_GjJPtjcsuOvpQ?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/t5wpfT-3cyD1rsFlwDY0tA?type=download"},{"title":"Patho Pearls nd Treasure.pdf","pdf_downloadUrl":"https://web.afrahtafreeh.site/prepare/tWn_D-8wLghXlSvWt1oyBw?type=download","pdf_downloadUrlx":"https://webx.afrahtafreeh.site/prepare/SHUFrirszceT5fKuh9ahzA?type=download"}],"skipped":[]};
+
+const state = {
+  lectures: Array.isArray(LECTURE_DATA.lectures) ? LECTURE_DATA.lectures : [],
+  query: ""
+};
+
+const $ = id => document.getElementById(id);
+const list = $("list"), count = $("count"), search = $("search");
+const overlay = $("overlay"), frame = $("frame"), playerTitle = $("playerTitle");
+const downloadLink = $("downloadLink"), toast = $("toast");
+
+function keyFor(item){ return "marrowPearlDone:" + (item.title || ""); }
+function isDone(item){ try{return localStorage.getItem(keyFor(item)) === "1"}catch(e){return false} }
+function toggleDone(item){
+  const next = !isDone(item);
+  try{ localStorage.setItem(keyFor(item), next ? "1" : "0"); }catch(e){}
+  render();
+}
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function getStream(item){
+  return item.streamingUrl || item.streamUrl || item.pdf_downloadUrl || item.pdf_downloadUrlx || "";
+}
+function getDownload(item){
+  return item.downloadUrl || item.pdf_downloadUrl || item.pdf_downloadUrlx || getStream(item);
+}
+function render(){
+  const q = state.query.trim().toLowerCase();
+  const filtered = state.lectures.filter(x => String(x.title||"").toLowerCase().includes(q));
+  count.textContent = filtered.length + " / " + state.lectures.length;
+  if(!filtered.length){
+    list.innerHTML = '<div class="empty">No matching pearls found.</div>'; return;
+  }
+  list.innerHTML = filtered.map((item, i) => `
+    <article class="card">
+      <button class="complete ${isDone(item) ? "done":""}" data-done="${i}" aria-label="Mark completed">✓</button>
+      <div class="title">${esc(item.title || "Untitled")}</div>
+      <div class="meta">Marrow Pearls · PDF resource</div>
+      <div class="actions">
+        <button class="action open" data-open="${i}">▶ Open</button>
+        <button class="action download" data-download="${i}">↓ Download</button>
+      </div>
+    </article>
+  `).join("");
+
+  [...list.querySelectorAll("[data-open]")].forEach(btn => {
+    btn.onclick = () => openItem(filtered[+btn.dataset.open]);
+  });
+  [...list.querySelectorAll("[data-download]")].forEach(btn => {
+    btn.onclick = () => openExternal(getDownload(filtered[+btn.dataset.download]));
+  });
+  [...list.querySelectorAll("[data-done]")].forEach(btn => {
+    btn.onclick = e => { e.stopPropagation(); toggleDone(filtered[+btn.dataset.done]); };
+  });
+}
+function openExternal(url){
+  if(!url){ showToast("Source URL not available"); return; }
+  window.open(url, "_blank", "noopener");
+}
+function openItem(item){
+  const url = getStream(item);
+  if(!url){ showToast("Source URL not available"); return; }
+  playerTitle.textContent = item.title || "Lecture";
+  downloadLink.href = getDownload(item);
+  frame.src = url;
+  overlay.classList.add("show");
+}
+function closePlayer(){
+  overlay.classList.remove("show");
+  frame.src = "about:blank";
+}
+function showToast(msg){
+  toast.textContent = msg; toast.classList.add("show");
+  clearTimeout(showToast.t); showToast.t = setTimeout(()=>toast.classList.remove("show"),1800);
+}
+search.addEventListener("input", e => { state.query=e.target.value; render(); });
+$("closeBtn").onclick = closePlayer;
+$("refreshBtn").onclick = () => { const x=frame.src; frame.src="about:blank"; setTimeout(()=>frame.src=x,80); };
+overlay.addEventListener("click", e => { if(e.target===overlay) closePlayer(); });
+$("backBtn").onclick = () => { if(history.length>1) history.back(); else showToast("Already at start"); };
+$("searchNav").onclick = () => { search.focus(); window.scrollTo({top:0,behavior:"smooth"}); };
+$("pdfNav").onclick = () => { search.value=""; state.query=""; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+
+render();
+</script>
+</body>
+</html>
