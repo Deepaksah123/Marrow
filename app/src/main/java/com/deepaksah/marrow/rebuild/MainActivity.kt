@@ -1484,7 +1484,7 @@ class MainActivity : Activity() {
         val index = state.test.currentIndex
         val q = if (index in ids.indices) state.contentRegistry.question(ids[index]) else null
         state.startTestTimer()
-        v.findViewById<TextView>(R.id.testPlayPosition).text = "Test · \${index + 1} / \${ids.size}"
+        v.findViewById<TextView>(R.id.testPlayPosition).text = "Test · ${index + 1} / ${ids.size}"
         val remaining = state.test.remainingTimeMs
         v.findViewById<TextView>(R.id.testPlayTimer).text = if (remaining != null) "Time remaining: " + ((remaining + 999L) / 1000L) + "s" else ""
         v.findViewById<TextView>(R.id.testPlayQuestion).text = q?.text ?: "No supplied test MCQ payload is loaded."
