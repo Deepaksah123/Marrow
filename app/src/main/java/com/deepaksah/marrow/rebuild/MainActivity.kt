@@ -1428,24 +1428,31 @@ class MainActivity : Activity() {
             MarrowRoute.TEST_REVIEW -> showTestReview()
             MarrowRoute.TEST_ANALYTICS -> showTestAnalytics()
             else -> {
-                val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-                box.addView(TextView(this).apply { text="Tests"; textSize=26f; setTypeface(typeface,Typeface.BOLD) })
-                val tabs=listOf("Grand Tests","Mini Tests","Subject Tests")
-                val tabRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
-                tabs.forEach { tab -> tabRow.addView(Button(this).apply {
-                    text=tab
-                    setOnClickListener { tests.selectConfiguredTab(tab); Toast.makeText(this@MainActivity,"Selected $tab",Toast.LENGTH_SHORT).show() }
-                },LinearLayout.LayoutParams(0,-2,1f)) }
-                box.addView(tabRow)
-                box.addView(TextView(this).apply { text="Tests"; textSize=18f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8) })
-                val testList=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(12,12,12,12) }
-                testList.addView(TextView(this).apply { text="Test list"; textSize=16f; setTypeface(typeface,Typeface.BOLD) })
-                testList.addView(Button(this).apply { text="OPEN TEST INTRO"; setOnClickListener { tests.openIntro("source-test"); showTests() } })
-                box.addView(testList)
-                box.addView(TextView(this).apply { text="Previous Year Tests"; textSize=18f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8) })
-                box.addView(Button(this).apply { text="Previous Year Tests   ›"; setOnClickListener { tests.openIntro("previous-year"); showTests() } })
-                box.addView(Button(this).apply { text="Test Analytics   ›"; setOnClickListener { tests.openAnalytics(); showTests() } })
-                replace(ScrollView(this).apply { addView(box) })
+                val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
+                replace(v)
+                listOf(
+                    R.id.testGrandTab to "Grand Tests",
+                    R.id.testMiniTab to "Mini Tests",
+                    R.id.testSubjectTab to "Subject Tests"
+                ).forEach { (id, label) ->
+                    v.findViewById<Button>(id).setOnClickListener {
+                        tests.selectConfiguredTab(label)
+                        v.findViewById<TextView>(R.id.testYear).text = "Current Year · $label"
+                    }
+                }
+                v.findViewById<TextView>(R.id.testYear).text = "Current Year · configured test tabs"
+                v.findViewById<Button>(R.id.testStart).setOnClickListener {
+                    tests.openIntro("source-test")
+                    showTests()
+                }
+                v.findViewById<Button>(R.id.testAnalytics).setOnClickListener {
+                    state.navigate(MarrowRoute.GT_ANALYTICS)
+                    showGTAnalytics()
+                }
+                v.findViewById<Button>(R.id.testReview).setOnClickListener {
+                    tests.openAnalytics()
+                    showTests()
+                }
             }
         }
     }
