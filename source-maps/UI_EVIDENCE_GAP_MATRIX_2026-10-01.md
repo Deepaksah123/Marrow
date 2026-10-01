@@ -12,7 +12,7 @@ Source authority:
 |---|---|---|---|
 | UI-A | Home + home navigation chrome | IN PROGRESS / structural pass applied | Original Home has distinct QBank/Test/Video/Feature/Pearls/Recent/Plan/Zen surfaces. Current repeated generic rows were replaced by source-backed card hierarchy while preserving existing IDs/routes. |
 | UI-B | Original XML/resource ↔ current UI mapping | AUDITED | Major surface-specific resources exist in recovered APK but many current routes collapse into fewer generic reconstruction layouts. |
-| UI-C | Interaction/state matrix | PENDING | Must verify selected/pressed/disabled/loading/empty/error/dialog/back/transition behavior route-by-route. |
+| UI-C | Interaction/state matrix | IN PROGRESS | Test intro/play and Video player dedicated state layouts applied; remaining route-state matrix still pending. |
 
 ## Evidence-backed original surface families
 
@@ -54,8 +54,11 @@ Current dedicated XML:
 - `screen_qbank_lessons.xml`
 - `screen_qbank_play.xml`
 - `screen_qbank_score.xml`
+- `screen_qbank_tracker.xml`
+- `screen_qbank_search.xml`
+- `screen_schema.xml`
 
-Gap: tracker/review/search/schema and several native subcomponents are rendered through dynamic reconstruction rather than dedicated source-mapped layouts. These require UI-B/UI-C evidence mapping before visual replacement.
+UI-B batch applied: tracker, search and Schema listing now use dedicated source-shaped state layouts while preserving existing metrics/search/navigation logic. Schema detail/review remain intentionally payload-unresolved because live schema data is not locally verified.
 
 ### Tests
 Recovered:
@@ -86,8 +89,10 @@ Recovered:
 
 Current:
 - `screen_videos.xml`
+- `screen_video_lessons.xml`
+- `screen_video_player.xml`
 
-Gap: player/notes/timeline/downloaded/error/completed state surfaces need separate evidence mapping.
+UI-B batch applied: Video Landing remains on its dedicated landing layout; Video subject/lesson list and Player now have dedicated state-shaped layouts. Downloaded/sample/notes/timeline/error/completed payload/state surfaces remain unresolved where local evidence does not provide verified payload.
 
 ### Custom Module
 Recovered dedicated creation/mode/subject/topic/tag/add-on/introduction/join/score resources and ViewModels.
@@ -116,9 +121,8 @@ Gap: high-priority generic/native mismatch.
 
 ## Exact next order
 
-1. Finish UI-A Home/navigation structural evidence pass.
-2. UI-B: map every current dynamic surface to recovered resource + ViewModel/state owner.
-3. UI-C: build interaction/state matrix.
-4. Apply only evidence-backed visual/state fixes.
-5. Build/static verification.
-6. Then continue isolated content audits: Pearls, GT, Mini, PYQ, stale/generated content, route-to-source mapping.
+1. Complete UI-C interaction/state matrix for selected/pressed/disabled/loading/empty/error/dialog/back/transition states.
+2. Map remaining Video downloaded/notes/timeline/error/completed surfaces to recovered evidence.
+3. Decompose Custom Module, Bookmarks, Profile, Settings and Theme dynamic routes into dedicated evidence-backed layouts.
+4. Build/static verification.
+5. Then continue isolated content audits: Pearls, GT, Mini, PYQ, stale/generated content, route-to-source mapping.
