@@ -9,11 +9,11 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.deepaksah.marrow.installtest"
+        applicationId = "com.deepaksah.marrow.rebuild"
         minSdk = 23
         targetSdk = 35
-        versionCode = 100155
-        versionName = "0.1.0-installtest"
+        versionCode = 101
+        versionName = "0.1.1-reconstruction"
     }
 
     signingConfigs {
