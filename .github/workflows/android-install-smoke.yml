@@ -45,7 +45,7 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
           unzip -t "$APK" > /tmp/zip-test.txt
 
-      - name: Start Android emulator and install-debug-launch
+      - name: Start Android emulator and exact adb install -r
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -65,7 +65,22 @@ jobs:
             adb shell pm list packages -f > /tmp/packages-before.txt
             adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
-            adb install -r -d --no-incremental /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?; echo "INSTALL_RC=$RC" >> /tmp/install.txt; adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true; adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true; adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true; if [ "$RC" -eq 0 ]; then adb shell am force-stop com.deepaksah.marrow.rebuild || true; adb shell monkey -p com.deepaksah.marrow.rebuild 1 > /tmp/launch.txt 2>&1 || true; sleep 8; adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true; adb shell dumpsys meminfo com.deepaksah.marrow.rebuild > /tmp/meminfo.txt 2>&1 || true; adb exec-out screencap -p > /tmp/screen.png || true; fi; adb logcat -d > /tmp/logcat.txt || true; exit "$RC"
+            adb install -r /tmp/marrow-debug.apk > /tmp/install.txt 2>&1; RC=$?
+            echo "INSTALL_COMMAND=adb install -r /tmp/marrow-debug.apk" >> /tmp/install.txt
+            echo "INSTALL_RC=$RC" >> /tmp/install.txt
+            adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true
+            adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true
+            adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true
+            if [ "$RC" -eq 0 ]; then
+              adb shell am force-stop com.deepaksah.marrow.rebuild || true
+              adb shell monkey -p com.deepaksah.marrow.rebuild 1 > /tmp/launch.txt 2>&1 || true
+              sleep 8
+              adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true
+              adb shell dumpsys meminfo com.deepaksah.marrow.rebuild > /tmp/meminfo.txt 2>&1 || true
+              adb exec-out screencap -p > /tmp/screen.png || true
+            fi
+            adb logcat -d > /tmp/logcat.txt || true
+            exit "$RC"
 
       - name: Upload install diagnostics
         if: always()
