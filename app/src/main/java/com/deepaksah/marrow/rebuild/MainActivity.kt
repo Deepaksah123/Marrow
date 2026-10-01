@@ -222,91 +222,13 @@ class MainActivity : Activity() {
         }, "Share"))
     }
 
-    private fun showSearch() {
-        val box = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20, 20, 20, 20)
-        }
-        box.addView(TextView(this).apply {
-            text = "Search"
-            textSize = 22f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        val input = EditText(this).apply {
-            hint = "Search loaded QBank content"
-            isSingleLine = true
-        }
-        box.addView(input)
-        val results = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        box.addView(results)
-        fun renderSearch() {
-            results.removeAllViews()
-            val query = input.text.toString().trim()
-            if (query.isBlank()) {
-                results.addView(TextView(this@MainActivity).apply {
-                    text = "Search questions, explanations or tags in loaded QBank content."
-                    setPadding(4, 20, 4, 20)
-                    setTextColor(getColor(R.color.marrow_muted))
-                })
-                return
-            }
-            val matches = state.contentRegistry.search(query)
-            if (matches.isEmpty()) {
-                results.addView(TextView(this@MainActivity).apply {
-                    text = "No matches in loaded content."
-                    setPadding(4, 20, 4, 20)
-                })
-                return
-            }
-            results.addView(TextView(this@MainActivity).apply {
-                text = "Matches: ${matches.size}"
-                setTypeface(typeface, Typeface.BOLD)
-                setPadding(4, 14, 4, 10)
-            })
-            matches.take(100).forEachIndexed { index, q ->
-                val module = state.contentRegistry.findModuleForQuestion(q.id).orEmpty()
-                results.addView(Button(this@MainActivity).apply {
-                    text = "${index + 1}. ${q.text}\n\n$module"
-                    isAllCaps = false
-                    setOnClickListener {
-                        if (module.isNotBlank()) {
-                            val ids = state.contentRegistry.questionIds(module)
-                            state.selectModule(module, ids)
-                            state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0))
-                            state.navigate(MarrowRoute.QBANK_PLAY)
-                            showPlayer()
-                        }
-                    }
-                })
-            }
-            if (matches.size > 100) {
-                results.addView(TextView(this@MainActivity).apply {
-                    text = "Showing first 100 matches."
-                    setPadding(4, 12, 4, 20)
-                    setTextColor(getColor(R.color.marrow_muted))
-                })
-            }
-        }
-        val searchHandler = Handler(Looper.getMainLooper())
-        var pendingSearch: Runnable? = null
-        input.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                pendingSearch?.let(searchHandler::removeCallbacks)
-                pendingSearch = Runnable { renderSearch() }.also {
-                    searchHandler.postDelayed(it, 500L)
-                }
-            }
-            override fun afterTextChanged(s: android.text.Editable?) = Unit
-        })
-        box.addView(Button(this).apply {
-            text = "SEARCH"
-            setOnClickListener { renderSearch() }
-        })
-        renderSearch()
-        replace(ScrollView(this).apply { addView(box) })
-    }
-
+    private fun showSearch({
+ val v=LayoutInflater.from(this).inflate(R.layout.screen_qbank_search,content,false);replace(v)
+ val input=v.findViewById<EditText>(R.id.qbankSearchInput);val results=v.findViewById<LinearLayout>(R.id.qbankSearchResults);val st=v.findViewById<TextView>(R.id.qbankSearchState)
+ fun renderSearch(){results.removeAllViews();val query=input.text.toString().trim();if(query.isBlank()){st.text="Search questions, explanations or tags in loaded QBank content.";return};val matches=state.contentRegistry.search(query);st.text=if(matches.isEmpty())"No matches in loaded content." else "Matches: "+matches.size;matches.take(100).forEachIndexed{index,q->val module=state.contentRegistry.findModuleForQuestion(q.id).orEmpty();results.addView(Button(this).apply{text=(index+1).toString()+". "+q.text+"\n\n"+module;isAllCaps=false;setOnClickListener{if(module.isNotBlank()){val ids=state.contentRegistry.questionIds(module);state.selectModule(module,ids);state.moveQuestion(ids.indexOf(q.id).coerceAtLeast(0));state.navigate(MarrowRoute.QBANK_PLAY);showPlayer()}}})}}
+ val h=Handler(Looper.getMainLooper());var p:Runnable?=null;input.addTextChangedListener(object:android.text.TextWatcher{override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int)=Unit;override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int){p?.let(h::removeCallbacks);p=Runnable{renderSearch()}.also{h.postDelayed(it,500L)}};override fun afterTextChanged(s:android.text.Editable?)=Unit})
+ v.findViewById<Button>(R.id.qbankSearchButton).setOnClickListener{renderSearch()};renderSearch()
+}
 
     private fun showPyq() {
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
@@ -335,19 +257,11 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
 
-    private fun showSchemaList() {
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        box.addView(TextView(this).apply { text = "Schema"; textSize = 22f; setTypeface(typeface, Typeface.BOLD) })
-        box.addView(TextView(this).apply {
-            text = "Recovered native Schema flow: Listing → Detail → Review. Live schema payload is not present in the local content registry."
-            setPadding(4,16,4,16)
-        })
-        box.addView(Button(this).apply {
-            text = "OPEN SCHEMA DETAIL"
-            setOnClickListener { selectedSchemaTitle = "Schema"; state.navigate(MarrowRoute.SCHEMA_DETAIL); showSchemaDetail() }
-        })
-        box.addView(Button(this).apply { text = "BACK TO QBANK"; setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() } })
-        replace(ScrollView(this).apply { addView(box) })
+    private fun showSchemaList({
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_schema,content,false);replace(v)
+        v.findViewById<TextView>(R.id.schemaState).text="Recovered native Schema flow: Listing → Detail → Review. Live schema payload is not present in the local content registry."
+        v.findViewById<LinearLayout>(R.id.schemaActions).addView(Button(this).apply{text="OPEN SCHEMA DETAIL";isAllCaps=false;setOnClickListener{selectedSchemaTitle="Schema";state.navigate(MarrowRoute.SCHEMA_DETAIL);showSchemaDetail()}})
+        v.findViewById<Button>(R.id.schemaBack).setOnClickListener{state.navigate(MarrowRoute.QBANK);showQBank()}
     }
 
     private fun showSchemaDetail() {
@@ -763,77 +677,16 @@ class MainActivity : Activity() {
         })
         replace(ScrollView(this).apply { addView(box) })
     }
-    private fun showQBankTracker() {
-        val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
-        val box = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20, 20, 20, 20)
-        }
-        box.addView(TextView(this).apply {
-            text = "QBank Tracker"
-            textSize = 26f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        box.addView(TextView(this).apply {
-            text = "Progress and completion"
-            textSize = 13f
-            setPadding(0, 6, 0, 16)
-        })
-
-        val summary = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(12, 12, 12, 12)
-            setBackgroundColor(getColor(R.color.marrow_surface))
-        }
-        listOf(
-            "Total questions" to metrics.total,
-            "Attempted" to metrics.attempted,
-            "Correct" to metrics.correct,
-            "Wrong" to metrics.wrong,
-            "Skipped" to metrics.skipped,
-            "Bookmarked" to metrics.bookmarked
-        ).forEach { (label, value) ->
-            summary.addView(TextView(this).apply {
-                text = "$label    $value"
-                textSize = 16f
-                setPadding(4, 8, 4, 8)
-            })
-        }
-        summary.addView(TextView(this).apply {
-            text = "Accuracy    " + String.format("%.1f", metrics.accuracy) + "%"
-            textSize = 17f
-            setTypeface(typeface, Typeface.BOLD)
-            setPadding(4, 10, 4, 6)
-        })
-        box.addView(summary)
-
-        box.addView(TextView(this).apply {
-            text = "Subject progress"
-            textSize = 19f
-            setTypeface(typeface, Typeface.BOLD)
-            setPadding(4, 22, 4, 10)
-        })
-
-        subjects.forEach { subject ->
-            val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$subject/") || it == subject }
-            val total = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
-            val answered = moduleIds.sumOf { module ->
-                state.contentRegistry.questionIds(module).count { state.session.answers[it]?.selectedAnswer != null || state.session.answers[it]?.skipped == true }
-            }
-            val percent = if (total == 0) 0 else (answered * 100 / total)
-            box.addView(TextView(this).apply {
-                text = "$subject    $answered/$total   ·   $percent%"
-                textSize = 15f
-                setPadding(8, 10, 8, 10)
-            })
-        }
-
-        box.addView(Button(this).apply {
-            text = "BACK TO QBANK"
-            setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
-        })
-        replace(ScrollView(this).apply { addView(box) })
+    private fun showQBankTracker({
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_qbank_tracker,content,false); replace(v)
+        val m=QBankMetrics.from(state.session.mcqIds,state.session.answers); val sum=v.findViewById<LinearLayout>(R.id.qbankTrackerSummary)
+        listOf("Total questions" to m.total,"Attempted" to m.attempted,"Correct" to m.correct,"Wrong" to m.wrong,"Skipped" to m.skipped,"Bookmarked" to m.bookmarked).forEach{(l,x)->sum.addView(TextView(this).apply{text="$l    $x";textSize=15f;setPadding(4,7,4,7)})}
+        sum.addView(TextView(this).apply{text="Accuracy    "+String.format("%.1f",m.accuracy)+"%";textSize=17f;setTypeface(typeface,Typeface.BOLD);setPadding(4,9,4,4)})
+        val root=v.findViewById<LinearLayout>(R.id.qbankTrackerSubjects)
+        subjects.forEach{subject->val ms=state.contentRegistry.moduleIds().filter{it.startsWith("$subject/")||it==subject};val total=ms.sumOf{state.contentRegistry.questionIds(it).size};val answered=ms.sumOf{mod->state.contentRegistry.questionIds(mod).count{state.session.answers[it]?.selectedAnswer!=null||state.session.answers[it]?.skipped==true}};val pct=if(total==0)0 else answered*100/total;root.addView(TextView(this).apply{text="$subject    $answered/$total   ·   $pct%";textSize=14f;setPadding(8,9,8,9)})}
+        v.findViewById<Button>(R.id.qbankTrackerBack).setOnClickListener{state.navigate(MarrowRoute.QBANK);showQBank()}
     }
+
     private fun showLessons(subject: String) {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank_lessons, content, false)
         replace(v)
@@ -1683,45 +1536,19 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(box) })
     }
 
-    private fun showVideos() {
-        when (state.session.route) {
-            MarrowRoute.VIDEO_SUBJECT -> showVideoLessons()
-            MarrowRoute.VIDEO_PLAYER -> showVideoPlayer()
-            else -> {
-                val v = LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false)
-                replace(v)
-                v.findViewById<Button>(R.id.videoDownloaded).setOnClickListener {
-                    showVideoInfo("Downloaded Videos", "The recovered APK exposes a downloaded-video surface. No verified downloaded payload is bundled locally.")
-                }
-                v.findViewById<Button>(R.id.videoSample).setOnClickListener {
-                    showVideoInfo("Sample Videos", "The recovered APK exposes a sample-video surface. No verified sample payload is bundled locally.")
-                }
-                v.findViewById<Button>(R.id.videoRevision).setOnClickListener {
-                    showVideoInfo("World of Revision", "The recovered APK exposes revision-video navigation. Remote lesson payload is not fabricated locally.")
-                }
-                v.findViewById<Button>(R.id.videoNotes).setOnClickListener {
-                    showVideoInfo("Video Notes", "The recovered APK exposes a video-notes surface. Remote note payload is not fabricated locally.")
-                }
-                v.findViewById<Button>(R.id.videoSubjects).setOnClickListener {
-                    state.navigate(MarrowRoute.VIDEO_SUBJECT)
-                    showVideoLessons()
-                }
-            }
-        }
+    private fun showVideos({
+        when(state.session.route){MarrowRoute.VIDEO_SUBJECT->showVideoLessons();MarrowRoute.VIDEO_PLAYER->showVideoPlayer();else->{val v=LayoutInflater.from(this).inflate(R.layout.screen_videos,content,false);replace(v);v.findViewById<Button>(R.id.videoDownloaded).setOnClickListener{showVideoInfo("Downloaded Videos","The recovered APK exposes a downloaded-video surface. No verified downloaded payload is bundled locally.")};v.findViewById<Button>(R.id.videoSample).setOnClickListener{showVideoInfo("Sample Videos","The recovered APK exposes a sample-video surface. No verified sample payload is bundled locally.")};v.findViewById<Button>(R.id.videoRevision).setOnClickListener{showVideoInfo("World of Revision","The recovered APK exposes revision-video navigation. Remote lesson payload is not fabricated locally.")};v.findViewById<Button>(R.id.videoNotes).setOnClickListener{showVideoInfo("Video Notes","The recovered APK exposes a video-notes surface. Remote note payload is not fabricated locally.")};v.findViewById<Button>(R.id.videoSubjects).setOnClickListener{state.navigate(MarrowRoute.VIDEO_SUBJECT);showVideoLessons()}}}
     }
 
-    private fun showVideoLessons() {
-        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        root.addView(TextView(this).apply { text="Video Lessons"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply { text="Select subject"; setPadding(4,12,4,18) })
-        subjects.forEach { subject ->
-            root.addView(Button(this).apply {
-                text=subject
-                setOnClickListener { selectedVideoSubject=subject; state.navigate(MarrowRoute.VIDEO_PLAYER); showVideoPlayer() }
-            })
-        }
-        root.addView(Button(this).apply { text="BACK"; setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() } })
-        replace(ScrollView(this).apply { addView(root) })
+    private fun showVideoLessons({
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_video_lessons,content,false);replace(v);val c=v.findViewById<LinearLayout>(R.id.videoSubjectContainer);val f=v.findViewById<LinearLayout>(R.id.videoLessonFilters)
+        listOf("All","Sort","Filter").forEach{n->f.addView(Button(this).apply{text=n;isAllCaps=false;layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f);setOnClickListener{renderVideoSubjects(c,"All")}})}
+        v.findViewById<Button>(R.id.videoLessonsBack).setOnClickListener{state.navigate(MarrowRoute.VIDEOS);showVideos()};renderVideoSubjects(c,"All")
+    }
+
+    private fun renderVideoSubjects(container: LinearLayout, filter: String) {
+        container.removeAllViews()
+        subjects.filter{filter=="All"||it.contains(filter,true)}.forEach{subject->container.addView(LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(14,12,14,12);setBackgroundColor(getColor(R.color.marrow_surface));setOnClickListener{selectedVideoSubject=subject;state.navigate(MarrowRoute.VIDEO_PLAYER);showVideoPlayer()};addView(TextView(this@MainActivity).apply{text=subject;textSize=16f;setTypeface(typeface,Typeface.BOLD)});addView(TextView(this@MainActivity).apply{text="Lessons · local stream payload not bundled";textSize=12f;setTextColor(getColor(R.color.marrow_muted));setPadding(0,4,0,0)})});addDivider(container)}
     }
 
     private fun showVideoPlayer() {
