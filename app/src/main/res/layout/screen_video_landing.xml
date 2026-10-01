@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<LinearLayout android:id="@+id/videoLandingRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<LinearLayout android:id="@+id/videoLandingHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/marrow_surface" android:padding="16dp" android:orientation="vertical">
+<TextView android:id="@+id/videoLandingTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Videos" android:textSize="24sp" android:textStyle="bold" android:textColor="@color/marrow_text"/>
+<TextView android:id="@+id/videoLandingMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="Lessons · revision · notes · downloaded · sample" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<LinearLayout android:id="@+id/videoLandingQuickActions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp"/>
+<LinearLayout android:id="@+id/videoLandingContinue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:background="@color/marrow_surface" android:padding="14dp" android:orientation="vertical">
+<TextView android:id="@+id/videoContinueTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Continue Watching" android:textSize="15sp" android:textStyle="bold"/>
+<TextView android:id="@+id/videoContinueState" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:textSize="12sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="SUBJECTS" android:textSize="13sp" android:textStyle="bold" android:paddingTop="18dp" android:paddingBottom="8dp"/>
+<LinearLayout android:id="@+id/videoSubjectContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+</LinearLayout></ScrollView>
