@@ -26,26 +26,63 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --stacktrace
 
-      - name: Start Android emulator
+      - name: Static APK diagnostics
+        run: |
+          set -eu
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+          "$BUILD_TOOLS/aapt2" dump badging "$APK" > /tmp/aapt-badging.txt
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
+          unzip -t "$APK" > /tmp/zip-test.txt
+
+      - name: Start Android emulator and install-debug-launch
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
           profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          emulator-boot-timeout: 900
           script: |
             set -eu
+            APK=app/build/outputs/apk/debug/app-debug.apk
             adb wait-for-device
-            adb shell getprop ro.build.version.sdk
-            adb shell getprop ro.product.cpu.abilist
-            adb install -r app/build/outputs/apk/debug/app-debug.apk 2>&1 | tee /tmp/install.txt
-            adb shell pm path com.deepaksah.marrow.rebuild
-            adb shell monkey -p com.deepaksah.marrow.rebuild 1
-            adb shell dumpsys package com.deepaksah.marrow.rebuild | head -120
+            adb devices -l > /tmp/adb-devices.txt
+            adb shell getprop > /tmp/device-props.txt
+            adb shell pm list packages -f > /tmp/packages-before.txt
+            adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-before.txt 2>&1 || true
+            adb logcat -c
+
+            set +e
+            adb install -r -d --no-incremental "$APK" > /tmp/install.txt 2>&1
+            INSTALL_RC=$?
+            set -e
+            echo "INSTALL_RC=$INSTALL_RC" >> /tmp/install.txt
+
+            adb shell pm path com.deepaksah.marrow.rebuild > /tmp/pm-path-after.txt 2>&1 || true
+            adb shell dumpsys package com.deepaksah.marrow.rebuild > /tmp/package-dump.txt 2>&1 || true
+            adb shell pm list packages -f | grep com.deepaksah.marrow.rebuild > /tmp/package-list.txt 2>&1 || true
+
+            if [ "$INSTALL_RC" -eq 0 ]; then
+              adb shell am force-stop com.deepaksah.marrow.rebuild || true
+              adb shell monkey -p com.deepaksah.marrow.rebuild 1 > /tmp/launch.txt 2>&1 || true
+              sleep 8
+              adb shell dumpsys activity activities > /tmp/activities.txt 2>&1 || true
+              adb shell dumpsys meminfo com.deepaksah.marrow.rebuild > /tmp/meminfo.txt 2>&1 || true
+              adb exec-out screencap -p > /tmp/screen.png || true
+            fi
+
+            adb logcat -d > /tmp/logcat.txt || true
+            exit "$INSTALL_RC"
+
       - name: Upload install diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: marrow-install-diagnostics
-          path: /tmp/install.txt
+          path: |
+            /tmp/*.txt
+            /tmp/*.png
           if-no-files-found: ignore
