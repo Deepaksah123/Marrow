@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<LinearLayout android:id="@+id/videoLessonsRoot" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<LinearLayout android:id="@+id/videoLessonsHeader" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@color/marrow_surface" android:padding="16dp">
+<TextView android:id="@+id/videoLessonsTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Video Lessons" android:textSize="24sp" android:textStyle="bold"/>
+<TextView android:id="@+id/videoLessonsMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="Subjects · lessons · filters" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+</LinearLayout>
+<LinearLayout android:id="@+id/videoLessonFilters" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="10dp"/>
+<LinearLayout android:id="@+id/videoSubjectContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="8dp"/>
+<Button android:id="@+id/videoLessonsBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="BACK" android:textAllCaps="false"/>
+</LinearLayout></ScrollView>
