@@ -1725,55 +1725,24 @@ class MainActivity : Activity() {
     }
 
     private fun showVideoPlayer() {
-        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        root.addView(TextView(this).apply { text="Video Player"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply { text="Subject: $selectedVideoSubject"; setPadding(4,12,4,18) })
-        root.addView(TextView(this).apply { text="No verified local stream/file is bundled, so playback is not faked."; setPadding(4,8,4,18) })
-        val speed=TextView(this).apply { text="Playback speed: 1.0×"; setPadding(4,12,4,8) }; root.addView(speed)
-        val speedRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
-        listOf("0.75×","1.0×","1.25×","1.5×","2.0×").forEach { s ->
-            speedRow.addView(Button(this).apply {
-                text=s
-                setOnClickListener { speed.text="Playback speed: $s" }
-            }, LinearLayout.LayoutParams(0,-2,1f))
+        val v = LayoutInflater.from(this).inflate(R.layout.screen_video_player, content, false)
+        replace(v)
+        v.findViewById<TextView>(R.id.videoPlayerSubject).text = "Subject: " + selectedVideoSubject
+        val stateView=v.findViewById<TextView>(R.id.videoPlayerState)
+        stateView.text="No verified local stream/file is bundled, so playback is not faked."
+        val speedRow=v.findViewById<LinearLayout>(R.id.videoSpeedRow)
+        listOf("0.75×","1.0×","1.25×","1.5×","2.0×").forEach{s->
+            speedRow.addView(Button(this).apply{text=s;isAllCaps=false;setOnClickListener{stateView.text="No verified local stream/file is bundled. Playback speed: "+s}},LinearLayout.LayoutParams(0,-2,1f))
         }
-        root.addView(speedRow)
-        root.addView(TextView(this).apply { text="Brightness"; setPadding(4,18,4,4) })
-        val brightness = SeekBar(this).apply {
-            max=100
-            progress=((window.attributes.screenBrightness.takeIf { it >= 0f } ?: 0.5f) * 100f).toInt()
-            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
-                    if (!fromUser) return
-                    val params=window.attributes
-                    params.screenBrightness=(value.coerceIn(1,100) / 100f)
-                    window.attributes=params
-                }
-                override fun onStartTrackingTouch(bar: SeekBar?) {}
-                override fun onStopTrackingTouch(bar: SeekBar?) {}
-            })
-        }
-        root.addView(brightness)
-        root.addView(TextView(this).apply { text="Volume"; setPadding(4,12,4,4) })
-        val audioManager=getSystemService(AudioManager::class.java)
-        val maxVolume=audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)?.coerceAtLeast(1) ?: 1
-        val currentVolume=audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 0
-        val volume = SeekBar(this).apply {
-            max=100
-            progress=(currentVolume * 100 / maxVolume).coerceIn(0,100)
-            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(bar: SeekBar?, value: Int, fromUser: Boolean) {
-                    if (fromUser) audioManager?.setStreamVolume(AudioManager.STREAM_MUSIC, value * maxVolume / 100, 0)
-                }
-                override fun onStartTrackingTouch(bar: SeekBar?) {}
-                override fun onStopTrackingTouch(bar: SeekBar?) {}
-            })
-        }
-        root.addView(volume)
-        root.addView(Button(this).apply { text="DOWNLOAD"; setOnClickListener { Toast.makeText(this@MainActivity,"No verified video file available.",Toast.LENGTH_SHORT).show() } })
-        root.addView(Button(this).apply { text="NOTES"; setOnClickListener { showVideoInfo("Video Notes","Native notes flow recovered; remote note content is unavailable locally.") } })
-        root.addView(Button(this).apply { text="BACK TO LESSONS"; setOnClickListener { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() } })
-        replace(ScrollView(this).apply { addView(root) })
+        val brightness=v.findViewById<SeekBar>(R.id.videoBrightness)
+        brightness.max=100
+        brightness.progress=((window.attributes.screenBrightness.takeIf{it>=0f}?:0.5f)*100f).toInt()
+        brightness.setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(b:SeekBar?,value:Int,fromUser:Boolean){if(fromUser){val p=window.attributes;p.screenBrightness=value.coerceIn(1,100)/100f;window.attributes=p}}
+            override fun onStartTrackingTouch(b:SeekBar?){}
+            override fun onStopTrackingTouch(b:SeekBar?){}
+        })
+        v.findViewById<Button>(R.id.videoPlayerBack).setOnClickListener{state.navigate(MarrowRoute.VIDEO_SUBJECT);showVideoLessons()}
     }
 
     private fun showVideoInfo(title:String,message:String) {
