@@ -130,8 +130,15 @@ class MainActivity : Activity() {
     }
 
     private fun updateBottomNavigation() {
-        findViewById<LinearLayout>(R.id.bottomNavigation)?.visibility = View.VISIBLE
+        val bottomNavigation = findViewById<LinearLayout>(R.id.bottomNavigation)
         val route = state.session.route
+        // Profile/Settings/Theme are dedicated account/settings surfaces in the
+        // recovered native app, not main-tab destinations.
+        if (route == MarrowRoute.PROFILE || route == MarrowRoute.SETTINGS || route == MarrowRoute.THEME) {
+            bottomNavigation?.visibility = View.GONE
+            return
+        }
+        bottomNavigation?.visibility = View.VISIBLE
         val selected = when (route) {
             MarrowRoute.QBANK, MarrowRoute.QBANK_INTRO, MarrowRoute.QBANK_TRACKER, MarrowRoute.QBANK_MODULE,
             MarrowRoute.QBANK_LESSON, MarrowRoute.QBANK_PLAY, MarrowRoute.QBANK_SCORE, MarrowRoute.QBANK_REVIEW,
