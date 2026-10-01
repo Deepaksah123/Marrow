@@ -172,12 +172,29 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.BOOKMARKS)
             showBookmarks()
         }
+        v.findViewById<View>(R.id.homeZenCard).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Zen / MCQ of the Day")
+                .setMessage("The recovered Home surface exposes a Zen/MCQ suggestion area. No verified local daily payload is bundled, so no question is fabricated.")
+                .setPositiveButton("OK", null).show()
+        }
         v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
         v.findViewById<View>(R.id.homePearlsCard).setOnClickListener {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
+        }
+        v.findViewById<View>(R.id.homeMagicModuleCard).setOnClickListener {
+            customStage = 0
+            state.navigate(MarrowRoute.CUSTOM_MODULE)
+            showCustom()
+        }
+        v.findViewById<View>(R.id.homeFeatureCards).setOnClickListener {
+            showAccountActionState("Feature Cards", "The recovered Home surface contains feature-card visibility/configuration state. No verified local recommendation payload is bundled.")
+        }
+        v.findViewById<View>(R.id.homePlanUpgrade).setOnClickListener {
+            showAccountActionState("Plan Upgrade", "The recovered Home surface exposes a plan-upgrade card. Subscription/account state is server-backed and is not fabricated locally.")
         }
         v.findViewById<View>(R.id.homeRecentCard).setOnClickListener {
             val modules = state.contentRegistry.moduleIds().size
@@ -1755,36 +1772,24 @@ class MainActivity : Activity() {
             MarrowRoute.VIDEO_SUBJECT -> showVideoLessons()
             MarrowRoute.VIDEO_PLAYER -> showVideoPlayer()
             else -> {
-                val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-                root.addView(TextView(this).apply { text="Videos"; textSize=26f; setTypeface(typeface,Typeface.BOLD) })
-                val topRow=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL }
-                listOf("Downloaded","Sample Videos").forEach { title ->
-                    topRow.addView(Button(this).apply {
-                        text=title
-                        setOnClickListener {
-                            if(title=="Downloaded") showVideoInfo("Downloaded","Downloaded videos surface recovered; no verified downloaded payload is bundled locally.")
-                            else showVideoInfo("Sample Videos","Sample-video surface recovered; no verified sample payload is bundled locally.")
-                        }
-                    },LinearLayout.LayoutParams(0,-2,1f))
+                val v = LayoutInflater.from(this).inflate(R.layout.screen_videos, content, false)
+                replace(v)
+                v.findViewById<Button>(R.id.videoDownloaded).setOnClickListener {
+                    showVideoInfo("Downloaded Videos", "The recovered APK exposes a downloaded-video surface. No verified downloaded payload is bundled locally.")
                 }
-                root.addView(topRow)
-                root.addView(Button(this).apply {
-                    text="World of Revision   ›"
-                    setOnClickListener { showVideoInfo("World of Revision","Recovered World of Revision navigation surface. Remote lesson payload is not fabricated locally.") }
-                })
-                root.addView(TextView(this).apply {
-                    text="SUBJECTS"; textSize=16f; setTypeface(typeface,Typeface.BOLD); setPadding(4,20,4,8)
-                })
-                root.addView(TextView(this).apply {
-                    text="Video subject catalog is server-backed; no verified local subject payload is bundled."
-                    setPadding(4,8,4,18)
-                })
-                root.addView(Button(this).apply {
-                    text="OPEN VIDEO SUBJECTS"
-                    setOnClickListener { state.navigate(MarrowRoute.VIDEO_SUBJECT); showVideoLessons() }
-                })
-                root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
-                replace(ScrollView(this).apply { addView(root) })
+                v.findViewById<Button>(R.id.videoSample).setOnClickListener {
+                    showVideoInfo("Sample Videos", "The recovered APK exposes a sample-video surface. No verified sample payload is bundled locally.")
+                }
+                v.findViewById<Button>(R.id.videoRevision).setOnClickListener {
+                    showVideoInfo("World of Revision", "The recovered APK exposes revision-video navigation. Remote lesson payload is not fabricated locally.")
+                }
+                v.findViewById<Button>(R.id.videoNotes).setOnClickListener {
+                    showVideoInfo("Video Notes", "The recovered APK exposes a video-notes surface. Remote note payload is not fabricated locally.")
+                }
+                v.findViewById<Button>(R.id.videoSubjects).setOnClickListener {
+                    state.navigate(MarrowRoute.VIDEO_SUBJECT)
+                    showVideoLessons()
+                }
             }
         }
     }
