@@ -13,28 +13,35 @@ git clone --depth 1 --filter=blob:none --sparse \
 
 cd "$TMP_DIR/repo"
 git sparse-checkout set \
-  "frontend/quizx/Brain/Marrow" \
-  "frontend/quizx/marrow" \
-  "frontend/1234xxx/marrow" \
-  "frontend/datax/marrow" \
-  "frontend/srcx/platforms/marrow"
+  "frontend/quizx/Brain/Marrow/Edition 8 qBank"
 
 cd "$ROOT"
-mkdir -p "$DEST/Brain/Marrow" "$DEST/quizx/marrow" "$DEST/1234xxx/marrow" "$DEST/datax/marrow" "$DEST/srcx/platforms/marrow"
-# Keep the user-supplied Marrow Pearls HTML as a local, offline Android asset.
-cp "$ROOT/Marrow_pearls.html" "$ROOT/app/src/main/assets/Marrow_pearls.html"
-cp -a "$TMP_DIR/repo/frontend/quizx/Brain/Marrow/." "$DEST/Brain/Marrow/"
-cp -a "$TMP_DIR/repo/frontend/quizx/marrow/." "$DEST/quizx/marrow/"
-cp -a "$TMP_DIR/repo/frontend/1234xxx/marrow/." "$DEST/1234xxx/marrow/"
-cp -a "$TMP_DIR/repo/frontend/datax/marrow/." "$DEST/datax/marrow/"
-cp -a "$TMP_DIR/repo/frontend/srcx/platforms/marrow/." "$DEST/srcx/platforms/marrow/"
+mkdir -p "$DEST/Brain/Marrow/Edition 8 qBank"
 
-cat > "$DEST/README.md" <<\x27EOF\x27
+# Canonical active QBank only. Do NOT import GT, Mini Test, PYQ,
+# FMGE test series, or other Marrow catalogue/content trees.
+cp -a "$TMP_DIR/repo/frontend/quizx/Brain/Marrow/Edition 8 qBank/." \
+  "$DEST/Brain/Marrow/Edition 8 qBank/"
+
+# This file is user-provided and is the sole Pearls content source.
+cp "$ROOT/Marrow_pearls.html" "$ROOT/app/src/main/assets/Marrow_pearls.html"
+
+cat > "$DEST/README.md" <<'EOF'
 # Marrow Content
 
-This folder contains only Marrow educational content materialized from WEBREPLITX5. Edition 8 QBank is the active QBank source. Legacy/duplicate Marrow6 content is intentionally excluded.
+Canonical active content currently materialized here:
+- Edition 8 QBank only, from the verified Marrow QBank source.
+
+Explicitly NOT imported from WEBREPLITX5:
+- Grand Tests
+- Mini Tests
+- PYQ / Previous Year content
+- FMGE Test Series
+- other Marrow catalogue/content trees
+
+Pearls are sourced separately from the user-provided Marrow_pearls.html.
 EOF
 
-echo "Marrow source synced into $DEST"
+echo "Marrow Edition 8 QBank synced into $DEST"
 find "$DEST" -type f | wc -l
 du -sh "$DEST"
