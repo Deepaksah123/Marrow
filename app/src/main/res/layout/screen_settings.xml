@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+<TextView android:id="@+id/settingsTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Settings" android:textSize="26sp" android:textStyle="bold"/>
+<TextView android:id="@+id/settingsSubtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="App preferences" android:textSize="13sp" android:textColor="@color/marrow_muted" android:paddingTop="6dp" android:paddingBottom="18dp"/>
+<LinearLayout android:id="@+id/settingsPreferencesCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:background="@drawable/bg_home_card">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Preferences" android:textSize="18sp" android:textStyle="bold"/>
+<Button android:id="@+id/settingsTheme" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="THEME" android:layout_marginTop="8dp"/>
+<Button android:id="@+id/settingsVibration" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="false"/>
+</LinearLayout>
+<Button android:id="@+id/settingsProfile" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="PROFILE" android:layout_marginTop="12dp"/>
+<Button android:id="@+id/settingsBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BACK"/>
+</LinearLayout></ScrollView>
