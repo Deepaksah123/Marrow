@@ -419,153 +419,29 @@ class MainActivity : Activity() {
         replace(ScrollView(this).apply { addView(root) })
     }
     private fun showBookmarks() {
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20, 20, 20, 20)
-        }
-        root.addView(TextView(this).apply {
-            text = "Bookmarks"
-            textSize = 24f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        root.addView(TextView(this).apply {
-            text = "Saved questions"
-            textSize = 13f
-            setTextColor(getColor(R.color.marrow_muted))
-            setPadding(0, 5, 0, 18)
-        })
-
-        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        root.addView(list)
-
-        fun render(allContent: Boolean) {
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_bookmarks,content,false); replace(v)
+        val list=v.findViewById<LinearLayout>(R.id.bookmarkList); val status=v.findViewById<TextView>(R.id.bookmarkState)
+        fun render(allContent:Boolean){
             list.removeAllViews()
-            val pairs = if (allContent) {
-                state.contentRegistry.moduleIds().flatMap { module ->
-                    state.contentRegistry.questionIds(module)
-                        .filter { id -> state.session.answers[id]?.isStarred == true }
-                        .map { module to it }
-                }
-            } else {
-                BookmarkNavigationModel.ids(state).map { (state.session.moduleId ?: "") to it }
-            }
-
-            list.addView(TextView(this).apply {
-                text = if (allContent) "All loaded bookmarks · " + pairs.size else "Current module bookmarks · " + pairs.size
-                textSize = 14f
-                setTypeface(typeface, Typeface.BOLD)
-                setPadding(4, 8, 4, 12)
-            })
-
-            if (pairs.isEmpty()) {
-                list.addView(TextView(this).apply {
-                    text = "No bookmarked questions."
-                    textSize = 15f
-                    setPadding(4, 18, 4, 18)
-                    setTextColor(getColor(R.color.marrow_muted))
-                })
-                return
-            }
-
-            pairs.forEachIndexed { index, pair ->
-                val module = pair.first
-                val id = pair.second
-                val q = state.contentRegistry.question(module, id)
-                val row = LinearLayout(this).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(14, 12, 14, 12)
-                    setBackgroundColor(getColor(R.color.marrow_surface))
-                }
-                row.addView(TextView(this@MainActivity).apply {
-                    text = (index + 1).toString() + ". " + (q?.text ?: "Question " + (index + 1))
-                    textSize = 16f
-                    setTextColor(getColor(R.color.marrow_text))
-                })
-                row.addView(TextView(this@MainActivity).apply {
-                    text = module
-                    textSize = 12f
-                    setTextColor(getColor(R.color.marrow_muted))
-                    setPadding(0, 5, 0, 8)
-                })
-                row.addView(Button(this@MainActivity).apply {
-                    text = "OPEN"
-                    setOnClickListener {
-                        if (module.isNotBlank()) {
-                            val idsForModule = state.contentRegistry.questionIds(module)
-                            state.selectModule(module, idsForModule)
-                            state.moveQuestion(idsForModule.indexOf(id).coerceAtLeast(0))
-                            state.navigate(MarrowRoute.QBANK_PLAY)
-                            showPlayer()
-                        }
-                    }
-                })
-                row.addView(Button(this@MainActivity).apply {
-                    text = "REMOVE BOOKMARK"
-                    setOnClickListener {
-                        QBankSession(state).toggleBookmark(id)
-                        render(allContent)
-                    }
-                })
-                list.addView(row)
-                addDivider(list)
+            val pairs=if(allContent) state.contentRegistry.moduleIds().flatMap{module->state.contentRegistry.questionIds(module).filter{id->state.session.answers[id]?.isStarred==true}.map{module to it}} else BookmarkNavigationModel.ids(state).map{(state.session.moduleId?:"") to it}
+            status.text=if(allContent) "All loaded bookmarks · "+pairs.size else "Current module bookmarks · "+pairs.size
+            if(pairs.isEmpty()){list.addView(TextView(this).apply{text="No bookmarked questions.";textSize=15f;setPadding(8,18,8,18);setTextColor(getColor(R.color.marrow_muted))});return}
+            pairs.forEachIndexed{index,pair->
+                val module=pair.first;val id=pair.second;val q=state.contentRegistry.question(module,id)
+                val row=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(14,12,14,12);setBackgroundColor(getColor(R.color.marrow_surface))}
+                row.addView(TextView(this).apply{text=(index+1).toString()+". "+(q?.text?:"Question "+(index+1));textSize=16f})
+                row.addView(TextView(this).apply{text=module;textSize=12f;setTextColor(getColor(R.color.marrow_muted));setPadding(0,5,0,8)})
+                row.addView(Button(this).apply{text="OPEN";setOnClickListener{val ids=state.contentRegistry.questionIds(module);state.selectModule(module,ids);state.moveQuestion(ids.indexOf(id).coerceAtLeast(0));state.navigate(MarrowRoute.QBANK_PLAY);showPlayer()}})
+                row.addView(Button(this).apply{text="REMOVE BOOKMARK";setOnClickListener{QBankSession(state).toggleBookmark(id);render(allContent)}})
+                list.addView(row);addDivider(list)
             }
         }
-
-        val surfaceSwitch = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 0, 0, 8)
-        }
-        surfaceSwitch.addView(Button(this).apply {
-            text = "QUESTIONS"
-            isAllCaps = false
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setOnClickListener { render(true) }
-        })
-        surfaceSwitch.addView(Button(this).apply {
-            text = "VIDEO"
-            isAllCaps = false
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setOnClickListener {
-                AlertDialog.Builder(this@MainActivity)
-                    .setTitle("Bookmarked Videos")
-                    .setMessage("The recovered APK has a dedicated bookmark-video surface. No verified local video bookmark payload is bundled, so no video entries are fabricated.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
-        })
-        surfaceSwitch.addView(Button(this).apply {
-            text = "TIMELINE"
-            isAllCaps = false
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setOnClickListener {
-                AlertDialog.Builder(this@MainActivity)
-                    .setTitle("Bookmark Timeline")
-                    .setMessage("The recovered APK exposes a bookmark timeline surface. Its account/server timeline payload is unavailable locally, so no timeline entries are fabricated.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
-        })
-        root.addView(surfaceSwitch)
-
-        val switch = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 0, 0, 12)
-        }
-        switch.addView(Button(this).apply {
-            text = "ALL LOADED"
-            isAllCaps = false
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setOnClickListener { render(true) }
-        })
-        switch.addView(Button(this).apply {
-            text = "CURRENT MODULE"
-            isAllCaps = false
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setOnClickListener { render(false) }
-        })
-        root.addView(switch)
+        v.findViewById<Button>(R.id.bookmarkQuestionsTab).setOnClickListener{render(true)}
+        v.findViewById<Button>(R.id.bookmarkAllTab).setOnClickListener{render(true)}
+        v.findViewById<Button>(R.id.bookmarkCurrentTab).setOnClickListener{render(false)}
+        v.findViewById<Button>(R.id.bookmarkVideoTab).setOnClickListener{showAccountActionState("Bookmarked Videos","The recovered APK exposes a dedicated bookmark-video surface. No verified local video bookmark payload is bundled.")}
+        v.findViewById<Button>(R.id.bookmarkTimelineTab).setOnClickListener{showAccountActionState("Bookmark Timeline","The recovered APK exposes a bookmark timeline surface. Its remote timeline payload is unavailable locally.")}
         render(true)
-        replace(ScrollView(this).apply { addView(root) })
     }
 
     private fun showQBank() {
@@ -1676,15 +1552,12 @@ class MainActivity : Activity() {
     }
 
     private fun showProfile() {
-        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        root.addView(TextView(this).apply { text="Profile"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply { text="Recovered profile surface. Account identity is not fabricated locally."; setPadding(4,18,4,20) })
-        root.addView(Button(this).apply { text="EDIT PROFILE"; setOnClickListener { showProfileEdit() } })
-        root.addView(Button(this).apply { text="CHANGE PASSWORD"; setOnClickListener { showAccountActionState("Change Password", "The recovered Profile Landing flow exposes a change-password action. The password reset/update response is account/server-backed and is not fabricated locally.") } })
-        root.addView(Button(this).apply { text="KYC"; setOnClickListener { showAccountActionState("KYC", "The recovered Profile Landing flow exposes KYC navigation. KYC document/name/upload states are server/account-backed and are not fabricated locally.") } })
-        root.addView(Button(this).apply { text="SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
-        root.addView(Button(this).apply { text="BACK HOME"; setOnClickListener { state.navigate(MarrowRoute.HOME); showHome() } })
-        replace(ScrollView(this).apply { addView(root) })
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_profile,content,false);replace(v)
+        v.findViewById<Button>(R.id.profileEdit).setOnClickListener{showProfileEdit()}
+        v.findViewById<Button>(R.id.profilePassword).setOnClickListener{showAccountActionState("Change Password","The recovered Profile Landing flow exposes a change-password action. The update response is account/server-backed.")}
+        v.findViewById<Button>(R.id.profileKyc).setOnClickListener{showAccountActionState("KYC","The recovered Profile Landing flow exposes KYC navigation. KYC document/name/upload states are server/account-backed.")}
+        v.findViewById<Button>(R.id.profileSettings).setOnClickListener{state.navigate(MarrowRoute.SETTINGS);showSettings()}
+        v.findViewById<Button>(R.id.profileBack).setOnClickListener{state.navigate(MarrowRoute.HOME);showHome()}
     }
 
     private fun showAccountActionState(title: String, message: String) {
@@ -1717,28 +1590,14 @@ class MainActivity : Activity() {
     }
 
     private fun showSettings() {
-        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        val prefs = getSharedPreferences("marrow_preferences", MODE_PRIVATE)
-        root.addView(TextView(this).apply { text="Settings"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply {
-            text="App preferences"
-            textSize=13f
-            setTextColor(getColor(R.color.marrow_muted))
-            setPadding(4,8,4,16)
-        })
-        root.addView(Button(this).apply { text="THEME"; setOnClickListener { state.navigate(MarrowRoute.THEME); showTheme() } })
-        root.addView(Button(this).apply {
-            text = if (prefs.getBoolean("vibration_enabled", false)) "VIBRATION: ON" else "VIBRATION: OFF"
-            isAllCaps = false
-            setOnClickListener {
-                val next = !prefs.getBoolean("vibration_enabled", false)
-                prefs.edit().putBoolean("vibration_enabled", next).apply()
-                showSettings()
-            }
-        })
-        root.addView(Button(this).apply { text="PROFILE"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
-        root.addView(Button(this).apply { text="BACK"; setOnClickListener { state.navigate(MarrowRoute.PROFILE); showProfile() } })
-        replace(ScrollView(this).apply { addView(root) })
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_settings,content,false);replace(v)
+        val prefs=getSharedPreferences("marrow_preferences",MODE_PRIVATE);val vibration=v.findViewById<Button>(R.id.settingsVibration)
+        fun refresh(){vibration.text=if(prefs.getBoolean("vibration_enabled",false))"VIBRATION: ON" else "VIBRATION: OFF"}
+        refresh()
+        v.findViewById<Button>(R.id.settingsTheme).setOnClickListener{state.navigate(MarrowRoute.THEME);showTheme()}
+        vibration.setOnClickListener{prefs.edit().putBoolean("vibration_enabled",!prefs.getBoolean("vibration_enabled",false)).apply();refresh()}
+        v.findViewById<Button>(R.id.settingsProfile).setOnClickListener{state.navigate(MarrowRoute.PROFILE);showProfile()}
+        v.findViewById<Button>(R.id.settingsBack).setOnClickListener{state.navigate(MarrowRoute.PROFILE);showProfile()}
     }
 
     private fun applySavedThemeMode() {
@@ -1782,17 +1641,12 @@ class MainActivity : Activity() {
     }
 
     private fun showTheme() {
-        val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(20,20,20,20) }
-        val dark = MarrowTheme.isDark(this)
-        root.addView(TextView(this).apply { text="Theme"; textSize=24f; setTypeface(typeface,Typeface.BOLD) })
-        root.addView(TextView(this).apply {
-            text = "Current theme: " + if (dark) "Dark" else "Light"
-            setPadding(4,18,4,18)
-        })
-        root.addView(Button(this).apply { text="LIGHT"; isEnabled = dark; setOnClickListener { setDarkTheme(false) } })
-        root.addView(Button(this).apply { text="DARK"; isEnabled = !dark; setOnClickListener { setDarkTheme(true) } })
-        root.addView(Button(this).apply { text="BACK SETTINGS"; setOnClickListener { state.navigate(MarrowRoute.SETTINGS); showSettings() } })
-        replace(ScrollView(this).apply { addView(root) })
+        val v=LayoutInflater.from(this).inflate(R.layout.screen_theme,content,false);replace(v)
+        val dark=MarrowTheme.isDark(this);v.findViewById<TextView>(R.id.themeState).text="Current theme: "+if(dark)"Dark" else "Light"
+        v.findViewById<Button>(R.id.themeLight).isEnabled=dark;v.findViewById<Button>(R.id.themeDark).isEnabled=!dark
+        v.findViewById<Button>(R.id.themeLight).setOnClickListener{setDarkTheme(false)}
+        v.findViewById<Button>(R.id.themeDark).setOnClickListener{setDarkTheme(true)}
+        v.findViewById<Button>(R.id.themeBack).setOnClickListener{state.navigate(MarrowRoute.SETTINGS);showSettings()}
     }
 
     private fun addDivider(c: LinearLayout) {
