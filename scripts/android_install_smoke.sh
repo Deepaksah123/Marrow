@@ -43,7 +43,7 @@ fi
 clear_launcher_anr
 adb exec-out screencap -p > /tmp/marrow-home.png
 
-adb shell input tap 135 2300
+adb shell input tap 945 2300
 sleep 3
 clear_launcher_anr
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
