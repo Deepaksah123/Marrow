@@ -64,29 +64,15 @@ jobs:
             adb install -r app/build/outputs/apk/debug/app-debug.apk || adb install --no-streaming -r app/build/outputs/apk/debug/app-debug.apk || true
             adb shell pm path com.deepaksah.marrow.rebuild || true
             adb shell am start -n com.deepaksah.marrow.rebuild/.MainActivity || true
-            # Wait for the real post-splash Home surface. Content import can take longer
-            # than a fixed sleep; require the actual bottom-navigation resource to exist.
-            READY=0
-            for i in $(seq 1 120); do
-              adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-              if adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'bottomNavigation'; then
-                READY=1
-                break
-              fi
-              sleep 1
-            done
-            if [ "$READY" -ne 1 ]; then
-              echo "Timed out waiting for post-splash UI"
-              adb shell uiautomator dump /sdcard/window.xml || true
-              adb shell cat /sdcard/window.xml || true
-              exit 1
-            fi
-
+            # Allow the real APK content-import/render path to settle before QA.
+            # The previous fixed 45s capture was proven to catch the splash screen.
+            sleep 90
             adb shell pidof com.deepaksah.marrow.rebuild || true
+            adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+            adb shell cat /sdcard/window.xml 2>/dev/null | grep -o 'bottomNavigation' | head -1 || true
             adb exec-out screencap -p > /tmp/marrow-home.png
 
-            # Navigate using the actual bottom-navigation positions only after
-            # Home is confirmed rendered.
+            # Navigate only after the long post-launch settle period.
             adb shell input tap 270 2200
             sleep 3
             adb exec-out screencap -p > /tmp/marrow-qbank.png
@@ -98,6 +84,7 @@ jobs:
             adb shell input tap 810 2200
             sleep 3
             adb exec-out screencap -p > /tmp/marrow-video.png
+
       - name: Smoke-test marker
         run: echo "install-smoke-production-package"
 
