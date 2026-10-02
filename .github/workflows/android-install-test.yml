@@ -33,8 +33,10 @@ jobs:
       - name: Verify APK signature
         run: |
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk
+      - name: Prepare emulator APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk /tmp/marrow-debug.apk
       - name: Install and launch on Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis
@@ -60,7 +62,8 @@ jobs:
             test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
             adb shell getprop ro.build.version.sdk
             echo "===== INSTALL ====="
-            adb install -r -t app/build/outputs/apk/debug/app-debug.apk
+            test -f /tmp/marrow-debug.apk
+            adb install -r -t /tmp/marrow-debug.apk
             echo "===== PACKAGE ====="
             adb shell pm path com.deepaksah.marrow.rebuild
             echo "===== LAUNCH ====="
