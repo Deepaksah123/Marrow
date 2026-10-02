@@ -51,7 +51,7 @@ jobs:
           yes | sdkmanager --licenses >/dev/null
           sdkmanager --install "platform-tools" "emulator" "platforms;android-35" "system-images;android-35;google_apis;x86_64" >/dev/null
           echo no | avdmanager create avd --force -n marrow-smoke --package "system-images;android-35;google_apis;x86_64" --device "pixel_7"
-          nohup emulator -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none >/tmp/emulator.log 2>&1 &
+          nohup "$ANDROID_HOME/emulator/emulator" -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none >/tmp/emulator.log 2>&1 &
           EMU_PID=$!
           trap 'kill "$EMU_PID" >/dev/null 2>&1 || true' EXIT
           adb start-server >/dev/null 2>&1 || true
