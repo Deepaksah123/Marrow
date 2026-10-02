@@ -58,13 +58,10 @@ jobs:
           script: |
             set -e
             adb wait-for-device
-            for i in $(seq 1 60); do
-              BOOT="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
-              echo "boot=$BOOT attempt=$i"
-              [ "$BOOT" = "1" ] && break
-              sleep 2
-            done
-            test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
+            sleep 5
+            BOOT="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+            echo "boot=$BOOT"
+            test "$BOOT" = "1"
             adb install -r app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path com.deepaksah.marrow.rebuild
             adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
