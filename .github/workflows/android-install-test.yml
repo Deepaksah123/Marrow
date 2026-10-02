@@ -43,7 +43,7 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            set -euxo pipefail
+            set -eux
             adb start-server || true
             sleep 2
             set +e
