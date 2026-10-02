@@ -48,28 +48,36 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          yes | sdkmanager --licenses >/dev/null
-          sdkmanager --install "platform-tools" "emulator" "platforms;android-35" "system-images;android-35;google_apis;x86_64" >/dev/null
-          echo no | avdmanager create avd --force -n marrow-smoke --package "system-images;android-35;google_apis;x86_64" --device "pixel_7"
-          nohup "$ANDROID_HOME/emulator/emulator" -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none >/tmp/emulator.log 2>&1 &
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
+          AVDMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name avdmanager | head -1)"
+          ADB="$ANDROID_HOME/platform-tools/adb"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
+          test -x "$SDKMANAGER"
+          test -x "$AVDMANAGER"
+          test -x "$ADB"
+          test -x "$EMULATOR"
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          "$SDKMANAGER" --install "platform-tools" "emulator" "platforms;android-35" "system-images;android-35;google_apis;x86_64" >/dev/null
+          echo no | "$AVDMANAGER" create avd --force -n marrow-smoke --package "system-images;android-35;google_apis;x86_64" --device "pixel_7"
+          nohup "$EMULATOR" -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none >/tmp/emulator.log 2>&1 &
           EMU_PID=$!
           trap 'kill "$EMU_PID" >/dev/null 2>&1 || true' EXIT
-          adb start-server >/dev/null 2>&1 || true
+          "$ADB" start-server >/dev/null 2>&1 || true
           for i in $(seq 1 120); do
-            STATE="$(adb get-state 2>/dev/null || true)"
-            BOOT="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+            STATE="$("$ADB" get-state 2>/dev/null || true)"
+            BOOT="$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
             echo "attempt=$i state=$STATE boot=$BOOT"
             if [ "$STATE" = "device" ] && [ "$BOOT" = "1" ]; then break; fi
-            adb reconnect offline >/dev/null 2>&1 || true
+            "$ADB" reconnect offline >/dev/null 2>&1 || true
             sleep 2
           done
-          test "$(adb get-state)" = "device"
-          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
-          adb install -r app/build/outputs/apk/debug/app-debug.apk
-          adb shell pm path com.deepaksah.marrow.rebuild
-          adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
+          test "$("$ADB" get-state)" = "device"
+          test "$("$ADB" shell getprop sys.boot_completed | tr -d '\r')" = "1"
+          "$ADB" install -r app/build/outputs/apk/debug/app-debug.apk
+          "$ADB" shell pm path com.deepaksah.marrow.rebuild
+          "$ADB" shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
           sleep 5
-          adb shell pidof com.deepaksah.marrow.rebuild
+          "$ADB" shell pidof com.deepaksah.marrow.rebuild
       - name: Smoke-test marker
         run: echo "install-smoke-production-package"
 
