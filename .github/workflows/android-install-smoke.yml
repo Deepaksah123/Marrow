@@ -38,7 +38,7 @@ jobs:
           set -eu
           APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
           test -f "$APK"
-          cp "$APK" /tmp/marrow-debug.apk
+          cp "$APK" "$GITHUB_WORKSPACE/marrow-debug.apk"
           BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           "$BUILD_TOOLS/aapt2" dump badging "$APK" > /tmp/aapt-badging.txt
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
@@ -60,7 +60,7 @@ jobs:
             sleep 2
             cat > /tmp/run-install-test.sh <<'SH'
             set -u
-            APK=/tmp/marrow-debug.apk
+            APK="$GITHUB_WORKSPACE/marrow-debug.apk"
             PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
             adb start-server || true
