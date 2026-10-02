@@ -44,8 +44,10 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > /tmp/apksigner.txt
           unzip -t "$APK" > /tmp/zip-test.txt
 
+      - name: Prepare emulator APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk /tmp/marrow-debug.apk
       - name: Start Android emulator and exact adb install -r
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
           api-level: 35
           target: google_apis
@@ -57,7 +59,7 @@ jobs:
           emulator-boot-timeout: 900
           script: |
             set -e
-            APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
+            APK="/tmp/marrow-debug.apk"
             test -f "$APK"
             echo "===== ADB DEVICES ====="
             adb devices -l
