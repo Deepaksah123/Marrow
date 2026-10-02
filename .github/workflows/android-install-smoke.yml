@@ -60,15 +60,16 @@ jobs:
           test -x "$EMULATOR"
 
           echo no | "$AVDMANAGER" create avd --force -n marrow-smoke --package "system-images;android-35;google_apis;x86_64" --device "pixel_7"
-          nohup "$EMULATOR" -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none >/tmp/emulator.log 2>&1 &
+          nohup "$EMULATOR" -avd marrow-smoke -port 5554 -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot -wipe-data -accel off >/tmp/emulator.log 2>&1 &
           EMU_PID=$!
           trap 'kill "$EMU_PID" >/dev/null 2>&1 || true' EXIT
           "$ADB" start-server >/dev/null 2>&1 || true
-          for i in $(seq 1 120); do
+          for i in $(seq 1 180); do
             STATE="$("$ADB" get-state 2>/dev/null || true)"
             BOOT="$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
             echo "attempt=$i state=$STATE boot=$BOOT"
             if [ "$STATE" = "device" ] && [ "$BOOT" = "1" ]; then break; fi
+            "$ADB" connect 127.0.0.1:5554 >/dev/null 2>&1 || true
             "$ADB" reconnect offline >/dev/null 2>&1 || true
             sleep 2
           done
