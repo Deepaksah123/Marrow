@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+<TextView android:id="@+id/profileTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profile" android:textSize="26sp" android:textStyle="bold"/>
+<TextView android:id="@+id/profileState" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profile &amp; account" android:textSize="13sp" android:textColor="@color/marrow_muted" android:paddingTop="6dp" android:paddingBottom="18dp"/>
+<LinearLayout android:id="@+id/profileAccountCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:background="@drawable/bg_home_card">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Account" android:textSize="18sp" android:textStyle="bold"/>
+<TextView android:id="@+id/profileAccountNote" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Recovered profile landing/edit surfaces are available. Account identity remains server-backed." android:textSize="13sp" android:textColor="@color/marrow_muted" android:paddingTop="6dp"/>
+</LinearLayout>
+<Button android:id="@+id/profileEdit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="EDIT PROFILE" android:layout_marginTop="12dp"/>
+<Button android:id="@+id/profilePassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CHANGE PASSWORD"/>
+<Button android:id="@+id/profileKyc" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="KYC"/>
+<Button android:id="@+id/profileSettings" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="SETTINGS"/>
+<Button android:id="@+id/profileBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BACK HOME"/>
+</LinearLayout></ScrollView>
