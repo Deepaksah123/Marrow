@@ -75,14 +75,20 @@ jobs:
             # Navigate only after the long post-launch settle period.
             adb shell input tap 270 2300
             sleep 3
+            adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+            adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'qbankTracker' || exit 1
             adb exec-out screencap -p > /tmp/marrow-qbank.png
 
             adb shell input tap 540 2300
             sleep 3
+            adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+            adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'testStart' || exit 1
             adb exec-out screencap -p > /tmp/marrow-test.png
 
             adb shell input tap 810 2300
             sleep 3
+            adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+            adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'videoSubjects' || exit 1
             adb exec-out screencap -p > /tmp/marrow-video.png
 
       - name: Smoke-test marker
