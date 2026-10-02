@@ -43,7 +43,7 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            set -eux
+            set -ux
             adb start-server || true
             sleep 2
             set +e
@@ -60,7 +60,7 @@ jobs:
             set -e
             test "$(adb get-state)" = "device"
             test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
-            adb shell getprop ro.build.version.sdk
+            adb shell getprop ro.build.version.sdk || true
             for attempt in $(seq 1 5); do
               if adb install -r -t app/build/outputs/apk/debug/app-debug.apk; then
                 break
