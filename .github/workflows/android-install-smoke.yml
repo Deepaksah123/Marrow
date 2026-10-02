@@ -64,7 +64,7 @@ jobs:
             adb install -r app/build/outputs/apk/debug/app-debug.apk || adb install --no-streaming -r app/build/outputs/apk/debug/app-debug.apk || true
             adb shell pm path com.deepaksah.marrow.rebuild || true
             adb shell am start -n com.deepaksah.marrow.rebuild/.MainActivity || true
-            sleep 8
+            sleep 45
             adb shell pidof com.deepaksah.marrow.rebuild || true
             adb exec-out screencap -p > /tmp/marrow-home.png || true
             adb shell input tap 270 1800 || true
