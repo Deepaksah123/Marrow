@@ -67,6 +67,16 @@ jobs:
             adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
             sleep 5
             adb shell pidof com.deepaksah.marrow.rebuild
+            adb exec-out screencap -p > /tmp/marrow-home.png
+            adb shell input tap 270 1800
+            sleep 2
+            adb exec-out screencap -p > /tmp/marrow-qbank.png
+            adb shell input tap 540 1800
+            sleep 2
+            adb exec-out screencap -p > /tmp/marrow-test.png
+            adb shell input tap 810 1800
+            sleep 2
+            adb exec-out screencap -p > /tmp/marrow-video.png
       - name: Smoke-test marker
         run: echo "install-smoke-production-package"
 
