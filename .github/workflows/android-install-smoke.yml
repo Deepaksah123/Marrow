@@ -56,21 +56,15 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            adb start-server || true
-            sleep 2
             cat > /tmp/run-install-test.sh <<'SH'
             set +e
             APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
             PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
-            adb kill-server >/dev/null 2>&1 || true
-            adb start-server >/dev/null 2>&1 || true
-            sleep 8
-            adb reconnect offline >/dev/null 2>&1 || true
-            sleep 8
-            adb devices -l > /tmp/adb-devices.txt 2>&1 || true
+            sleep 10
             adb wait-for-device >/tmp/adb-wait.txt 2>&1 || true
-            sleep 5
+            sleep 3
+            adb devices -l > /tmp/adb-devices.txt 2>&1 || true
             adb shell getprop > /tmp/device-props.txt 2>&1 || true
             adb shell pm path "$PKG" > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
