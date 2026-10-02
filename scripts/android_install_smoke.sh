@@ -43,7 +43,7 @@ fi
 clear_launcher_anr
 adb exec-out screencap -p > /tmp/marrow-home.png
 
-adb shell input tap 945 2300
+adb shell input tap 405 2300
 sleep 3
 clear_launcher_anr
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
@@ -51,7 +51,7 @@ adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'qbankTracker' || { echo 
 clear_launcher_anr
 adb exec-out screencap -p > /tmp/marrow-qbank.png
 
-adb shell input tap 405 2300
+adb shell input tap 675 2300
 sleep 3
 clear_launcher_anr
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
@@ -59,7 +59,7 @@ adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'testStart' || { echo "Te
 clear_launcher_anr
 adb exec-out screencap -p > /tmp/marrow-test.png
 
-adb shell input tap 675 2300
+adb shell input tap 945 2300
 sleep 3
 clear_launcher_anr
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
