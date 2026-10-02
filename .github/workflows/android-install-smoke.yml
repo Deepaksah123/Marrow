@@ -59,15 +59,19 @@ jobs:
             adb start-server || true
             sleep 2
             cat > /tmp/run-install-test.sh <<'SH'
-            set -u
+            set +e
             APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
             PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
-            adb start-server || true
-            sleep 2
-            adb wait-for-device
-            adb devices -l > /tmp/adb-devices.txt
-            adb shell getprop > /tmp/device-props.txt
+            adb kill-server >/dev/null 2>&1 || true
+            adb start-server >/dev/null 2>&1 || true
+            sleep 8
+            adb reconnect offline >/dev/null 2>&1 || true
+            sleep 8
+            adb devices -l > /tmp/adb-devices.txt 2>&1 || true
+            adb wait-for-device >/tmp/adb-wait.txt 2>&1 || true
+            sleep 5
+            adb shell getprop > /tmp/device-props.txt 2>&1 || true
             adb shell pm path "$PKG" > /tmp/pm-path-before.txt 2>&1 || true
             adb logcat -c
             set +e
