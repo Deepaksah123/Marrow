@@ -55,7 +55,7 @@ adb shell input tap 405 2300
 sleep 3
 clear_launcher_anr
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-adb.shell cat /sdcard/window.xml 2>/dev/null | grep -q 'testStart' || { echo "Test UI not detected"; adb shell cat /sdcard/window.xml 2>/dev/null || true; exit 1; }
+adb shell cat /sdcard/window.xml 2>/dev/null | grep -q 'testStart' || { echo "Test UI not detected"; adb shell cat /sdcard/window.xml 2>/dev/null || true; exit 1; }
 clear_launcher_anr
 adb exec-out screencap -p > /tmp/marrow-test.png
 
