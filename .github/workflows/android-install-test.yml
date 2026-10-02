@@ -43,31 +43,27 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            set +e
-            sleep 10
-            adb wait-for-device >/tmp/adb-wait.txt 2>&1 || true
-            sleep 3
-            adb devices -l || true
-            adb shell getprop ro.build.version.sdk || true
-            adb shell getprop sys.boot_completed || true
-            adb install -r -t app/build/outputs/apk/debug/app-debug.apk >/tmp/install.txt 2>&1
-            RC=$?
-            cat /tmp/install.txt || true
-            if [ "$RC" -ne 0 ]; then
-              echo "INSTALL_FAILED_RC=$RC"
-              adb reconnect offline >/dev/null 2>&1 || true
-              sleep 8
-              adb install -r -t app/build/outputs/apk/debug/app-debug.apk >/tmp/install-retry.txt 2>&1
-              RC=$?
-              cat /tmp/install-retry.txt || true
-            fi
-            if [ "$RC" -ne 0 ]; then
-              echo "INSTALL_FAILED_FINAL_RC=$RC"
-              adb devices -l || true
-              adb logcat -d > /tmp/logcat-install-failure.txt 2>&1 || true
-              exit "$RC"
-            fi
+            set -e
+            echo "===== ADB DEVICES ====="
+            adb devices -l
+            echo "===== WAIT FOR BOOT ====="
+            for i in $(seq 1 90); do
+              STATE="$(adb get-state 2>/dev/null || true)"
+              BOOT="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+              echo "attempt=$i state=$STATE boot=$BOOT"
+              if [ "$STATE" = "device" ] && [ "$BOOT" = "1" ]; then
+                break
+              fi
+              sleep 2
+            done
+            test "$(adb get-state)" = "device"
+            test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
+            adb shell getprop ro.build.version.sdk
+            echo "===== INSTALL ====="
+            adb install -r -t app/build/outputs/apk/debug/app-debug.apk
+            echo "===== PACKAGE ====="
             adb shell pm path com.deepaksah.marrow.rebuild
+            echo "===== LAUNCH ====="
             adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
             sleep 5
             adb shell pidof com.deepaksah.marrow.rebuild
