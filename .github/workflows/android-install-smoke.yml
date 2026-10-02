@@ -73,15 +73,15 @@ jobs:
             adb exec-out screencap -p > /tmp/marrow-home.png
 
             # Navigate only after the long post-launch settle period.
-            adb shell input tap 270 2200
+            adb shell input tap 270 2300
             sleep 3
             adb exec-out screencap -p > /tmp/marrow-qbank.png
 
-            adb shell input tap 540 2200
+            adb shell input tap 540 2300
             sleep 3
             adb exec-out screencap -p > /tmp/marrow-test.png
 
-            adb shell input tap 810 2200
+            adb shell input tap 810 2300
             sleep 3
             adb exec-out screencap -p > /tmp/marrow-video.png
 
