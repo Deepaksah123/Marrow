@@ -18,6 +18,7 @@ import android.text.Html
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowInsets
 import android.widget.*
 import android.webkit.WebView
 import android.webkit.WebSettings
@@ -47,6 +48,28 @@ class MainActivity : Activity() {
         val navTests = findViewById<TextView>(R.id.navTests)
         val navVideos = findViewById<TextView>(R.id.navVideos)
         val bottomNavigation = findViewById<LinearLayout>(R.id.bottomNavigation)
+
+        // Android 15+ enforces edge-to-edge for targetSdk 35. Apply the
+        // system-bar insets explicitly so the native-like toolbar/content does
+        // not sit under the status bar and the bottom navigation remains fully
+        // touchable above the gesture/navigation area.
+        val root = findViewById<LinearLayout>(R.id.root)
+        root.setOnApplyWindowInsetsListener { _, insets ->
+            val topInset = insets.systemWindowInsetTop
+            val bottomInset = insets.systemWindowInsetBottom
+            content.setPadding(content.paddingLeft, topInset, content.paddingRight, 0)
+            val navParams = bottomNavigation.layoutParams
+            navParams.height = dp(56) + bottomInset
+            bottomNavigation.layoutParams = navParams
+            bottomNavigation.setPadding(
+                bottomNavigation.paddingLeft,
+                dp(2),
+                bottomNavigation.paddingRight,
+                bottomInset + dp(2)
+            )
+            insets
+        }
+        root.requestApplyInsets()
         bottomNavigation.visibility = View.GONE
 
         fun renderBottomNav() {
@@ -71,6 +94,9 @@ class MainActivity : Activity() {
         navVideos.setOnClickListener { state.navigate(MarrowRoute.VIDEOS); renderBottomNav(); showVideos() }
         loadMarrowContentThenHome()
     }
+
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density).toInt()
 
     private fun loadMarrowContentThenHome() {
         val splash = LayoutInflater.from(this).inflate(R.layout.screen_splash, content, false)
