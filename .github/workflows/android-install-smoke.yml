@@ -60,7 +60,7 @@ jobs:
             sleep 2
             cat > /tmp/run-install-test.sh <<'SH'
             set -u
-            APK="$GITHUB_WORKSPACE/marrow-debug.apk"
+            APK="$GITHUB_WORKSPACE/app/build/outputs/apk/debug/app-debug.apk"
             PKG=com.deepaksah.marrow.rebuild
             test -f "$APK"
             adb start-server || true
