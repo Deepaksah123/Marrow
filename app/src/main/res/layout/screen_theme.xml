@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
 <TextView android:id="@+id/themeTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Theme" android:textSize="26sp" android:textStyle="bold"/>
-<TextView android:id="@+id/themeState" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:textColor="@color/marrow_muted" android:paddingTop="8dp" android:paddingBottom="16dp"/>
+<TextView android:id="@+id/themeState" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:textColor="@color/marrow_muted" android:paddingTop="8dp" android:paddingBottom="14dp"/>
 <LinearLayout android:id="@+id/themeOptions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:background="@drawable/bg_home_card">
-<Button android:id="@+id/themeLight" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="LIGHT"/>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Appearance" android:textSize="18sp" android:textStyle="bold"/>
+<Button android:id="@+id/themeLight" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="LIGHT" android:layout_marginTop="8dp"/>
 <Button android:id="@+id/themeDark" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="DARK"/>
 </LinearLayout>
 <Button android:id="@+id/themeBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="BACK SETTINGS" android:layout_marginTop="12dp"/>
