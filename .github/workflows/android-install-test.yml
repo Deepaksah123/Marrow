@@ -48,7 +48,7 @@ jobs:
           EMULATOR="$ANDROID_HOME/emulator/emulator"
           test -x "$SDKMANAGER"
           test -x "$AVDMANAGER"
-          yes | "$SDKMANAGER" --licenses >/dev/null
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" --install "platform-tools" "emulator" "platforms;android-${{ matrix.api-level }}" "system-images;android-${{ matrix.api-level }};google_apis;x86_64" >/dev/null
           test -x "$ADB"
           test -x "$EMULATOR"
