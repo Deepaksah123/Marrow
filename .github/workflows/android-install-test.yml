@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [35]
+        api-level: [34]
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
@@ -46,13 +46,24 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_2
-          cores: 2
-          ram-size: 2048M
+          cores: 4
+          ram-size: 3072M
           heap-size: 512M
+          disk-size: 6000M
           force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           disable-animations: true
-          emulator-boot-timeout: 600
+          emulator-boot-timeout: 900
+          disable-linux-hw-accel: false
+          pre-emulator-launch-script: |
+            echo "=== KVM ==="
+            ls -l /dev/kvm || true
+            echo "=== CPU ==="
+            nproc || true
+            echo "=== DISK ==="
+            df -h || true
+            echo "=== EMULATOR ACCEL ==="
+            "$ANDROID_HOME/emulator/emulator" -accel-check || true
           script: |
             set -u
             timeout 30s adb wait-for-device
