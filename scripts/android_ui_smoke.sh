@@ -6,18 +6,32 @@ APK="app/build/outputs/apk/debug/app-debug.apk"
 PACKAGE="com.deepaksah.marrow.rebuild"
 ACTIVITY="${PACKAGE}/.MainActivity"
 
-timeout 30s adb wait-for-device
-adb shell input keyevent 82
-timeout 60s adb install -r -t "${APK}"
-adb shell pm path "${PACKAGE}"
+echo "=== adb devices ==="
+adb devices
 
-set +e
-timeout 45s adb shell am start -W -n "${ACTIVITY}" > launch.txt 2>&1
+echo "=== wait for device ==="
+timeout 60s adb wait-for-device
+
+echo "=== install ==="
+if ! timeout 90s adb install -r -t "${APK}"; then
+  echo "streamed install failed; retrying non-streaming"
+  timeout 90s adb install --no-streaming -r -t "${APK}" || exit 1
+fi
+
+echo "=== package path ==="
+adb shell pm path "${PACKAGE}" > package-path.txt 2>&1
+cat package-path.txt
+test -s package-path.txt
+
+echo "=== launch ==="
+adb shell am force-stop "${PACKAGE}" || true
+timeout 60s adb shell am start -W -n "${ACTIVITY}" > launch.txt 2>&1
 START_RC=$?
 cat launch.txt
-sleep 5
-adb exec-out screencap -p > "marrow-launch-api-${API_LEVEL}-t05s.png"
-sleep 25
+
+sleep 8
+adb exec-out screencap -p > "marrow-launch-api-${API_LEVEL}-t08s.png"
+sleep 22
 adb exec-out screencap -p > "marrow-launch-api-${API_LEVEL}-t30s.png"
 sleep 30
 adb exec-out screencap -p > "marrow-launch-api-${API_LEVEL}-t60s.png"
@@ -25,68 +39,47 @@ adb exec-out screencap -p > "marrow-launch-api-${API_LEVEL}-t60s.png"
 adb shell pidof "${PACKAGE}" > pid.txt 2>&1
 PID_RC=$?
 cat pid.txt
-adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' > activity.txt 2>&1
+
+adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' > activity.txt 2>&1 || true
 cat activity.txt
-adb logcat -d -v threadtime -t 1200 > logcat.txt
-adb shell dumpsys package "${PACKAGE}" > package.txt
+adb logcat -d -v threadtime -t 1600 > logcat.txt 2>&1 || true
+adb shell dumpsys package "${PACKAGE}" > package.txt 2>&1 || true
+adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+adb exec-out cat /sdcard/window.xml > ui.xml 2>/dev/null || true
 
-tap_text() {
-  local target="$1"
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-  local line
-  line=$(adb exec-out cat /sdcard/window.xml 2>/dev/null | grep -m1 "text=\"${target}\"" || true)
-  local b
-  b=$(printf '%s' "${line}" | sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
-  if [ -n "${b}" ]; then
-    set -- ${b}
-    adb shell input tap $(( ($1+$3)/2 )) $(( ($2+$4)/2 ))
-    sleep 3
-    return 0
-  fi
-  return 1
-}
+echo "=== UI markers ==="
+grep -E 'homeQBankCard|homePearlsCard|homeShare|QBank|Pearls|Home' ui.xml | head -80 || true
 
-tap_desc() {
-  local target="$1"
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-  local line
-  line=$(adb exec-out cat /sdcard/window.xml 2>/dev/null | grep -m1 "content-desc=\"${target}\"" || true)
-  local b
-  b=$(printf '%s' "${line}" | sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
-  if [ -n "${b}" ]; then
-    set -- ${b}
-    adb shell input tap $(( ($1+$3)/2 )) $(( ($2+$4)/2 ))
-    sleep 3
-    return 0
-  fi
-  return 1
-}
-
-tap_text "QBank" || true
-adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-qbank.png"
-tap_text "Tests" || true
-adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-tests.png"
-tap_text "Home" || true
-sleep 2
-tap_desc "Menu" || tap_text "☰" || true
+echo "=== navigation QA: QBank ==="
+adb shell input keyevent 3 || true
 sleep 1
-tap_text "Profile" || true
-adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-profile.png"
-tap_text "BACK HOME" || true
+adb shell input tap 405 2300 || true
+sleep 3
+adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-qbank.png"
+adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+adb exec-out cat /sdcard/window.xml > qbank-ui.xml 2>/dev/null || true
+
+echo "=== navigation QA: Tests ==="
+adb shell input tap 675 2300 || true
+sleep 3
+adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-tests.png"
+adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+adb exec-out cat /sdcard/window.xml > tests-ui.xml 2>/dev/null || true
+
+echo "=== navigation QA: Home ==="
+adb shell input tap 135 2300 || true
+sleep 3
 adb exec-out screencap -p > "marrow-ui-api-${API_LEVEL}-home-final.png"
 
-{
-  echo "start_rc=${START_RC}"
-  echo "pid_rc=${PID_RC}"
-  echo "--- launch ---"
-  cat launch.txt
-  echo "--- pid ---"
-  cat pid.txt
-  echo "--- activity ---"
-  cat activity.txt
-  echo "--- crash markers ---"
-  grep -E 'FATAL EXCEPTION|AndroidRuntime|Process: com.deepaksah.marrow.rebuild|ANR in' logcat.txt | tail -80 || true
-} | tee install-summary.txt
+echo "=== launch diagnostics ==="
+echo "start_rc=${START_RC}"
+echo "pid_rc=${PID_RC}"
+echo "--- crash markers ---"
+grep -E 'FATAL EXCEPTION|AndroidRuntime|Process: com.deepaksah.marrow.rebuild|ANR in' logcat.txt | tail -100 || true
+echo "--- resumed/focused ---"
+cat activity.txt
+echo "--- UI marker counts ---"
+grep -o 'homeQBankCard\|homePearlsCard\|homeShare' ui.xml | sort | uniq -c || true
 
 test "${START_RC}" -eq 0
 test "${PID_RC}" -eq 0
