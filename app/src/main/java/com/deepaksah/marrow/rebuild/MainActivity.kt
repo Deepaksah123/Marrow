@@ -512,7 +512,7 @@ class MainActivity : Activity() {
                     showLessons(s)
                 }
             }
-            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_pc_circle_including_logo); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
+            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_qbank_header); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
             row.addView(LinearLayout(this).apply {
                 orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
                 addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
