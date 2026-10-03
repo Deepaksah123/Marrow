@@ -45,7 +45,7 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           script: |
-            set -e
+            set -u
             adb wait-for-device
             for i in $(seq 1 60); do
               BOOT="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
@@ -56,9 +56,29 @@ jobs:
             test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
             adb install -r -t app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path com.deepaksah.marrow.rebuild
-            adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity
+            set +e
+            adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity 2>&1 | tee launch.txt
+            START_RC=$?
             sleep 5
-            adb shell pidof com.deepaksah.marrow.rebuild
+            adb shell pidof com.deepaksah.marrow.rebuild 2>&1 | tee pid.txt
+            PID_RC=$?
+            adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' | tee activity.txt
+            adb logcat -d -v threadtime -t 1200 > logcat.txt
+            adb shell dumpsys package com.deepaksah.marrow.rebuild > package.txt
+            {
+              echo "start_rc=$START_RC"
+              echo "pid_rc=$PID_RC"
+              echo "--- launch ---"
+              cat launch.txt
+              echo "--- pid ---"
+              cat pid.txt
+              echo "--- activity ---"
+              cat activity.txt
+              echo "--- crash markers ---"
+              grep -E 'FATAL EXCEPTION|AndroidRuntime|Process: com.deepaksah.marrow.rebuild|ANR in' logcat.txt | tail -80 || true
+            } | tee install-summary.txt
+            test "$START_RC" -eq 0
+            test "$PID_RC" -eq 0
       - name: Upload diagnostic APK
         if: always()
         uses: actions/upload-artifact@v4
