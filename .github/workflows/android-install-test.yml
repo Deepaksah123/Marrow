@@ -57,12 +57,15 @@ jobs:
             adb install -r -t app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path com.deepaksah.marrow.rebuild
             set +e
-            adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity 2>&1 | tee launch.txt
+            timeout 45s adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity > launch.txt 2>&1
             START_RC=$?
+            cat launch.txt
             sleep 5
-            adb shell pidof com.deepaksah.marrow.rebuild 2>&1 | tee pid.txt
+            adb shell pidof com.deepaksah.marrow.rebuild > pid.txt 2>&1
             PID_RC=$?
-            adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' | tee activity.txt
+            cat pid.txt
+            adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' > activity.txt 2>&1
+            cat activity.txt
             adb logcat -d -v threadtime -t 1200 > logcat.txt
             adb shell dumpsys package com.deepaksah.marrow.rebuild > package.txt
             adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}.png
