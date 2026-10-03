@@ -10,55 +10,77 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
-        android:paddingStart="8dp"
+        android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:background="@color/marrow_primary"
         android:elevation="4dp">
+
         <TextView
             android:id="@+id/homeMenu"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginVertical="4dp"
             android:gravity="center"
             android:text="☰"
             android:textColor="@android:color/white"
             android:textSize="22sp"
             android:contentDescription="Menu"/>
+
         <TextView
             android:id="@+id/homeTitle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Home"
+            android:paddingStart="8dp"
+            android:text="Marrow"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"/>
-        <ImageButton
-            android:id="@+id/homeSearch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginVertical="4dp"
+
+        <Button
+            android:id="@+id/homeGoPro"
+            android:layout_width="72dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="2dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="GO PRO"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_marrow_search"
-            android:contentDescription="Search"
-            android:scaleType="center"/>
+            android:contentDescription="Go Pro"/>
+
         <ImageButton
             android:id="@+id/homeBookmark"
-            android:layout_width="48dp"
+            android:layout_width="44dp"
             android:layout_height="48dp"
-            android:layout_marginVertical="4dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_marrow_bookmark"
             android:tint="@android:color/white"
             android:contentDescription="Bookmarks"
             android:scaleType="center"/>
+
+        <ImageButton
+            android:id="@+id/homeSearch"
+            android:layout_width="44dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_marrow_search"
+            android:tint="@android:color/white"
+            android:contentDescription="Search"
+            android:scaleType="center"/>
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false">
+
         <LinearLayout
             android:id="@+id/homeFeed"
             android:layout_width="match_parent"
@@ -69,222 +91,223 @@
             android:paddingTop="12dp"
             android:paddingBottom="20dp">
 
-            <ImageView
-                android:id="@+id/homeEditionBanner"
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginBottom="14dp"
-                android:src="@drawable/ic_edition_8_5_mobile"
-                android:scaleType="centerCrop"
-                android:contentDescription="Edition 8.5"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="Zen / MCQ of the Day"
-                android:textColor="@color/marrow_text"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:paddingStart="4dp"
-                android:paddingBottom="6dp"/>
-
+            <!-- MCQ_OF_THE_DAY: native surface exists, but no verified daily
+                 payload is bundled in this reconstruction. Renderer keeps it hidden. -->
             <LinearLayout
                 android:id="@+id/homeZenCard"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_home_card"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="14dp">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="14dp"
-                    android:src="@drawable/ic_home_tab_home"
-                    android:contentDescription="@null"/>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="MCQ of the Day"
-                        android:textColor="@color/marrow_text"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="Zen area"
-                        android:textColor="@color/marrow_muted"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textColor="@color/marrow_muted"
-                    android:textSize="28sp"/>
-            </LinearLayout>
-
-            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Suggestions"
-                android:textColor="@color/marrow_text"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:paddingStart="4dp"
-                android:paddingBottom="6dp"/>
-
-            <LinearLayout
-                android:id="@+id/homeQBankCard"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone"
                 android:background="@drawable/bg_home_card"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="14dp">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="14dp"
-                    android:src="@drawable/icv_fc_qbank"
-                    android:contentDescription="@null"/>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Question Bank"
-                        android:textColor="@color/marrow_text"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:id="@+id/homeQBankSummary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="Edition 8 local QBank"
-                        android:textColor="@color/marrow_muted"
-                        android:textSize="12sp"/>
-                </LinearLayout>
+                android:padding="14dp">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="›"
+                    android:text="mcq of the day"
+                    android:textColor="@color/marrow_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/homeZenSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/marrow_muted"
-                    android:textSize="28sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
 
+            <!-- SUGGESTED_TEST: shown only when an actual verified test payload
+                 exists. No empty/fabricated test card is exposed. -->
             <LinearLayout
                 android:id="@+id/homeTestCard"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone"
                 android:background="@drawable/bg_home_card"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="14dp">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="14dp"
-                    android:src="@drawable/icv_test_home"
-                    android:contentDescription="@null"/>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Tests"
-                        android:textColor="@color/marrow_text"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="Test surface"
-                        android:textColor="@color/marrow_muted"
-                        android:textSize="12sp"/>
-                </LinearLayout>
+                android:padding="14dp">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="›"
+                    android:text="Suggested Test"
+                    android:textColor="@color/marrow_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/homeTestSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/marrow_muted"
-                    android:textSize="28sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
 
+            <!-- SUGGESTED_QBANK: backed by the actual Edition 8 question registry. -->
+            <LinearLayout
+                android:id="@+id/homeQBankCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_home_card"
+                android:padding="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/ic_home_tab_qbank"
+                        android:contentDescription="@null"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Suggested QBank"
+                            android:textColor="@color/marrow_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="@color/marrow_muted"
+                        android:textSize="28sp"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/homeQBankSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/marrow_muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- SUGGESTED_VIDEO: renderer exposes it only when verified video data exists. -->
             <LinearLayout
                 android:id="@+id/homeVideoCard"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone"
                 android:background="@drawable/bg_home_card"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="14dp">
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="14dp"
-                    android:src="@drawable/icv_fc_video"
-                    android:contentDescription="@null"/>
-                <LinearLayout
-                    android:layout_width="0dp"
+                android:padding="14dp">
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="Suggested Video"
+                    android:textColor="@color/marrow_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/homeVideoSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/marrow_muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- PEARLS: backed by the checked-in Marrow_pearls.html asset. -->
+            <LinearLayout
+                android:id="@+id/homePearlsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_home_card"
+                android:padding="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Videos"
+                        android:layout_weight="1"
+                        android:text="Pearls"
                         android:textColor="@color/marrow_text"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="Video library"
+                        android:text="›"
                         android:textColor="@color/marrow_muted"
-                        android:textSize="12sp"/>
+                        android:textSize="28sp"/>
                 </LinearLayout>
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/homePearlsSummary"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="›"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/marrow_muted"
-                    android:textSize="28sp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
 
-            <!-- These surfaces are not currently given fabricated payloads.
-                 Their structural views remain present for evidence-backed wiring. -->
-            <LinearLayout android:id="@+id/homeMagicModuleCard" android:layout_width="match_parent" android:layout_height="80dp" android:visibility="gone"/>
-            <LinearLayout android:id="@+id/homePearlsCard" android:layout_width="match_parent" android:layout_height="80dp" android:visibility="gone"/>
-            <LinearLayout android:id="@+id/homeFeatureCards" android:layout_width="match_parent" android:layout_height="80dp" android:visibility="gone"/>
-            <LinearLayout android:id="@+id/homePlanUpgrade" android:layout_width="match_parent" android:layout_height="80dp" android:visibility="gone"/>
-            <LinearLayout android:id="@+id/homeRecentCard" android:layout_width="match_parent" android:layout_height="80dp" android:visibility="gone"/>
-            <Button android:id="@+id/homeShare" android:layout_width="match_parent" android:layout_height="48dp" android:visibility="gone"/>
+            <!-- RECENT_UPDATES: no remote recent-update payload is bundled,
+                 therefore no placeholder card is rendered. -->
+            <LinearLayout
+                android:id="@+id/homeRecentCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:background="@drawable/bg_home_card"
+                android:padding="14dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recent updates"
+                    android:textColor="@color/marrow_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/homeRecentSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/marrow_muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- RENEW_CARD / FEATURED_CARD / MAGIC_MODULE are retained as route
+                 surfaces elsewhere, but are NOT injected into Home without their
+                 source-backed payload/configuration. -->
+            <LinearLayout
+                android:id="@+id/homeFeatureCards"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+            <LinearLayout
+                android:id="@+id/homePlanUpgrade"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+            <LinearLayout
+                android:id="@+id/homeMagicModuleCard"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/homeShare"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:text="Share Marrow"
+                android:textAllCaps="false"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
