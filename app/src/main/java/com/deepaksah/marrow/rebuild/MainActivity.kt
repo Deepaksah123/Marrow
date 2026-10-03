@@ -207,7 +207,7 @@ class MainActivity : Activity() {
         v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
         v.findViewById<TextView>(R.id.homeQBankSummary).text = run {
             val total = state.contentRegistry.allQuestions().size
-            val attempted = state.contentRegistry.allQuestions().count { state.session.answers[it.id]?.selectedAnswer != null || state.session.answers[it.id]?.skipped == true }
+            val attempted = state.contentRegistry.allQuestions().keys.count { id -> state.session.answers[id]?.selectedAnswer != null || state.session.answers[id]?.skipped == true }
             if (total == 0) "Edition 8 · verified local content" else "Edition 8 · ${attempted}/${total} attempted"
         }
         v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
