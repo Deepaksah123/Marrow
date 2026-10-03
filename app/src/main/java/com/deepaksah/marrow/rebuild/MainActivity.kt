@@ -491,6 +491,19 @@ class MainActivity : Activity() {
         render(true)
     }
 
+    private fun verifiedQBankSubjects(): List<String> {
+        // The recovered QBank landing surface is data-driven. Preserve the
+        // subject order emitted by the verified Edition 8 content registry
+        // instead of imposing an alphabetical UI order.
+        val fromSource = state.contentRegistry.moduleIds()
+            .asSequence()
+            .map { it.substringBefore('/') }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .toList()
+        return if (fromSource.isNotEmpty()) fromSource else subjects
+    }
+
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
         replace(v)
@@ -546,7 +559,7 @@ class MainActivity : Activity() {
             addDivider(container)
         }
 
-        subjects.forEach { s ->
+        verifiedQBankSubjects().forEach { s ->
             val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$s/") || it == s }
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
@@ -658,7 +671,7 @@ class MainActivity : Activity() {
         listOf("Total questions" to m.total,"Attempted" to m.attempted,"Correct" to m.correct,"Wrong" to m.wrong,"Skipped" to m.skipped,"Bookmarked" to m.bookmarked).forEach{(l,x)->sum.addView(TextView(this).apply{text="$l    $x";textSize=15f;setPadding(4,7,4,7)})}
         sum.addView(TextView(this).apply{text="Accuracy    "+String.format("%.1f",m.accuracy)+"%";textSize=17f;setTypeface(typeface,Typeface.BOLD);setPadding(4,9,4,4)})
         val root=v.findViewById<LinearLayout>(R.id.qbankTrackerSubjects)
-        subjects.forEach{subject->val ms=state.contentRegistry.moduleIds().filter{it.startsWith("$subject/")||it==subject};val total=ms.sumOf{state.contentRegistry.questionIds(it).size};val answered=ms.sumOf{mod->state.contentRegistry.questionIds(mod).count{state.session.answers[it]?.selectedAnswer!=null||state.session.answers[it]?.skipped==true}};val pct=if(total==0)0 else answered*100/total;root.addView(TextView(this).apply{text="$subject    $answered/$total   ·   $pct%";textSize=14f;setPadding(8,9,8,9)})}
+        verifiedQBankSubjects().forEach{subject->val ms=state.contentRegistry.moduleIds().filter{it.startsWith("$subject/")||it==subject};val total=ms.sumOf{state.contentRegistry.questionIds(it).size};val answered=ms.sumOf{mod->state.contentRegistry.questionIds(mod).count{state.session.answers[it]?.selectedAnswer!=null||state.session.answers[it]?.skipped==true}};val pct=if(total==0)0 else answered*100/total;root.addView(TextView(this).apply{text="$subject    $answered/$total   ·   $pct%";textSize=14f;setPadding(8,9,8,9)})}
         v.findViewById<Button>(R.id.qbankTrackerBack).setOnClickListener{state.navigate(MarrowRoute.QBANK);showQBank()}
     }
 
