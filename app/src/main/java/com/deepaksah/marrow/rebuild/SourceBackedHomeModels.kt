@@ -39,3 +39,25 @@ data class SourceHomeMain(
     val testModels: List<Any> = emptyList(),
     val videoModels: List<Any> = emptyList()
 )
+
+
+/**
+ * Exact HomePageItems contract recovered from CourseConfigV2/HomeViewModelV2.
+ * Order is the native enum/config order; it is NOT a guessed UI order.
+ */
+enum class RecoveredHomePageItem {
+    MCQ_OF_THE_DAY,
+    FEATURED_CARD,
+    SUGGESTED_TEST,
+    SUGGESTED_QBANK,
+    SUGGESTED_VIDEO,
+    PEARLS,
+    RECENT_UPDATES,
+    RENEW_CARD,
+    MAGIC_MODULE
+}
+
+object HomeSurfacePolicy {
+    fun enabled(config: Set<RecoveredHomePageItem>, item: RecoveredHomePageItem): Boolean =
+        item in config
+}
