@@ -1,27 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
-<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
-<LinearLayout android:layout_width="match_parent" android:layout_height="76dp" android:orientation="horizontal" android:gravity="center_vertical" android:background="@color/marrow_primary" android:paddingStart="16dp" android:paddingEnd="16dp">
-<ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/icv_fc_video" android:contentDescription="@null"/>
-<TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:paddingStart="12dp" android:text="Videos" android:textSize="22sp" android:textStyle="bold" android:textColor="@android:color/white"/>
-</LinearLayout>
-<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Lessons  ·  Revision  ·  Notes  ·  Downloaded  ·  Sample" android:textSize="12sp" android:textColor="@color/marrow_muted"/>
-<LinearLayout android:id="@+id/videoNativeHeaderCard" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="6dp" android:background="@color/marrow_surface" android:gravity="center_vertical" android:padding="14dp">
-<ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/icv_fc_video" android:contentDescription="@null"/>
-<TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:paddingStart="10dp" android:text="Video Library" android:textSize="15sp" android:textStyle="bold"/>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lessons" android:textSize="12sp" android:textColor="@color/marrow_muted"/>
-</LinearLayout>
-<LinearLayout android:id="@+id/videoContinueCard" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="8dp" android:background="@color/marrow_surface" android:gravity="center_vertical" android:padding="14dp">
-<TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Continue Watching" android:textSize="15sp" android:textStyle="bold"/>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No local lesson payload" android:textSize="12sp" android:textColor="@color/marrow_muted"/>
-</LinearLayout>
-<LinearLayout android:id="@+id/videoQuickSurfaces" android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal" android:layout_marginTop="8dp">
-<Button android:id="@+id/videoDownloaded" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Downloaded" android:textAllCaps="false"/>
-<Button android:id="@+id/videoSample" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="Sample Videos" android:textAllCaps="false"/>
-</LinearLayout>
-<LinearLayout android:id="@+id/videoRevisionCard" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="8dp" android:background="@color/marrow_surface" android:gravity="center_vertical" android:padding="14dp"><ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/icv_fc_video" android:contentDescription="@null"/><TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:paddingStart="10dp" android:text="World of Revision" android:textSize="15sp" android:textStyle="bold"/><Button android:id="@+id/videoRevision" android:layout_width="wrap_content" android:layout_height="44dp" android:text="OPEN" android:textAllCaps="false"/></LinearLayout>
-<LinearLayout android:id="@+id/videoNotesCard" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="8dp" android:background="@color/marrow_surface" android:gravity="center_vertical" android:padding="14dp"><ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/icv_fc_video" android:contentDescription="@null"/><TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:paddingStart="10dp" android:text="Notes" android:textSize="15sp" android:textStyle="bold"/><Button android:id="@+id/videoNotes" android:layout_width="wrap_content" android:layout_height="44dp" android:text="OPEN" android:textAllCaps="false"/></LinearLayout>
-<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="SUBJECTS" android:textSize="12sp" android:textStyle="bold" android:textColor="@color/marrow_muted" android:paddingTop="14dp" android:paddingBottom="6dp"/>
-<TextView android:id="@+id/videoSubjectState" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Video subject catalog is server-backed; local subject payload is not bundled." android:textSize="12sp" android:textColor="@color/marrow_muted" android:paddingBottom="8dp"/>
-<Button android:id="@+id/videoSubjects" android:layout_width="match_parent" android:layout_height="44dp" android:text="OPEN VIDEO SUBJECTS" android:textAllCaps="false"/>
-</LinearLayout></ScrollView>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="28dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Videos"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/marrow_text"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Recovered video navigation surfaces"
+            android:textSize="13sp"
+            android:textColor="@color/marrow_muted"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LESSONS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/marrow_muted"
+            android:paddingTop="18dp"
+            android:paddingBottom="7dp"/>
+        <LinearLayout
+            android:id="@+id/videoNativeHeaderCard"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_home_card"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/icv_fc_video"
+                android:contentDescription="@null"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="10dp"
+                android:text="Video Subjects"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/marrow_text"/>
+            <Button
+                android:id="@+id/videoSubjects"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="OPEN"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VIDEO TOOLS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/marrow_muted"
+            android:paddingTop="18dp"
+            android:paddingBottom="7dp"/>
+
+        <LinearLayout
+            android:id="@+id/videoQuickSurfaces"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/videoDownloaded"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Downloaded"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/videoSample"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="Sample Videos"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/videoRevisionCard"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_home_card"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="World of Revision"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/marrow_text"/>
+            <Button
+                android:id="@+id/videoRevision"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="OPEN"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/videoNotesCard"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_home_card"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Notes"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/marrow_text"/>
+            <Button
+                android:id="@+id/videoNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="OPEN"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+        <!-- Continue Watching is deliberately absent: there is no verified
+             local lesson/progress payload in the reconstruction. -->
+        <LinearLayout
+            android:id="@+id/videoContinueCard"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/videoSubjectState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Video subject catalog is server-backed; local subject payload is not bundled."
+            android:textSize="12sp"
+            android:textColor="@color/marrow_muted"/>
+    </LinearLayout>
+</ScrollView>
