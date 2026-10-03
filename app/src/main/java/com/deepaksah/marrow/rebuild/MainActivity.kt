@@ -190,7 +190,7 @@ class MainActivity : Activity() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
         replace(v)
 
-        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener {
+        v.findViewById<View>(R.id.homeMenu).setOnClickListener {
             showHomeMenu(v.findViewById(R.id.homeMenu))
         }
         v.findViewById<ImageButton>(R.id.homeSearch).setOnClickListener {
