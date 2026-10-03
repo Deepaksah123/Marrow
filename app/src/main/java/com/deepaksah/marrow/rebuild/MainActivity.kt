@@ -205,6 +205,11 @@ class MainActivity : Activity() {
                 .setPositiveButton("OK", null).show()
         }
         v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
+        v.findViewById<TextView>(R.id.homeQBankSummary).text = run {
+            val total = state.contentRegistry.allQuestions().size
+            val attempted = state.contentRegistry.allQuestions().count { state.session.answers[it.id]?.selectedAnswer != null || state.session.answers[it.id]?.skipped == true }
+            if (total == 0) "Edition 8 · verified local content" else "Edition 8 · ${attempted}/${total} attempted"
+        }
         v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
         v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
         v.findViewById<View>(R.id.homePearlsCard).setOnClickListener {
@@ -473,10 +478,19 @@ class MainActivity : Activity() {
     private fun showQBank() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_qbank, content, false)
         replace(v)
+
         val tracker = v.findViewById<TextView>(R.id.qbankTracker)
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
-        tracker.text = "QBank tracker   ·   " + metrics.attempted + "/" + metrics.total + " attempted   ·   " + String.format("%.1f", metrics.accuracy) + "% accuracy"
-        tracker.setOnClickListener { state.navigate(MarrowRoute.QBANK_TRACKER); showQBankTracker() }
+        tracker.text = if (metrics.total == 0) {
+            "QBank tracker   ·   Select a subject to begin"
+        } else {
+            "QBank tracker   ·   ${metrics.attempted}/${metrics.total} attempted   ·   ${String.format("%.1f", metrics.accuracy)}% accuracy"
+        }
+        tracker.setOnClickListener {
+            state.navigate(MarrowRoute.QBANK_TRACKER)
+            showQBankTracker()
+        }
+
         v.findViewById<Button>(R.id.qbankSearchAction).setOnClickListener {
             state.navigate(MarrowRoute.SEARCH)
             showSearch()
@@ -490,41 +504,84 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.CUSTOM_MODULE)
             showCustom()
         }
-        val c = v.findViewById<LinearLayout>(R.id.subjectContainer)
-        fun sourceCard(label: String, detail: String, action: () -> Unit) {
-            c.addView(LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL; setPadding(14,12,14,12)
-                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener { action() }
-                addView(TextView(this@MainActivity).apply { text=label; textSize=16f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
-                addView(TextView(this@MainActivity).apply { text=detail; textSize=13f; setPadding(0,4,0,0); setTextColor(getColor(R.color.marrow_muted)) })
-            }); addDivider(c)
+
+        val subjectsContainer = v.findViewById<LinearLayout>(R.id.subjectContainer)
+        val extraContainer = v.findViewById<LinearLayout>(R.id.qbankExtraSurfaces)
+
+        fun sourceCard(container: LinearLayout, label: String, detail: String, action: () -> Unit) {
+            container.addView(LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(14, 12, 14, 12)
+                setBackgroundColor(getColor(R.color.marrow_surface))
+                setOnClickListener { action() }
+                addView(TextView(this@MainActivity).apply {
+                    text = label
+                    textSize = 16f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setTextColor(getColor(R.color.marrow_text))
+                })
+                addView(TextView(this@MainActivity).apply {
+                    text = detail
+                    textSize = 13f
+                    setPadding(0, 4, 0, 0)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+            })
+            addDivider(container)
         }
-        sourceCard("Bookmarks","Saved questions") { state.navigate(MarrowRoute.BOOKMARKS); showBookmarks() }
-        sourceCard("Custom Module","Customised MCQs") { customStage=0; state.navigate(MarrowRoute.CUSTOM_MODULE); showCustom() }
+
         subjects.forEach { s ->
             val moduleIds = state.contentRegistry.moduleIds().filter { it.startsWith("$s/") || it == s }
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
-                orientation=LinearLayout.HORIZONTAL; setPadding(14,12,14,12); gravity=android.view.Gravity.CENTER_VERTICAL
-                setBackgroundColor(getColor(R.color.marrow_surface)); setOnClickListener {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(14, 12, 14, 12)
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setBackgroundColor(getColor(R.color.marrow_surface))
+                setOnClickListener {
                     qbank.openSubject(s)
                     state.navigate(MarrowRoute.QBANK_MODULE)
                     showLessons(s)
                 }
             }
-            row.addView(ImageView(this).apply { layoutParams=LinearLayout.LayoutParams(52,52).apply { marginEnd=12 }; setImageResource(R.drawable.ic_qbank_header); scaleType=ImageView.ScaleType.CENTER_INSIDE; contentDescription="Question Bank" })
+            row.addView(ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(52, 52).apply { marginEnd = 12 }
+                setImageResource(R.drawable.ic_qbank_header)
+                scaleType = ImageView.ScaleType.CENTER_INSIDE
+                contentDescription = "Question Bank"
+            })
             row.addView(LinearLayout(this).apply {
-                orientation=LinearLayout.VERTICAL; layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f)
-                addView(TextView(this@MainActivity).apply { text=s; textSize=17f; setTypeface(typeface,Typeface.BOLD); setTextColor(getColor(R.color.marrow_text)) })
-                addView(TextView(this@MainActivity).apply { text="${moduleIds.size} modules  ·  ${questionCount} questions"; textSize=13f; setPadding(0,5,0,0); setTextColor(getColor(R.color.marrow_muted)) })
-            }); c.addView(row); addDivider(c)
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                addView(TextView(this@MainActivity).apply {
+                    text = s
+                    textSize = 17f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setTextColor(getColor(R.color.marrow_text))
+                })
+                addView(TextView(this@MainActivity).apply {
+                    text = "${moduleIds.size} modules  ·  ${questionCount} questions"
+                    textSize = 13f
+                    setPadding(0, 5, 0, 0)
+                    setTextColor(getColor(R.color.marrow_muted))
+                })
+            })
+            subjectsContainer.addView(row)
+            addDivider(subjectsContainer)
         }
-        sourceCard("Previous Year Question Papers","Question paper modules") { state.navigate(MarrowRoute.PYQ); showPyq() }
-        sourceCard("Schema","Collection of important and repeatedly asked topics from all modules") { state.navigate(MarrowRoute.SCHEMA); showSchemaList() }
-        sourceCard("QBank Manifesto","Recovered manifesto surface") {
+
+        sourceCard(extraContainer, "Previous Year Question Papers", "Recovered PYQ surface; local PYQ content is shown only when verified") {
+            state.navigate(MarrowRoute.PYQ)
+            showPyq()
+        }
+        sourceCard(extraContainer, "Schema", "Recovered schema navigation; live payload remains server-backed") {
+            state.navigate(MarrowRoute.SCHEMA)
+            showSchemaList()
+        }
+        sourceCard(extraContainer, "QBank Manifesto", "Recovered QBank surface; live payload is not bundled locally") {
             AlertDialog.Builder(this)
                 .setTitle("QBank Manifesto")
-                .setMessage("The original app exposes a QBank Manifesto surface. Its live/account-backed payload is not present in the local reconstruction, so no manifesto text is fabricated.")
+                .setMessage("The recovered app exposes a QBank Manifesto surface. Its live/account-backed payload is not present in the local reconstruction, so no manifesto text is fabricated.")
                 .setPositiveButton("OK", null)
                 .show()
         }
@@ -1454,14 +1511,40 @@ class MainActivity : Activity() {
     }
 
     private fun showVideoLessons() {
-        val v=LayoutInflater.from(this).inflate(R.layout.screen_video_lessons,content,false);replace(v);val c=v.findViewById<LinearLayout>(R.id.videoSubjectContainer);val f=v.findViewById<LinearLayout>(R.id.videoLessonFilters)
-        listOf("All","Sort","Filter").forEach{n->f.addView(Button(this).apply{text=n;isAllCaps=false;layoutParams=LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f);setOnClickListener{renderVideoSubjects(c,"All")}})}
-        v.findViewById<Button>(R.id.videoLessonsBack).setOnClickListener{state.navigate(MarrowRoute.VIDEOS);showVideos()};renderVideoSubjects(c,"All")
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(20, 20, 20, 20)
+        }
+        root.addView(TextView(this).apply {
+            text = "Video Subjects"
+            textSize = 22f
+            setTypeface(typeface, Typeface.BOLD)
+        })
+        root.addView(TextView(this).apply {
+            text = "The recovered native app exposes a video-subject landing surface, but the subject/lesson payload is server-backed. The Edition 8 QBank subject list is not reused here."
+            textSize = 14f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(4, 14, 4, 18)
+        })
+        root.addView(Button(this).apply {
+            text = "BACK TO VIDEOS"
+            isAllCaps = false
+            setOnClickListener {
+                state.navigate(MarrowRoute.VIDEOS)
+                showVideos()
+            }
+        })
+        replace(ScrollView(this).apply { addView(root) })
     }
 
     private fun renderVideoSubjects(container: LinearLayout, filter: String) {
         container.removeAllViews()
-        subjects.filter{filter=="All"||it.contains(filter,true)}.forEach{subject->container.addView(LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(14,12,14,12);setBackgroundColor(getColor(R.color.marrow_surface));setOnClickListener{selectedVideoSubject=subject;state.navigate(MarrowRoute.VIDEO_PLAYER);showVideoPlayer()};addView(TextView(this@MainActivity).apply{text=subject;textSize=16f;setTypeface(typeface,Typeface.BOLD)});addView(TextView(this@MainActivity).apply{text="Lessons · local stream payload not bundled";textSize=12f;setTextColor(getColor(R.color.marrow_muted));setPadding(0,4,0,0)})});addDivider(container)}
+        container.addView(TextView(this).apply {
+            text = "No verified local video subject payload is bundled."
+            textSize = 14f
+            setTextColor(getColor(R.color.marrow_muted))
+            setPadding(4, 12, 4, 12)
+        })
     }
 
     private fun showVideoPlayer() {
