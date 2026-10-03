@@ -43,12 +43,12 @@ jobs:
           force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot -wipe-data
           disable-animations: true
-          emulator-boot-timeout: 900
+          emulator-boot-timeout: 300
           script: |
             set -u
-            adb wait-for-device
+            timeout 30s adb wait-for-device
             adb shell input keyevent 82
-            adb install -r -t app/build/outputs/apk/debug/app-debug.apk
+            timeout 60s adb install -r -t app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path com.deepaksah.marrow.rebuild
             set +e
             timeout 45s adb shell am start -W -n com.deepaksah.marrow.rebuild/.MainActivity > launch.txt 2>&1
