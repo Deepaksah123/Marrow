@@ -1,4 +1,4 @@
-name: Android 12 and 13 Installation Verification
+name: Android 12 and 13 Installation Verification v2
 
 on:
   push:
