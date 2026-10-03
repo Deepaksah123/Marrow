@@ -65,6 +65,7 @@ jobs:
             adb shell dumpsys activity activities | grep -E 'mResumedActivity|mFocusedApp' | tee activity.txt
             adb logcat -d -v threadtime -t 1200 > logcat.txt
             adb shell dumpsys package com.deepaksah.marrow.rebuild > package.txt
+            adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}.png
             {
               echo "start_rc=$START_RC"
               echo "pid_rc=$PID_RC"
@@ -79,10 +80,18 @@ jobs:
             } | tee install-summary.txt
             test "$START_RC" -eq 0
             test "$PID_RC" -eq 0
-      - name: Upload diagnostic APK
+      - name: Upload emulator screenshot and diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: marrow-install-test-api-${{ matrix.api-level }}
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            marrow-launch-api-${{ matrix.api-level }}.png
+            launch.txt
+            pid.txt
+            activity.txt
+            logcat.txt
+            package.txt
+            install-summary.txt
           if-no-files-found: ignore
