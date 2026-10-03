@@ -15,26 +15,33 @@
         android:background="@color/marrow_primary"
         android:elevation="4dp">
 
-        <TextView
+        <ImageButton
             android:id="@+id/homeMenu"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:gravity="center"
-            android:text="☰"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:contentDescription="Menu"/>
+            android:layout_marginStart="2dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_home_menu_native"
+            android:contentDescription="Menu"
+            android:scaleType="centerInside"/>
 
+        <ImageView
+            android:id="@+id/homeMarrowLogo"
+            android:layout_width="16dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_marrow_logo_large"
+            android:contentDescription="Marrow"/>
         <TextView
             android:id="@+id/homeTitle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:paddingStart="8dp"
             android:text="Marrow"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"/>
 
         <Button
@@ -58,7 +65,7 @@
             android:layout_width="44dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_marrow_bookmark"
+            android:src="@drawable/ic_bookmark_filled_native"
             android:tint="@android:color/white"
             android:contentDescription="Bookmarks"
             android:scaleType="center"/>
@@ -68,7 +75,7 @@
             android:layout_width="44dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_marrow_search"
+            android:src="@drawable/ic_search_revamp"
             android:tint="@android:color/white"
             android:contentDescription="Search"
             android:scaleType="center"/>
