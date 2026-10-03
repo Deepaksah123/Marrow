@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [31, 33]
+        api-level: [35]
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
@@ -39,11 +39,11 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
-          profile: pixel_4
+          profile: pixel_2
           force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot -wipe-data
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          emulator-boot-timeout: 300
+          emulator-boot-timeout: 600
           script: |
             set -u
             timeout 30s adb wait-for-device
