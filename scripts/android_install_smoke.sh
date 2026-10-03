@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -u
+set -o pipefail
 
 APK="app/build/outputs/apk/debug/app-debug.apk"
 PACKAGE="com.deepaksah.marrow.rebuild"
 
 echo "=== adb ==="
+adb start-server || true
 adb devices
-timeout 60s adb wait-for-device
+timeout 120s adb wait-for-device
 
 echo "=== install ==="
 if ! timeout 90s adb install -r -t "${APK}"; then
@@ -24,9 +26,9 @@ timeout 60s adb shell am start -W -n "${PACKAGE}/.MainActivity" > /tmp/launch.tx
 START_RC=$?
 cat /tmp/launch.txt
 
-sleep 8
+sleep 5
 adb exec-out screencap -p > /tmp/marrow-home.png
-sleep 20
+sleep 10
 adb exec-out screencap -p > /tmp/marrow-home-t28s.png
 
 adb shell pidof "${PACKAGE}" > /tmp/pid.txt 2>&1
