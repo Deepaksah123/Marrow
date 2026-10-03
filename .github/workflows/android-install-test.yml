@@ -55,6 +55,11 @@ jobs:
             START_RC=$?
             cat launch.txt
             sleep 5
+            adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}-t05s.png
+            sleep 25
+            adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}-t30s.png
+            sleep 30
+            adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}-t60s.png
             adb shell pidof com.deepaksah.marrow.rebuild > pid.txt 2>&1
             PID_RC=$?
             cat pid.txt
@@ -62,7 +67,6 @@ jobs:
             cat activity.txt
             adb logcat -d -v threadtime -t 1200 > logcat.txt
             adb shell dumpsys package com.deepaksah.marrow.rebuild > package.txt
-            adb exec-out screencap -p > marrow-launch-api-${{ matrix.api-level }}.png
             {
               echo "start_rc=$START_RC"
               echo "pid_rc=$PID_RC"
@@ -84,7 +88,9 @@ jobs:
           name: marrow-install-test-api-${{ matrix.api-level }}
           path: |
             app/build/outputs/apk/debug/app-debug.apk
-            marrow-launch-api-${{ matrix.api-level }}.png
+            marrow-launch-api-${{ matrix.api-level }}-t05s.png
+            marrow-launch-api-${{ matrix.api-level }}-t30s.png
+            marrow-launch-api-${{ matrix.api-level }}-t60s.png
             launch.txt
             pid.txt
             activity.txt
