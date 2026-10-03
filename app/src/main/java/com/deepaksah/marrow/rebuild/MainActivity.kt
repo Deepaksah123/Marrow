@@ -189,7 +189,10 @@ class MainActivity : Activity() {
     private fun showHome() {
         val v = LayoutInflater.from(this).inflate(R.layout.screen_home, content, false)
         replace(v)
-        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener { showHomeMenu(v.findViewById(R.id.homeMenu)) }
+
+        v.findViewById<TextView>(R.id.homeMenu).setOnClickListener {
+            showHomeMenu(v.findViewById(R.id.homeMenu))
+        }
         v.findViewById<ImageButton>(R.id.homeSearch).setOnClickListener {
             state.navigate(MarrowRoute.SEARCH)
             showSearch()
@@ -198,45 +201,58 @@ class MainActivity : Activity() {
             state.navigate(MarrowRoute.BOOKMARKS)
             showBookmarks()
         }
-        v.findViewById<View>(R.id.homeZenCard).setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("Zen / MCQ of the Day")
-                .setMessage("The recovered Home surface exposes a Zen/MCQ suggestion area. No verified local daily payload is bundled, so no question is fabricated.")
-                .setPositiveButton("OK", null).show()
+
+        // HomePageItems is a native server configuration in the recovered APK.
+        // Do not synthesize missing config/payloads. Each surface is exposed only
+        // when this reconstruction has the corresponding verified local source.
+        val total = state.contentRegistry.allQuestions().size
+        val attempted = state.contentRegistry.allQuestions().keys.count { id ->
+            state.session.answers[id]?.selectedAnswer != null ||
+                state.session.answers[id]?.skipped == true
         }
-        v.findViewById<View>(R.id.homeQBankCard).setOnClickListener { state.navigate(MarrowRoute.QBANK); showQBank() }
-        v.findViewById<TextView>(R.id.homeQBankSummary).text = run {
-            val total = state.contentRegistry.allQuestions().size
-            val attempted = state.contentRegistry.allQuestions().keys.count { id -> state.session.answers[id]?.selectedAnswer != null || state.session.answers[id]?.skipped == true }
-            if (total == 0) "Edition 8 · verified local content" else "Edition 8 · ${attempted}/${total} attempted"
+        v.findViewById<TextView>(R.id.homeQBankSummary).text =
+            if (total == 0) {
+                "No verified Edition 8 QBank payload loaded"
+            } else {
+                "Edition 8 · $total MCQs · $attempted attempted"
+            }
+
+        v.findViewById<View>(R.id.homeQBankCard).setOnClickListener {
+            state.navigate(MarrowRoute.QBANK)
+            showQBank()
         }
-        v.findViewById<View>(R.id.homeTestCard).setOnClickListener { state.navigate(MarrowRoute.TESTS); showTests() }
-        v.findViewById<View>(R.id.homeVideoCard).setOnClickListener { state.navigate(MarrowRoute.VIDEOS); showVideos() }
+
+        // Pearls has an actual checked-in source asset, so this surface can be
+        // rendered without inventing server data.
+        val pearlCount = runCatching { PearlsAssetLoader(assets).load().size }.getOrDefault(0)
+        v.findViewById<TextView>(R.id.homePearlsSummary).text =
+            if (pearlCount > 0) "$pearlCount verified Pearls" else "No verified Pearl payload loaded"
         v.findViewById<View>(R.id.homePearlsCard).setOnClickListener {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
         }
-        v.findViewById<View>(R.id.homeMagicModuleCard).setOnClickListener {
-            customStage = 0
-            state.navigate(MarrowRoute.CUSTOM_MODULE)
-            showCustom()
+
+        v.findViewById<Button>(R.id.homeShare).setOnClickListener {
+            shareCurrentRoute()
         }
-        v.findViewById<View>(R.id.homeFeatureCards).setOnClickListener {
-            showAccountActionState("Feature Cards", "The recovered Home surface contains feature-card visibility/configuration state. No verified local recommendation payload is bundled.")
+
+        // These native HomePageItems have dedicated recovered layouts, but their
+        // payloads/configuration are remote-backed and are intentionally not
+        // replaced with fabricated local cards.
+        v.findViewById<View>(R.id.homeZenCard).visibility = View.GONE
+        v.findViewById<View>(R.id.homeTestCard).visibility = View.GONE
+        v.findViewById<View>(R.id.homeVideoCard).visibility = View.GONE
+        v.findViewById<View>(R.id.homeRecentCard).visibility = View.GONE
+        v.findViewById<View>(R.id.homeFeatureCards).visibility = View.GONE
+        v.findViewById<View>(R.id.homePlanUpgrade).visibility = View.GONE
+        v.findViewById<View>(R.id.homeMagicModuleCard).visibility = View.GONE
+
+        v.findViewById<Button>(R.id.homeGoPro).setOnClickListener {
+            showAccountActionState(
+                "GO PRO",
+                "The recovered app exposes GO PRO as a subscription/account action. No subscription state or purchase response is fabricated locally."
+            )
         }
-        v.findViewById<View>(R.id.homePlanUpgrade).setOnClickListener {
-            showAccountActionState("Plan Upgrade", "The recovered Home surface exposes a plan-upgrade card. Subscription/account state is server-backed and is not fabricated locally.")
-        }
-        v.findViewById<View>(R.id.homeRecentCard).setOnClickListener {
-            val modules = state.contentRegistry.moduleIds().size
-            val questions = state.contentRegistry.allQuestions().size
-            AlertDialog.Builder(this)
-                .setTitle("Local Content Status")
-                .setMessage("Verified local Edition 8 QBank content\n\nModules: $modules\nQuestions loaded: $questions\n\nNo remote/account-backed updates are fabricated.")
-                .setPositiveButton("OK", null)
-                .show()
-        }
-        v.findViewById<Button>(R.id.homeShare).setOnClickListener { shareCurrentRoute() }
     }
 
     private fun shareCurrentRoute() {
