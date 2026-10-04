@@ -82,3 +82,23 @@ No fabricated Home data or guessed configuration order is being introduced in th
 
 ## Next source-backed target
 Trace the course-config repository/remote response path and its parser for `home_items`, then map each returned enum to the corresponding recovered Home layout and ViewModel state. Only after that should the reconstruction alter runtime Home ordering/visibility.
+
+
+## Follow-up source trace — 2026-10-04 evening
+
+A repository-wide path audit was performed against the recovered source tree. Under `recovery/base_apk_Decompiler.com/sources/com/marrow2/data/course_config/`, the recovered package contains only the `remote/model` family (`AuthorRSModel`, `FreeVideoListRSModel`, `FreeVideoPromotionRSModel`, `SampleLessonRSModel`, `SampleVideosRSModel`, `ShareCopyRSModel`). No recovered `CourseConfigUseCase`, `CourseConfigRepository`, `CourseConfigRemoteSource`, or equivalent implementation class was found in the repository tree.
+
+The recovered `CourseConfigV2RepoModelKt` is only a Kotlin typealias bridge to `CourseConfigV2`; it is not a repository implementation. The recovered `UserConfigV2`/`UserConfig` models contain only the `smart_recall` / Magic Module flag and do not provide the Home `home_items` list.
+
+The recovered serializer confirms that `HomePageItems` is part of the serialized CourseConfig contract and has explicit enum-to-key handling, but the decompiled `CourseConfigDeserializer` method body is unavailable (JADX reports it as not decompiled). Consequently, this recovery tree does not expose a trustworthy authenticated JSON response or parser call chain from which a target-session `home_items` array can be reconstructed.
+
+### Result of this audit
+
+The blocker is now narrowed from “unknown Home configuration implementation” to **missing/recovered-incomplete provider + authenticated response evidence**. No source-backed reason exists to change the current Home ordering/visibility. Any guessed nine-card order would violate the reconstruction evidence rules.
+
+The next valid evidence sources are, in priority order:
+1. a recovered original authenticated CourseConfig response/cache containing `home_items`;
+2. a complete original decompilation/smali trace of the missing provider/endpoint;
+3. a runtime capture from the original app for the same target course/account.
+
+Until one of these exists, the reconstruction must retain the verified local QBank/Pearls behavior and avoid fabricated remote Home cards.
