@@ -11,6 +11,7 @@ This file is intentionally explicit. An item stays here until evidence from A (O
 | Exact runtime asset-to-screen mapping for every surface | PARTIAL | Original resources are recoverable; some screen-level associations still require reconciliation. |
 | Full QBank/Test/Custom content attachment | PARTIAL | Verified content layer exists for available datasets; remaining mappings must be proven before attachment. |
 | Exact server-side recommendation payloads | UNRESOLVED | Home data models/categories are known; live recommendation payloads are not proven. |
+| Exact authenticated Home `home_items` configuration | UNRESOLVED | `CourseConfigV2.homePageItems` and the complete nine-value enum are recovered; the target session's runtime `home_items` list is not locally verified. |
 
 ## Rules
 
