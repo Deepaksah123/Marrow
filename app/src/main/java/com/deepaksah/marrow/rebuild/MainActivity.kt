@@ -253,7 +253,7 @@ class MainActivity : Activity() {
         // fragment_home contains an explicit llShare surface. The exact native
         // share payload is unavailable offline, so this preserves only the
         // verified share action without inventing a referral/account payload.
-        v.findViewById<Button>(R.id.llShare).setOnClickListener {
+        v.findViewById<View>(R.id.llShare).setOnClickListener {
             shareCurrentRoute()
         }
 
