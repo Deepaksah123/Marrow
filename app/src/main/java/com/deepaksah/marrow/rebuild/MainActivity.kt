@@ -22,6 +22,7 @@ import android.view.WindowInsets
 import android.widget.*
 import android.webkit.WebView
 import android.webkit.WebSettings
+import androidx.drawerlayout.widget.DrawerLayout
 
 class MainActivity : Activity() {
     private lateinit var content: FrameLayout
@@ -1779,24 +1780,20 @@ class MainActivity : Activity() {
     }
 
     private fun showHomeMenu(anchor: View) {
-        PopupMenu(this, anchor).apply {
-            menu.add("Search")
-            menu.add("Bookmarks")
-            menu.add("Profile")
-            menu.add("Settings")
-            menu.add("Custom Module")
-            setOnMenuItemClickListener {
-                when (it.title.toString()) {
-                    "Search" -> { state.navigate(MarrowRoute.SEARCH); showSearch(); true }
-                    "Bookmarks" -> { state.navigate(MarrowRoute.BOOKMARKS); showBookmarks(); true }
-                    "Profile" -> { state.navigate(MarrowRoute.PROFILE); showProfile(); true }
-                    "Settings" -> { state.navigate(MarrowRoute.SETTINGS); showSettings(); true }
-                    "Custom Module" -> { customStage = 0; state.navigate(MarrowRoute.CUSTOM_MODULE); showCustom(); true }
-                    else -> false
-                }
-            }
-            show()
+        val drawer = findViewById<DrawerLayout>(R.id.drawerLayout)
+        val panel = findViewById<View>(R.id.homeDrawer)
+        if (drawer == null || panel == null) return
+
+        fun closeAnd(action: () -> Unit) {
+            drawer.closeDrawer(panel)
+            action()
         }
+        findViewById<TextView>(R.id.drawerSearch).setOnClickListener { closeAnd { state.navigate(MarrowRoute.SEARCH); showSearch() } }
+        findViewById<TextView>(R.id.drawerBookmarks).setOnClickListener { closeAnd { state.navigate(MarrowRoute.BOOKMARKS); showBookmarks() } }
+        findViewById<TextView>(R.id.drawerCustom).setOnClickListener { closeAnd { customStage = 0; state.navigate(MarrowRoute.CUSTOM_MODULE); showCustom() } }
+        findViewById<TextView>(R.id.drawerProfile).setOnClickListener { closeAnd { state.navigate(MarrowRoute.PROFILE); showProfile() } }
+        findViewById<TextView>(R.id.drawerSettings).setOnClickListener { closeAnd { state.navigate(MarrowRoute.SETTINGS); showSettings() } }
+        drawer.openDrawer(panel)
     }
 
     private fun showTheme() {
