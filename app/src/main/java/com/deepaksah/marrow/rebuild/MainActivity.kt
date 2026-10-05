@@ -237,44 +237,25 @@ class MainActivity : Activity() {
             shareCurrentRoute()
         }
 
-        // Native HomePageItems are part of the recovered Home contract.
-        // Keep the component structure visible even when a remote-backed payload
-        // is unavailable; never replace missing data with invented content.
-        v.findViewById<TextView>(R.id.homeZenState).text =
-            "No verified daily MCQ payload loaded"
-        v.findViewById<TextView>(R.id.homeFeatureSummary).text =
-            "No verified featured-card payload loaded"
-        v.findViewById<TextView>(R.id.homeTestSummary).text =
-            "No verified suggested-test payload loaded"
-        v.findViewById<TextView>(R.id.homeVideoSummary).text =
-            "No verified suggested-video payload loaded"
-        v.findViewById<TextView>(R.id.homeRecentSummary).text =
-            "No verified recent-update payload loaded"
-        v.findViewById<TextView>(R.id.homePlanSummary).text =
-            "Subscription state is not available in the local reconstruction"
-        v.findViewById<TextView>(R.id.homeMagicSummary).text =
-            "No verified Magic Module nudge payload loaded"
-
-        v.findViewById<View>(R.id.homeTestCard).setOnClickListener {
-            state.navigate(MarrowRoute.TESTS)
-            showTests()
-        }
-        v.findViewById<View>(R.id.homeVideoCard).setOnClickListener {
-            state.navigate(MarrowRoute.VIDEOS)
-            showVideos()
-        }
-        v.findViewById<View>(R.id.homeMagicModuleCard).setOnClickListener {
-            customStage = 0
-            state.navigate(MarrowRoute.CUSTOM_MODULE)
-            showCustom()
+        // Remote-backed HomePageItems require an authenticated CourseConfig
+        // response and corresponding payload. That runtime evidence is not
+        // recovered locally, so these surfaces remain hidden rather than being
+        // represented by placeholder data or guessed click targets.
+        listOf(
+            R.id.homeZenCard,
+            R.id.homeFeatureCards,
+            R.id.homeTestCard,
+            R.id.homeVideoCard,
+            R.id.homeRecentCard,
+            R.id.homeMagicModuleCard,
+            R.id.homePlanCard
+        ).forEach { id ->
+            v.findViewById<View>(id)?.visibility = View.GONE
         }
 
-        v.findViewById<Button>(R.id.homeGoPro).setOnClickListener {
-            showAccountActionState(
-                "GO PRO",
-                "The recovered app exposes GO PRO as a subscription/account action. No subscription state or purchase response is fabricated locally."
-            )
-        }
+        // GO PRO is account/subscription backed as well. Do not expose a
+        // purchase/account action without verified subscription state.
+        v.findViewById<Button>(R.id.homeGoPro).visibility = View.GONE
     }
 
     private fun shareCurrentRoute() {
