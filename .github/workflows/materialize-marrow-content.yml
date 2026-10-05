@@ -19,10 +19,31 @@ jobs:
           set -euo pipefail
           ROOT="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
           test -d "$ROOT"
-          expected="Anaesthesia Anatomy Biochemistry Community Medicine Dermatology ENT Forensic Medicine Medicine Microbiology Obstetrics & Gynaecology Ophthalmology Orthopaedics Paediatrics Pathology Pharmacology Physiology Psychiatry Radiology Surgery"
-          for subject in $expected; do
+          expected=$(cat <<\EOF
+Anaesthesia
+Anatomy
+Biochemistry
+Community Medicine
+Dermatology
+ENT
+Forensic Medicine
+Medicine
+Microbiology
+Obstetrics & Gynaecology
+Ophthalmology
+Orthopaedics
+Paediatrics
+Pathology
+Pharmacology
+Physiology
+Psychiatry
+Radiology
+Surgery
+EOF
+          )
+          while IFS= read -r subject; do
             test -d "$ROOT/$subject"
-          done
+          done <<< "$expected"
           if find app/src/main/assets/marrow_content/Brain/Marrow -maxdepth 1 -iname '*marrow6*' -o -iname '*edition 6*' | grep -q .; then
             echo "Forbidden Marrow6/Edition6 content detected."
             exit 1
