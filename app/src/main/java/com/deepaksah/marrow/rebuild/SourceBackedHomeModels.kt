@@ -33,11 +33,55 @@ data class SourceHomeQBank(
     fun isUnattempted(): Boolean = reason == 0
 }
 
+data class SourceHomeFeatured(
+    val id: String? = null,
+    val contentType: String? = null,
+    val contentId: String? = null,
+    val contentTitle: String? = null,
+    val subTitle: String? = null,
+    val thumbnail: String? = null,
+    val label: String? = null
+)
+
+data class SourceHomeTest(
+    val id: String,
+    val title: String? = null,
+    val isPaid: Boolean = false,
+    val status: Int = 0,
+    val isResultAvailable: Boolean = false,
+    val testType: String? = null,
+    val resultTimeStamp: Long = 0L,
+    val expiryTimeStamp: Long = 0L,
+    val startTimeStamp: Long = 0L,
+    val duration: Int = 0,
+    val availabilityType: Int = 0,
+    val questionCount: Int = 0,
+    val userStartedTimestamp: Long = 0L,
+    val hasAccess: Boolean = false
+)
+
+data class SourceHomeVideo(
+    val id: String? = null,
+    val thumbnail: String? = null,
+    val title: String? = null,
+    val subtitle: String? = null,
+    val subject: String? = null,
+    val durationText: String? = null,
+    val rating: Float = 0f,
+    val count: Int = 0,
+    val reason: Int = 0,
+    val isPaid: Boolean = false,
+    val status: Int = 0,
+    val isDownloaded: Boolean = false,
+    val isUnlocked: Boolean = false,
+    val videoProgress: Int = 0
+)
+
 data class SourceHomeMain(
-    val featuredCards: List<Any> = emptyList(),
+    val featuredCards: List<SourceHomeFeatured> = emptyList(),
     val qbankModels: List<SourceHomeQBank> = emptyList(),
-    val testModels: List<Any> = emptyList(),
-    val videoModels: List<Any> = emptyList()
+    val testModels: List<SourceHomeTest> = emptyList(),
+    val videoModels: List<SourceHomeVideo> = emptyList()
 )
 
 
