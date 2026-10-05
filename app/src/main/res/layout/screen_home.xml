@@ -551,13 +551,34 @@
                     android:textSize="12sp"/>
             </LinearLayout>
 
-            <Button
+            <LinearLayout
                 android:id="@+id/llShare"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="2dp"
-                android:text="Share Marrow"
-                android:textAllCaps="false"/>
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:background="@drawable/bg_home_card"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Share Marrow"
+                    android:textColor="@color/marrow_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="@color/marrow_muted"
+                    android:textSize="24sp"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
