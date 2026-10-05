@@ -228,7 +228,7 @@ class MainActivity : Activity() {
         } ?: 0
         v.findViewById<TextView>(R.id.homeQBankSummary).text =
             if (localModule.isNullOrBlank()) {
-                "No verified Edition 8 QBank payload loaded"
+                ""
             } else {
                 val title = localModuleTitle.ifBlank { localModule }
                 val subject = localModuleSubject.ifBlank { "Edition 8" }
@@ -244,50 +244,7 @@ class MainActivity : Activity() {
         // rendered without inventing server data.
         val pearlCount = runCatching { PearlsAssetLoader(assets).load().size }.getOrDefault(0)
         v.findViewById<TextView>(R.id.homePearlsSummary).text =
-            if (pearlCount > 0) "$pearlCount verified Pearls" else "No verified Pearl payload loaded"
-        v.findViewById<View>(R.id.cvPearl).setOnClickListener {
-            state.navigate(MarrowRoute.PEARLS)
-            showPearls()
-        }
-
-        // Preserve the recovered Home component geometry even when remote payloads
-        // are unavailable. Do not replace native cards with diagnostic/prototype text.
-        val total = state.contentRegistry.allQuestions().size
-        val attempted = state.contentRegistry.allQuestions().keys.count { id ->
-            state.session.answers[id]?.selectedAnswer != null ||
-                state.session.answers[id]?.skipped == true
-        }
-        val localModule = state.contentRegistry.moduleIds().firstOrNull { moduleId ->
-            state.contentRegistry.questionIds(moduleId).any { id ->
-                state.session.answers[id]?.selectedAnswer != null ||
-                    state.session.answers[id]?.skipped == true
-            }
-        } ?: state.contentRegistry.moduleIds().firstOrNull()
-        val localModuleCount = localModule?.let { state.contentRegistry.questionIds(it).size } ?: 0
-        val localModuleTitle = localModule?.substringAfter('/').orEmpty()
-        val localModuleSubject = localModule?.substringBefore('/').orEmpty()
-        val localModuleAttempted = localModule?.let { moduleId ->
-            state.contentRegistry.questionIds(moduleId).count { id ->
-                state.session.answers[id]?.selectedAnswer != null ||
-                    state.session.answers[id]?.skipped == true
-            }
-        } ?: 0
-        v.findViewById<TextView>(R.id.homeQBankSummary).text =
-            if (localModule.isNullOrBlank()) "" else {
-                val title = localModuleTitle.ifBlank { localModule }
-                val subject = localModuleSubject.ifBlank { "Edition 8" }
-                "$subject · $title · $localModuleCount MCQs · $localModuleAttempted attempted"
-            }
-
-        v.findViewById<View>(R.id.llQbank).setOnClickListener {
-            state.navigate(MarrowRoute.QBANK)
-            showQBank()
-        }
-
-        val pearlCount = runCatching { PearlsAssetLoader(assets).load().size }.getOrDefault(0)
-        v.findViewById<TextView>(R.id.homePearlsSummary).text =
             if (pearlCount > 0) "$pearlCount Pearls" else ""
-
         v.findViewById<View>(R.id.cvPearl).setOnClickListener {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
