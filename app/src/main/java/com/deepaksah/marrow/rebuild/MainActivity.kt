@@ -218,7 +218,7 @@ class MainActivity : Activity() {
                 "Edition 8 · $total MCQs · $attempted attempted"
             }
 
-        v.findViewById<View>(R.id.homeQBankCard).setOnClickListener {
+        v.findViewById<View>(R.id.llQbank).setOnClickListener {
             state.navigate(MarrowRoute.QBANK)
             showQBank()
         }
@@ -228,7 +228,7 @@ class MainActivity : Activity() {
         val pearlCount = runCatching { PearlsAssetLoader(assets).load().size }.getOrDefault(0)
         v.findViewById<TextView>(R.id.homePearlsSummary).text =
             if (pearlCount > 0) "$pearlCount verified Pearls" else "No verified Pearl payload loaded"
-        v.findViewById<View>(R.id.homePearlsCard).setOnClickListener {
+        v.findViewById<View>(R.id.cvPearl).setOnClickListener {
             state.navigate(MarrowRoute.PEARLS)
             showPearls()
         }
@@ -237,13 +237,13 @@ class MainActivity : Activity() {
         // unavailable remote cards hidden, but keep their source-mapped section
         // headers in lockstep so the local Home never leaves orphan headings.
         val unavailableHomePairs = listOf(
-            R.id.homeZenCard to R.id.homeZenSectionTitle,
+            R.id.layoutDynamicZenArea to R.id.homeZenSectionTitle,
             R.id.homeFeatureCards to R.id.homeFeatureSectionTitle,
-            R.id.homeTestCard to R.id.homeTestSectionTitle,
-            R.id.homeVideoCard to R.id.homeVideoSectionTitle,
-            R.id.homeRecentCard to R.id.homeRecentSectionTitle,
-            R.id.homeMagicModuleCard to null,
-            R.id.homePlanUpgrade to null
+            R.id.llTest to R.id.homeTestSectionTitle,
+            R.id.llVideo to R.id.homeVideoSectionTitle,
+            R.id.cvRecentUpdate to R.id.homeRecentSectionTitle,
+            R.id.cvMagicModule to null,
+            R.id.renewPlanBanner to null
         )
         unavailableHomePairs.forEach { (cardId, headingId) ->
             v.findViewById<View>(cardId)?.visibility = View.GONE
@@ -253,7 +253,7 @@ class MainActivity : Activity() {
         // fragment_home contains an explicit llShare surface. The exact native
         // share payload is unavailable offline, so this preserves only the
         // verified share action without inventing a referral/account payload.
-        v.findViewById<Button>(R.id.homeShare).setOnClickListener {
+        v.findViewById<Button>(R.id.llShare).setOnClickListener {
             shareCurrentRoute()
         }
 
