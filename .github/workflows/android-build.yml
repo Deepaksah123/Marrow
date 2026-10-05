@@ -22,7 +22,7 @@ jobs:
       - name: Sync Marrow content source
         run: bash scripts/sync_marrow_source.sh
       - name: Assemble debug APK
-        run: gradle :app:assembleDebug --stacktrace
+        run: gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true :app:assembleDebug --stacktrace
       - name: Validate debug APK
         shell: bash
         run: |
