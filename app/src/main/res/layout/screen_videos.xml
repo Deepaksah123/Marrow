@@ -148,9 +148,6 @@
                 android:text="OPEN"
                 android:textAllCaps="false"/>
         </LinearLayout>
-
-        <!-- Continue Watching is deliberately absent: there is no verified
-             local lesson/progress payload in the reconstruction. -->
         <LinearLayout
             android:id="@+id/videoContinueCard"
             android:layout_width="1dp"
