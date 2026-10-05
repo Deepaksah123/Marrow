@@ -37,11 +37,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-                <Button android:id="@+id/testGrandTab" android:layout_width="110dp" android:layout_height="44dp" android:text="200 MCQ" android:textAllCaps="false"/>
-                <Button android:id="@+id/testMiniTab" android:layout_width="100dp" android:layout_height="44dp" android:text="Grand" android:textAllCaps="false"/>
-                <Button android:id="@+id/testSubjectTab" android:layout_width="90dp" android:layout_height="44dp" android:text="All" android:textAllCaps="false"/>
-                <Button android:id="@+id/testSubjectFilterTab" android:layout_width="90dp" android:layout_height="44dp" android:text="Mini" android:textAllCaps="false"/>
-                <Button android:id="@+id/testSubjectOnlyTab" android:layout_width="100dp" android:layout_height="44dp" android:text="Subject" android:textAllCaps="false"/>
+                <Button android:id="@+id/testGrandTab" android:layout_width="110dp" android:layout_height="44dp" android:text="Grand Tests" android:textAllCaps="false"/>
+                <Button android:id="@+id/testMiniTab" android:layout_width="100dp" android:layout_height="44dp" android:text="Mini Tests" android:textAllCaps="false"/>
+                <Button android:id="@+id/testSubjectTab" android:layout_width="90dp" android:layout_height="44dp" android:text="Subject Tests" android:textAllCaps="false"/>
+                <Button android:id="@+id/testSubjectFilterTab" android:layout_width="90dp" android:layout_height="44dp" android:text="All Tests" android:textAllCaps="false"/>
+                <Button android:id="@+id/testSubjectOnlyTab" android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone"/> 
             </LinearLayout>
         </HorizontalScrollView>
 
