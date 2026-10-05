@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="Current Test Cycle · 200 MCQ"
+            android:text="Test Series"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"/>
