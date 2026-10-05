@@ -3,6 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+// Native side navigation used by the recovered Home surface.
+dependencies {
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+}
+
 android {
     namespace = "com.deepaksah.marrow.rebuild"
 
