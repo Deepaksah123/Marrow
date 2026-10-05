@@ -783,7 +783,7 @@ class MainActivity : Activity() {
             })
         }
         v.findViewById<TextView>(R.id.lessonSource).text = "Modules · All · Paused · Completed · Unattempted · Free"
-        v.findViewById<LinearLayout>(R.id.lessonRoot).addView(tabs, 2)
+        v.findViewById<LinearLayout>(R.id.lessonFilterTabs).addView(tabs)
         render("all")
     }
 
@@ -1305,12 +1305,12 @@ class MainActivity : Activity() {
             else -> {
                 val v = LayoutInflater.from(this).inflate(R.layout.screen_tests, content, false)
                 replace(v)
+                // Recovered APK categories: Grand Tests, Mini Tests, Subject Tests, All Tests.
                 val tabs = listOf(
-                    R.id.testGrandTab to "200 MCQ",
-                    R.id.testMiniTab to "Grand",
-                    R.id.testSubjectTab to "All",
-                    R.id.testSubjectFilterTab to "Mini",
-                    R.id.testSubjectOnlyTab to "Subject"
+                    R.id.testGrandTab to "Grand Tests",
+                    R.id.testMiniTab to "Mini Tests",
+                    R.id.testSubjectTab to "Subject Tests",
+                    R.id.testSubjectFilterTab to "All Tests"
                 )
                 tabs.forEach { (id, label) ->
                     v.findViewById<Button>(id).setOnClickListener {
@@ -1320,7 +1320,7 @@ class MainActivity : Activity() {
                             "Selected: $label · live schedule/payload remains server-backed and is not fabricated."
                     }
                 }
-                v.findViewById<TextView>(R.id.testYear).text = "Current Test Cycle · 200 MCQ"
+                v.findViewById<TextView>(R.id.testYear).text = "Test Series"
                 v.findViewById<Button>(R.id.testStart).setOnClickListener {
                     tests.openIntro("source-test")
                     showTests()
