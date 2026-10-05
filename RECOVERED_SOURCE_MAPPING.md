@@ -1,6 +1,6 @@
 # Marrow reconstruction — recovered source → current implementation mapping
 
-Updated: 2026-09-30 (post-duplication audit)
+Updated: 2026-10-05 (Home source reconciliation)
 
 ## Evidence rule
 
@@ -18,7 +18,7 @@ The recovered APK tree under `recovery/base_apk_Decompiler.com/` is the authorit
 
 | Original recovered surface | Recovered behavioral source | Current reconstruction | Status |
 |---|---|---|---|
-| Home | `ui/home/HomeViewModelV2.java` | `MainActivity.showHome()`, `screen_home.xml` | Partial |
+| Home | `ui/home/HomeViewModelV2.java`; `ui/main/viewmodel/HomeUIActivityViewModel.java`; `HomeNavigationActivityViewModel.java`; `RevampHomeActivityViewModel.java` | `MainActivity.showHome()`, `screen_home.xml` | Partial — contract reconciled; renderer/data wiring still incomplete |
 | QBank landing | `ui/qbank/landing/QBankLandingViewModel.java` | `showQBank()`, `screen_qbank.xml` | Partial |
 | QBank introduction | `ui/qbank/introduction/QbankIntroductionViewModel.java` | `QBankIntroductionModel.kt`, `showQBankIntroduction()` | Partial |
 | QBank lesson list | `ui/qbank/lesson_list/QBankLessonListViewModel.java` | `showLessons()` | Partial |
@@ -98,6 +98,18 @@ The recovered resource tree contains, among others:
 - `activity_search_qbank_play`
 
 ## Important source-backed observations
+
+### Home source reconciliation (2026-10-05)
+
+The recovered source establishes that Home is not a single static renderer. The implementation contract spans:
+
+- `ui/home/HomeViewModelV2.java` — Home content/config state: Zen, Pearls, recent updates, QBank/test/video suggestions, Magic Module, feature cards, plan upgrade, footer visibility, loading/error, notification and sync events.
+- `ui/main/viewmodel/HomeUIActivityViewModel.java` — Home UI/session actions and state handling.
+- `ui/main/viewmodel/HomeNavigationActivityViewModel.java` — persisted Home navigation state.
+- `ui/main/viewmodel/RevampHomeActivityViewModel.java` — revamp Home state/async operations.
+- Original packaged resource names include `activity_home_revamp`, `fragment_home`, `layout_dynamic_zen_area`, `layout_fc_qbank`, `layout_hc_pearl`, `layout_hc_recent_updates`, `layout_hc_plan_upgrade_card_m2`, `layout_hc_magic_module`, `item_home_mcq_option`, and `item_home_test_card`.
+
+This is evidence of the native surface structure, not proof of the user's authenticated runtime payload. The reconstruction must therefore use verified local content only where available and keep remote-backed cards unresolved when their payload/configuration is absent.
 
 ### Home
 
