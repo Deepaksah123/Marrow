@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tests"
-            android:textSize="28sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"/>
         <TextView
@@ -49,9 +49,9 @@
             android:id="@+id/testYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="17dp"
             android:text="TEST SERIES"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"/>
 
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="17sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_text"/>
             <TextView
@@ -94,7 +94,7 @@
             android:layout_marginTop="14dp"
             android:gravity="center_vertical"
             android:text="This Month    ·    Test schedule"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"
             android:background="@drawable/bg_home_card"
@@ -108,7 +108,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:text="Previous Year    ·    Archive"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"
             android:background="@drawable/bg_home_card"
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Grand Test Analytics"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_text"/>
             <Button
