@@ -244,7 +244,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="SUGGESTED QBANK"
+                            android:text="QBANK"
                             android:textColor="@color/marrow_text"
                             android:textSize="14sp"
                             android:textStyle="bold"/>
