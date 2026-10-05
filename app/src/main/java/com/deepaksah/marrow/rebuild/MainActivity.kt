@@ -236,16 +236,37 @@ class MainActivity : Activity() {
             shareCurrentRoute()
         }
 
-        // These native HomePageItems have dedicated recovered layouts, but their
-        // payloads/configuration are remote-backed and are intentionally not
-        // replaced with fabricated local cards.
-        v.findViewById<View>(R.id.homeZenCard).visibility = View.GONE
-        v.findViewById<View>(R.id.homeTestCard).visibility = View.GONE
-        v.findViewById<View>(R.id.homeVideoCard).visibility = View.GONE
-        v.findViewById<View>(R.id.homeRecentCard).visibility = View.GONE
-        v.findViewById<View>(R.id.homeFeatureCards).visibility = View.GONE
-        v.findViewById<View>(R.id.homePlanUpgrade).visibility = View.GONE
-        v.findViewById<View>(R.id.homeMagicModuleCard).visibility = View.GONE
+        // Native HomePageItems are part of the recovered Home contract.
+        // Keep the component structure visible even when a remote-backed payload
+        // is unavailable; never replace missing data with invented content.
+        v.findViewById<TextView>(R.id.homeZenState).text =
+            "No verified daily MCQ payload loaded"
+        v.findViewById<TextView>(R.id.homeFeatureSummary).text =
+            "No verified featured-card payload loaded"
+        v.findViewById<TextView>(R.id.homeTestSummary).text =
+            "No verified suggested-test payload loaded"
+        v.findViewById<TextView>(R.id.homeVideoSummary).text =
+            "No verified suggested-video payload loaded"
+        v.findViewById<TextView>(R.id.homeRecentSummary).text =
+            "No verified recent-update payload loaded"
+        v.findViewById<TextView>(R.id.homePlanSummary).text =
+            "Subscription state is not available in the local reconstruction"
+        v.findViewById<TextView>(R.id.homeMagicSummary).text =
+            "No verified Magic Module nudge payload loaded"
+
+        v.findViewById<View>(R.id.homeTestCard).setOnClickListener {
+            state.navigate(MarrowRoute.TESTS)
+            showTests()
+        }
+        v.findViewById<View>(R.id.homeVideoCard).setOnClickListener {
+            state.navigate(MarrowRoute.VIDEOS)
+            showVideos()
+        }
+        v.findViewById<View>(R.id.homeMagicModuleCard).setOnClickListener {
+            customStage = 0
+            state.navigate(MarrowRoute.CUSTOM_MODULE)
+            showCustom()
+        }
 
         v.findViewById<Button>(R.id.homeGoPro).setOnClickListener {
             showAccountActionState(
