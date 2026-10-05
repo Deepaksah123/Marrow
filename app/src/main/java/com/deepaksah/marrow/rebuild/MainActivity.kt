@@ -226,7 +226,7 @@ class MainActivity : Activity() {
                     state.session.answers[id]?.skipped == true
             }
         } ?: 0
-        v.findViewById<TextView>(R.id.homeQBankSummary).text =
+        // Only render Home surfaces backed by verified local payloads. The recovered APK's\n        // remaining Home cards are server-configured; showing empty placeholders would create\n        // a fabricated/prototype UI, so their cards and section headers stay hidden offline.\n        listOf(\n            R.id.homeZenSectionTitle, R.id.layoutDynamicZenArea,\n            R.id.homeFeatureSectionTitle, R.id.homeFeatureCards,\n            R.id.homeTestSectionTitle, R.id.llTest,\n            R.id.homeVideoSectionTitle, R.id.llVideo,\n            R.id.homeRecentSectionTitle, R.id.cvRecentUpdate,\n            R.id.renewPlanBanner, R.id.cvMagicModule\n        ).forEach { id -> v.findViewById<View>(id).visibility = View.GONE }\n\n        v.findViewById<TextView>(R.id.homeQBankSummary).text =
             if (localModule.isNullOrBlank()) {
                 ""
             } else {
