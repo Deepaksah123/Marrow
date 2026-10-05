@@ -248,7 +248,7 @@ class MainActivity : Activity() {
             R.id.homeVideoCard,
             R.id.homeRecentCard,
             R.id.homeMagicModuleCard,
-            R.id.homePlanCard
+            R.id.homePlanUpgrade
         ).forEach { id ->
             v.findViewById<View>(id)?.visibility = View.GONE
         }
