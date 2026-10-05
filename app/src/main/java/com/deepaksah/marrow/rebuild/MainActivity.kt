@@ -226,7 +226,7 @@ class MainActivity : Activity() {
                     state.session.answers[id]?.skipped == true
             }
         } ?: 0
-        v.findViewById<TextView>(R.id.llQbankSummary).text =
+        v.findViewById<TextView>(R.id.homeQBankSummary).text =
             if (localModule.isNullOrBlank()) {
                 "No verified Edition 8 QBank payload loaded"
             } else {
