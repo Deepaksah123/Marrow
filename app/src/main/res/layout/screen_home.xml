@@ -8,76 +8,59 @@
     <LinearLayout
         android:id="@+id/homeHeader"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="58dp"
         android:gravity="center_vertical"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:background="@color/marrow_primary"
-        android:elevation="4dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp"
+        android:background="@color/marrow_primary">
 
         <ImageButton
             android:id="@+id/homeMenu"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_home_menu_native"
+            android:tint="@android:color/white"
             android:contentDescription="Menu"
             android:scaleType="centerInside"/>
-
-        <ImageView
-            android:id="@+id/homeMarrowLogo"
-            android:layout_width="17dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="7dp"
-            android:src="@drawable/ic_marrow_logo_large"
-            android:contentDescription="Marrow"/>
 
         <TextView
             android:id="@+id/homeTitle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Marrow"
+            android:gravity="center"
+            android:text="Home"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <Button
-            android:id="@+id/homeGoPro"
-            android:layout_width="72dp"
-            android:layout_height="36dp"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:text="GO PRO"
-            android:textSize="10sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:contentDescription="Go Pro"/>
-
-        <ImageButton
-            android:id="@+id/homeBookmark"
-            android:layout_width="44dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_bookmark_filled_native"
-            android:tint="@android:color/white"
-            android:contentDescription="Bookmarks"
-            android:scaleType="center"/>
+            android:includeFontPadding="false"/>
 
         <ImageButton
             android:id="@+id/homeSearch"
-            android:layout_width="44dp"
-            android:layout_height="48dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_search_revamp"
             android:tint="@android:color/white"
             android:contentDescription="Search"
-            android:scaleType="center"/>
+            android:scaleType="centerInside"/>
+
+        <ImageButton
+            android:id="@+id/homeBookmark"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_bookmark_filled_native"
+            android:tint="@color/marrow_primary_light"
+            android:contentDescription="Bookmarks"
+            android:scaleType="centerInside"/>
+
+        <Button
+            android:id="@+id/homeGoPro"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <ScrollView
@@ -94,10 +77,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:paddingTop="10dp"
-            android:paddingBottom="14dp">
+            android:paddingBottom="82dp">
 
             <TextView
                 android:id="@+id/homeZenSectionTitle"
@@ -117,7 +100,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -132,7 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Daily MCQ surface"
+                    android:text=""
                     android:textColor="@color/marrow_muted"
                     android:textSize="12sp"/>
 
@@ -141,7 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="No verified daily payload loaded"
+                    android:text=""
                     android:textColor="@color/marrow_muted"
                     android:textSize="12sp"/>
             </LinearLayout>
@@ -164,7 +148,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -179,7 +164,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="No verified featured-card payload loaded"
+                    android:text=""
                     android:textColor="@color/marrow_muted"
                     android:textSize="12sp"/>
             </LinearLayout>
@@ -202,7 +187,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -234,7 +220,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
-                            android:text="No verified test payload loaded"
+                            android:text=""
                             android:textColor="@color/marrow_muted"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -266,7 +252,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -329,7 +316,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -361,7 +349,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
-                            android:text="No verified video payload loaded"
+                            android:text=""
                             android:textColor="@color/marrow_muted"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -393,7 +381,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -456,7 +445,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -483,7 +473,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -510,7 +501,8 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_home_card"
-                android:padding="14dp">
+                android:padding="14dp"
+                android:minHeight="70dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
