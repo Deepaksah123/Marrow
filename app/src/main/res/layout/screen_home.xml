@@ -111,7 +111,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homeZenCard"
+                android:id="@+id/layoutDynamicZenArea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -196,7 +196,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homeTestCard"
+                android:id="@+id/llTest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -260,7 +260,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homeQBankCard"
+                android:id="@+id/llQbank"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -323,7 +323,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homeVideoCard"
+                android:id="@+id/llVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -387,7 +387,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homePearlsCard"
+                android:id="@+id/cvPearl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -450,7 +450,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:id="@+id/homeRecentCard"
+                android:id="@+id/cvRecentUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -477,7 +477,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/homePlanUpgrade"
+                android:id="@+id/renewPlanBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -504,7 +504,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/homeMagicModuleCard"
+                android:id="@+id/cvMagicModule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -552,7 +552,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/homeShare"
+                android:id="@+id/llShare"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="2dp"
