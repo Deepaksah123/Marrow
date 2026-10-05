@@ -211,11 +211,28 @@ class MainActivity : Activity() {
             state.session.answers[id]?.selectedAnswer != null ||
                 state.session.answers[id]?.skipped == true
         }
-        v.findViewById<TextView>(R.id.homeQBankSummary).text =
-            if (total == 0) {
+        val localModule = state.contentRegistry.moduleIds().firstOrNull { moduleId ->
+            state.contentRegistry.questionIds(moduleId).any { id ->
+                state.session.answers[id]?.selectedAnswer != null ||
+                    state.session.answers[id]?.skipped == true
+            }
+        } ?: state.contentRegistry.moduleIds().firstOrNull()
+        val localModuleCount = localModule?.let { state.contentRegistry.questionIds(it).size } ?: 0
+        val localModuleTitle = localModule?.substringAfter('/').orEmpty()
+        val localModuleSubject = localModule?.substringBefore('/').orEmpty()
+        val localModuleAttempted = localModule?.let { moduleId ->
+            state.contentRegistry.questionIds(moduleId).count { id ->
+                state.session.answers[id]?.selectedAnswer != null ||
+                    state.session.answers[id]?.skipped == true
+            }
+        } ?: 0
+        v.findViewById<TextView>(R.id.llQbankSummary).text =
+            if (localModule.isNullOrBlank()) {
                 "No verified Edition 8 QBank payload loaded"
             } else {
-                "Edition 8 · $total MCQs · $attempted attempted"
+                val title = localModuleTitle.ifBlank { localModule }
+                val subject = localModuleSubject.ifBlank { "Edition 8" }
+                "$subject · $title · $localModuleCount MCQs · $localModuleAttempted attempted"
             }
 
         v.findViewById<View>(R.id.llQbank).setOnClickListener {
