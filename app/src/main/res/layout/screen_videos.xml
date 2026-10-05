@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Videos"
-            android:textSize="28sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/marrow_text"/>
         <TextView
@@ -55,7 +55,7 @@
                 android:layout_weight="1"
                 android:paddingStart="10dp"
                 android:text="Video Subjects"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_text"/>
             <Button
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="World of Revision"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_text"/>
             <Button
@@ -138,7 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Notes"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_text"/>
             <Button
@@ -161,7 +161,7 @@
             android:id="@+id/videoSubjectState"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="17dp"
             android:text=""
             android:textSize="12sp"
             android:textColor="@color/marrow_muted"/>
