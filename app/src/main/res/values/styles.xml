@@ -35,4 +35,9 @@
         <item name="android:textColorHint">@color/marrow_muted</item>
     </style>
     <style name="MarrowDrawerItem" parent="@android:style/Widget.TextView"><item name="android:layout_width">match_parent</item><item name="android:layout_height">52dp</item><item name="android:gravity">center_vertical</item><item name="android:paddingStart">24dp</item><item name="android:paddingEnd">16dp</item><item name="android:textSize">15sp</item><item name="android:textColor">@color/marrow_text</item></style>
+    <style name="HomeSectionTitle" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item><item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">3dp</item><item name="android:layout_marginTop">17dp</item><item name="android:layout_marginBottom">7dp</item>
+        <item name="android:textColor">@color/marrow_muted</item><item name="android:textSize">11sp</item><item name="android:textStyle">bold</item><item name="android:includeFontPadding">false</item>
+    </style>
 </resources>
