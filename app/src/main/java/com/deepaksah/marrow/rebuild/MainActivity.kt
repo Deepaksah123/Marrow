@@ -1315,7 +1315,7 @@ class MainActivity : Activity() {
                 tabs.forEach { (id, label) ->
                     v.findViewById<Button>(id).setOnClickListener {
                         tests.selectConfiguredTab(label)
-                        v.findViewById<TextView>(R.id.testYear).text = "Current Test Cycle · $label"
+                        v.findViewById<TextView>(R.id.testYear).text = "Test Series"
                         v.findViewById<TextView>(R.id.testPayloadState).text =
                             "Selected: $label · live schedule/payload remains server-backed and is not fabricated."
                     }
