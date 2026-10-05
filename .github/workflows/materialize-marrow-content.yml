@@ -2,30 +2,29 @@ name: Materialize Marrow Content
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  materialize:
-    if: github.actor != 'github-actions[bot]'
+  verify-local-content:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Sync Marrow content into app folder
-        run: bash scripts/sync_marrow_source.sh
-      - name: Commit Marrow content folder
+      - name: Verify repository-local Edition 8 content
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/assets/marrow_content
-          if git diff --cached --quiet; then
-            echo "No Marrow content changes."
-            exit 0
+          set -euo pipefail
+          ROOT="app/src/main/assets/marrow_content/Brain/Marrow/Edition 8 qBank"
+          test -d "$ROOT"
+          expected="Anaesthesia Anatomy Biochemistry Community Medicine Dermatology ENT Forensic Medicine Medicine Microbiology Obstetrics & Gynaecology Ophthalmology Orthopaedics Paediatrics Pathology Pharmacology Physiology Psychiatry Radiology Surgery"
+          for subject in $expected; do
+            test -d "$ROOT/$subject"
+          done
+          if find app/src/main/assets/marrow_content/Brain/Marrow -maxdepth 1 -iname '*marrow6*' -o -iname '*edition 6*' | grep -q .; then
+            echo "Forbidden Marrow6/Edition6 content detected."
+            exit 1
           fi
-          git commit -m "Materialize Marrow content in app folder [skip ci]"
-          git push
+          echo "Repository-local Marrow Edition 8 content verified. No external source sync is performed."
