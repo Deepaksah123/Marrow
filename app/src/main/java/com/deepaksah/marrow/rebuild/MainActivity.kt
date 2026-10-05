@@ -233,10 +233,6 @@ class MainActivity : Activity() {
             showPearls()
         }
 
-        v.findViewById<Button>(R.id.homeShare).setOnClickListener {
-            shareCurrentRoute()
-        }
-
         // Remote-backed HomePageItems require an authenticated CourseConfig
         // response and corresponding payload. That runtime evidence is not
         // recovered locally, so these surfaces remain hidden rather than being
