@@ -233,20 +233,28 @@ class MainActivity : Activity() {
             showPearls()
         }
 
-        // Remote-backed HomePageItems require an authenticated CourseConfig
-        // response and corresponding payload. That runtime evidence is not
-        // recovered locally, so these surfaces remain hidden rather than being
-        // represented by placeholder data or guessed click targets.
-        listOf(
-            R.id.homeZenCard,
-            R.id.homeFeatureCards,
-            R.id.homeTestCard,
-            R.id.homeVideoCard,
-            R.id.homeRecentCard,
-            R.id.homeMagicModuleCard,
-            R.id.homePlanUpgrade
-        ).forEach { id ->
-            v.findViewById<View>(id)?.visibility = View.GONE
+        // HomePageItems is server-configured in the recovered app. Keep
+        // unavailable remote cards hidden, but keep their source-mapped section
+        // headers in lockstep so the local Home never leaves orphan headings.
+        val unavailableHomePairs = listOf(
+            R.id.homeZenCard to R.id.homeZenSectionTitle,
+            R.id.homeFeatureCards to R.id.homeFeatureSectionTitle,
+            R.id.homeTestCard to R.id.homeTestSectionTitle,
+            R.id.homeVideoCard to R.id.homeVideoSectionTitle,
+            R.id.homeRecentCard to R.id.homeRecentSectionTitle,
+            R.id.homeMagicModuleCard to null,
+            R.id.homePlanUpgrade to null
+        )
+        unavailableHomePairs.forEach { (cardId, headingId) ->
+            v.findViewById<View>(cardId)?.visibility = View.GONE
+            headingId?.let { v.findViewById<View>(it)?.visibility = View.GONE }
+        }
+
+        // fragment_home contains an explicit llShare surface. The exact native
+        // share payload is unavailable offline, so this preserves only the
+        // verified share action without inventing a referral/account payload.
+        v.findViewById<Button>(R.id.homeShare).setOnClickListener {
+            shareCurrentRoute()
         }
 
         // GO PRO is account/subscription backed as well. Do not expose a
