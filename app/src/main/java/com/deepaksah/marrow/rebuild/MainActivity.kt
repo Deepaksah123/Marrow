@@ -250,21 +250,47 @@ class MainActivity : Activity() {
             showPearls()
         }
 
-        // HomePageItems is server-configured in the recovered app. Keep
-        // unavailable remote cards hidden, but keep their source-mapped section
-        // headers in lockstep so the local Home never leaves orphan headings.
-        val unavailableHomePairs = listOf(
-            R.id.layoutDynamicZenArea to R.id.homeZenSectionTitle,
-            R.id.homeFeatureCards to R.id.homeFeatureSectionTitle,
-            R.id.llTest to R.id.homeTestSectionTitle,
-            R.id.llVideo to R.id.homeVideoSectionTitle,
-            R.id.cvRecentUpdate to R.id.homeRecentSectionTitle,
-            R.id.cvMagicModule to null,
-            R.id.renewPlanBanner to null
-        )
-        unavailableHomePairs.forEach { (cardId, headingId) ->
-            v.findViewById<View>(cardId)?.visibility = View.GONE
-            headingId?.let { v.findViewById<View>(it)?.visibility = View.GONE }
+        // Preserve the recovered Home component geometry even when remote payloads
+        // are unavailable. Do not replace native cards with diagnostic/prototype text.
+        val total = state.contentRegistry.allQuestions().size
+        val attempted = state.contentRegistry.allQuestions().keys.count { id ->
+            state.session.answers[id]?.selectedAnswer != null ||
+                state.session.answers[id]?.skipped == true
+        }
+        val localModule = state.contentRegistry.moduleIds().firstOrNull { moduleId ->
+            state.contentRegistry.questionIds(moduleId).any { id ->
+                state.session.answers[id]?.selectedAnswer != null ||
+                    state.session.answers[id]?.skipped == true
+            }
+        } ?: state.contentRegistry.moduleIds().firstOrNull()
+        val localModuleCount = localModule?.let { state.contentRegistry.questionIds(it).size } ?: 0
+        val localModuleTitle = localModule?.substringAfter('/').orEmpty()
+        val localModuleSubject = localModule?.substringBefore('/').orEmpty()
+        val localModuleAttempted = localModule?.let { moduleId ->
+            state.contentRegistry.questionIds(moduleId).count { id ->
+                state.session.answers[id]?.selectedAnswer != null ||
+                    state.session.answers[id]?.skipped == true
+            }
+        } ?: 0
+        v.findViewById<TextView>(R.id.homeQBankSummary).text =
+            if (localModule.isNullOrBlank()) "" else {
+                val title = localModuleTitle.ifBlank { localModule }
+                val subject = localModuleSubject.ifBlank { "Edition 8" }
+                "$subject · $title · $localModuleCount MCQs · $localModuleAttempted attempted"
+            }
+
+        v.findViewById<View>(R.id.llQbank).setOnClickListener {
+            state.navigate(MarrowRoute.QBANK)
+            showQBank()
+        }
+
+        val pearlCount = runCatching { PearlsAssetLoader(assets).load().size }.getOrDefault(0)
+        v.findViewById<TextView>(R.id.homePearlsSummary).text =
+            if (pearlCount > 0) "$pearlCount Pearls" else ""
+
+        v.findViewById<View>(R.id.cvPearl).setOnClickListener {
+            state.navigate(MarrowRoute.PEARLS)
+            showPearls()
         }
 
         // fragment_home contains an explicit llShare surface. The exact native
