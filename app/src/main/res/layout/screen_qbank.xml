@@ -47,7 +47,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="12dp"
                 android:gravity="center_vertical"
-                android:text="QBank tracker"
+                android:text=""
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/marrow_primary"
