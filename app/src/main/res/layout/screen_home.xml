@@ -99,6 +99,17 @@
             android:paddingTop="10dp"
             android:paddingBottom="14dp">
 
+            <TextView
+                android:id="@+id/homeZenSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="MCQ OF THE DAY"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:id="@+id/homeZenCard"
                 android:layout_width="match_parent"
@@ -135,6 +146,17 @@
                     android:textSize="12sp"/>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/homeFeatureSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="FEATURED"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:id="@+id/homeFeatureCards"
                 android:layout_width="match_parent"
@@ -161,6 +183,17 @@
                     android:textColor="@color/marrow_muted"
                     android:textSize="12sp"/>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/homeTestSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="SUGGESTED TEST"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/homeTestCard"
@@ -215,6 +248,17 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/homeQBankSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="QBANK"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:id="@+id/homeQBankCard"
                 android:layout_width="match_parent"
@@ -266,6 +310,17 @@
                         android:textSize="28sp"/>
                 </LinearLayout>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/homeVideoSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="SUGGESTED VIDEO"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/homeVideoCard"
@@ -320,6 +375,17 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/homePearlsSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="PEARLS"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:id="@+id/homePearlsCard"
                 android:layout_width="match_parent"
@@ -371,6 +437,17 @@
                         android:textSize="28sp"/>
                 </LinearLayout>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/homeRecentSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:text="RECENT UPDATES"
+                android:textColor="@color/marrow_text"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/homeRecentCard"
@@ -481,16 +558,6 @@
                 android:layout_marginTop="2dp"
                 android:text="Share Marrow"
                 android:textAllCaps="false"/>
-
-            <TextView
-                android:id="@+id/homeFooter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center"
-                android:text="Marrow"
-                android:textColor="@color/marrow_muted"
-                android:textSize="11sp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
