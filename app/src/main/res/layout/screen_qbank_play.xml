@@ -1,35 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="10dp" android:paddingBottom="24dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView android:id="@+id/playPosition" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="14sp"/>
-            <TextView android:id="@+id/playBookmark" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="☆" android:textSize="26sp" android:padding="6dp"/>
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fillViewport="true" android:background="@color/marrow_background">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingStart="12dp" android:paddingEnd="12dp"
+        android:paddingTop="8dp" android:paddingBottom="28dp">
+        <LinearLayout android:id="@+id/playTopBar" android:layout_width="match_parent"
+            android:layout_height="52dp" android:gravity="center_vertical">
+            <TextView android:id="@+id/playPosition" android:layout_width="0dp"
+                android:layout_height="match_parent" android:layout_weight="1"
+                android:gravity="center_vertical" android:textSize="14sp"
+                android:textStyle="bold" android:textColor="@color/marrow_text"/>
+            <TextView android:id="@+id/playBookmark" android:layout_width="48dp"
+                android:layout_height="48dp" android:gravity="center"
+                android:text="☆" android:textSize="26sp" android:textColor="@color/marrow_primary"/>
         </LinearLayout>
-        <TextView android:id="@+id/playTimer" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:paddingTop="4dp" android:paddingBottom="8dp" android:text="Timer"/>
-        <LinearLayout android:id="@+id/questionMedia" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
-        <TextView android:id="@+id/playQuestion" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="19sp" android:textStyle="bold" android:paddingTop="14dp" android:paddingBottom="18dp"/>
-        <LinearLayout android:id="@+id/optionContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
-        <LinearLayout android:id="@+id/explanationMedia" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
-        <TextView android:id="@+id/explanation" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:visibility="gone" android:padding="12dp"/>
-        <LinearLayout android:id="@+id/qbankJumpRow" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="8dp" android:paddingBottom="8dp">
-            <EditText android:id="@+id/qbankJumpInput" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Question no." android:inputType="number" android:maxLines="1"/>
-            <Button android:id="@+id/qbankJumpButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="JUMP"/>
+        <LinearLayout android:id="@+id/playStatusCard" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal"
+            android:gravity="center_vertical" android:background="@drawable/bg_home_card"
+            android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TextView android:id="@+id/playTimer" android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="Timer" android:textSize="13sp" android:textColor="@color/marrow_muted"/>
+            <TextView android:id="@+id/playAnswerState" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="UNANSWERED"
+                android:textSize="11sp" android:textStyle="bold" android:textColor="@color/marrow_muted"/>
         </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <Button android:id="@+id/playReport" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="REPORT"/>
-            <Button android:id="@+id/playPrevious" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PREVIOUS"/>
-            <Button android:id="@+id/playSkip" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="SKIP"/>
-            <Button android:id="@+id/playNext" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="NEXT"/>
+        <LinearLayout android:id="@+id/questionMedia" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_marginTop="10dp"/>
+        <LinearLayout android:id="@+id/questionCard" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:background="@drawable/bg_home_card" android:padding="16dp" android:layout_marginTop="8dp">
+            <TextView android:id="@+id/playQuestion" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textSize="18sp"
+                android:textStyle="bold" android:textColor="@color/marrow_text"
+                android:paddingBottom="14dp"/>
+            <LinearLayout android:id="@+id/optionContainer" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical"/>
         </LinearLayout>
-        <Button android:id="@+id/playComplete" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="COMPLETE" android:visibility="gone"/>
+        <LinearLayout android:id="@+id/explanationMedia" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"/>
+        <TextView android:id="@+id/explanation" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textSize="14sp"
+            android:textColor="@color/marrow_text" android:visibility="gone"
+            android:background="@drawable/bg_home_card" android:padding="14dp"
+            android:layout_marginTop="8dp"/>
+        <LinearLayout android:id="@+id/qbankJumpRow" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+            <EditText android:id="@+id/qbankJumpInput" android:layout_width="0dp"
+                android:layout_height="48dp" android:layout_weight="1"
+                android:hint="Question no." android:inputType="number" android:maxLines="1"/>
+            <Button android:id="@+id/qbankJumpButton" android:layout_width="82dp"
+                android:layout_height="48dp" android:text="JUMP"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/playNavigation" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+            <Button android:id="@+id/playPrevious" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="PREVIOUS"/>
+            <Button android:id="@+id/playSkip" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="SKIP"/>
+            <Button android:id="@+id/playNext" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="NEXT"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/playUtilityRow" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+            <Button android:id="@+id/playReport" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="REPORT"/>
+            <Button android:id="@+id/playComplete" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:text="COMPLETE" android:visibility="gone"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
