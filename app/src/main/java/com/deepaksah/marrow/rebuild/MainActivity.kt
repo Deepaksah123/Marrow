@@ -541,19 +541,22 @@ class MainActivity : Activity() {
         fun sourceCard(container: LinearLayout, label: String, detail: String, action: () -> Unit) {
             container.addView(LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
-                setPadding(14, 12, 14, 12)
-                setBackgroundColor(getColor(R.color.marrow_surface))
+                setPadding(dp(14), dp(12), dp(14), dp(12))
+                setBackgroundResource(R.drawable.bg_qbank_row)
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    bottomMargin = dp(6)
+                }
                 setOnClickListener { action() }
                 addView(TextView(this@MainActivity).apply {
                     text = label
-                    textSize = 16f
+                    textSize = 15f
                     setTypeface(typeface, Typeface.BOLD)
                     setTextColor(getColor(R.color.marrow_text))
                 })
                 addView(TextView(this@MainActivity).apply {
                     text = detail
-                    textSize = 13f
-                    setPadding(0, 4, 0, 0)
+                    textSize = 12f
+                    setPadding(0, dp(4), 0, 0)
                     setTextColor(getColor(R.color.marrow_muted))
                 })
             })
@@ -565,9 +568,12 @@ class MainActivity : Activity() {
             val questionCount = moduleIds.sumOf { state.contentRegistry.questionIds(it).size }
             val row = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
-                setPadding(14, 12, 14, 12)
+                setPadding(dp(14), dp(12), dp(14), dp(12))
                 gravity = android.view.Gravity.CENTER_VERTICAL
-                setBackgroundColor(getColor(R.color.marrow_surface))
+                setBackgroundResource(R.drawable.bg_qbank_row)
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    bottomMargin = dp(6)
+                }
                 setOnClickListener {
                     qbank.openSubject(s)
                     state.navigate(MarrowRoute.QBANK_MODULE)
@@ -575,7 +581,7 @@ class MainActivity : Activity() {
                 }
             }
             row.addView(ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(52, 52).apply { marginEnd = 12 }
+                layoutParams = LinearLayout.LayoutParams(dp(46), dp(46)).apply { marginEnd = dp(12) }
                 setImageResource(R.drawable.ic_qbank_header)
                 scaleType = ImageView.ScaleType.CENTER_INSIDE
                 contentDescription = "Question Bank"
@@ -585,14 +591,14 @@ class MainActivity : Activity() {
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 addView(TextView(this@MainActivity).apply {
                     text = s
-                    textSize = 17f
+                    textSize = 16f
                     setTypeface(typeface, Typeface.BOLD)
                     setTextColor(getColor(R.color.marrow_text))
                 })
                 addView(TextView(this@MainActivity).apply {
                     text = "${moduleIds.size} modules  ·  ${questionCount} questions"
-                    textSize = 13f
-                    setPadding(0, 5, 0, 0)
+                    textSize = 12f
+                    setPadding(0, dp(5), 0, 0)
                     setTextColor(getColor(R.color.marrow_muted))
                 })
             })
