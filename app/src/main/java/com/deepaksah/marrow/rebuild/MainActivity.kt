@@ -114,6 +114,11 @@ class MainActivity : Activity() {
     }
 
     override fun onBackPressed() {
+        val currentView = if (::content.isInitialized && content.childCount > 0) content.getChildAt(0) else null
+        if (state.session.route == MarrowRoute.PEARLS && currentView is WebView && currentView.canGoBack()) {
+            currentView.goBack()
+            return
+        }
         val parent = state.session.route.parent
         if (parent != null) { state.navigate(parent); renderCurrent() } else super.onBackPressed()
     }
@@ -154,7 +159,7 @@ class MainActivity : Activity() {
         val route = state.session.route
         // Profile/Settings/Theme are dedicated account/settings surfaces in the
         // recovered native app, not main-tab destinations.
-        if (route == MarrowRoute.PROFILE || route == MarrowRoute.SETTINGS || route == MarrowRoute.THEME) {
+        if (route == MarrowRoute.PROFILE || route == MarrowRoute.SETTINGS || route == MarrowRoute.THEME || route == MarrowRoute.PEARLS) {
             bottomNavigation?.visibility = View.GONE
             return
         }
@@ -373,96 +378,45 @@ class MainActivity : Activity() {
     }
 
     private fun showPearls() {
-        val pearls = runCatching { PearlsAssetLoader(assets).load() }.getOrDefault(emptyList())
-
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(20, 20, 20, 20)
-        }
-        root.addView(TextView(this).apply {
-            text = "Pearls"
-            textSize = 24f
-            setTypeface(typeface, Typeface.BOLD)
-        })
-        root.addView(TextView(this).apply {
-            text = "Verified Pearl resources · ${pearls.size}"
-            textSize = 13f
-            setTextColor(getColor(R.color.marrow_muted))
-            setPadding(4, 4, 4, 14)
-        })
-
-        val search = EditText(this).apply {
-            hint = "Search Pearls"
-            isSingleLine = true
-        }
-        root.addView(search)
-
-        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        root.addView(list)
-
-        fun openPearl(source: PearlSource) {
-            runCatching {
-                startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(source.url)))
-            }.onFailure {
-                runCatching {
-                    startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(source.alternateUrl)))
-                }.onFailure {
-                    Toast.makeText(this, "Pearl source could not be opened.", Toast.LENGTH_SHORT).show()
+        val webView = WebView(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.allowFileAccess = true
+            settings.allowContentAccess = true
+            settings.databaseEnabled = true
+            settings.mediaPlaybackRequiresUserGesture = false
+            webChromeClient = android.webkit.WebChromeClient()
+            webViewClient = object : android.webkit.WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: android.webkit.WebResourceRequest?): Boolean {
+                    val url = request?.url?.toString() ?: return false
+                    if (url.startsWith("file://")) return false
+                    return false
                 }
             }
-        }
-
-        fun render(filter: String) {
-            list.removeAllViews()
-            val q = filter.trim().lowercase()
-            pearls.filter { q.isBlank() || it.title.lowercase().contains(q) }
-                .forEachIndexed { index, source ->
-                    val row = LinearLayout(this).apply {
-                        orientation = LinearLayout.VERTICAL
-                        setPadding(14, 12, 14, 12)
-                        setBackgroundColor(getColor(R.color.marrow_surface))
-                        setOnClickListener { openPearl(source) }
+            addJavascriptInterface(object {
+                @android.webkit.JavascriptInterface
+                fun goHome() {
+                    runOnUiThread {
+                        state.navigate(MarrowRoute.HOME)
+                        renderCurrent()
                     }
-                    row.addView(TextView(this@MainActivity).apply {
-                        text = "${index + 1}. ${source.title}"
-                        textSize = 16f
-                        setTypeface(typeface, Typeface.BOLD)
-                        setTextColor(getColor(R.color.marrow_text))
-                    })
-                    row.addView(TextView(this@MainActivity).apply {
-                        text = "Marrow Pearls · PDF resource"
-                        textSize = 12f
-                        setTextColor(getColor(R.color.marrow_muted))
-                        setPadding(0, 5, 0, 0)
-                    })
-                    list.addView(row)
-                    addDivider(list)
                 }
-            if (list.childCount == 0) {
-                list.addView(TextView(this@MainActivity).apply {
-                    text = "No matching Pearls."
-                    setPadding(4, 24, 4, 24)
-                })
-            }
+                @android.webkit.JavascriptInterface
+                fun goBack() {
+                    runOnUiThread {
+                        val parent = state.session.route.parent ?: MarrowRoute.HOME
+                        state.navigate(parent)
+                        renderCurrent()
+                    }
+                }
+            }, "Android")
+            loadUrl("file:///android_asset/Marrow_pearls.html")
         }
-
-        search.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                render(s?.toString().orEmpty())
-            }
-            override fun afterTextChanged(s: android.text.Editable?) = Unit
-        })
-
-        render("")
-        root.addView(Button(this).apply {
-            text = "BACK TO HOME"
-            setOnClickListener {
-                state.navigate(MarrowRoute.HOME)
-                showHome()
-            }
-        })
-        replace(ScrollView(this).apply { addView(root) })
+        replace(webView)
     }
     private fun showBookmarks() {
         val v=LayoutInflater.from(this).inflate(R.layout.screen_bookmarks,content,false); replace(v)

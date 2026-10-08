@@ -127,7 +127,7 @@ opacity:0;pointer-events:none;transition:.2s;z-index:200}
 <div class="toast" id="toast"></div>
 
 <nav>
-  <button class="active"><span class="ico">⌂</span>Home</button>
+  <button id="homeNav" class="active"><span class="ico">⌂</span>Home</button>
   <button id="pdfNav"><span class="ico">▣</span>Pearls</button>
   <button id="searchNav"><span class="ico">⌕</span>Search</button>
 </nav>
@@ -216,7 +216,24 @@ search.addEventListener("input", e => { state.query=e.target.value; render(); })
 $("closeBtn").onclick = closePlayer;
 $("refreshBtn").onclick = () => { const x=frame.src; frame.src="about:blank"; setTimeout(()=>frame.src=x,80); };
 overlay.addEventListener("click", e => { if(e.target===overlay) closePlayer(); });
-$("backBtn").onclick = () => { if(history.length>1) history.back(); else showToast("Already at start"); };
+$("backBtn").onclick = () => {
+  if (overlay.classList.contains("show")) {
+    closePlayer();
+  } else if (window.Android && window.Android.goBack) {
+    window.Android.goBack();
+  } else if (history.length > 1) {
+    history.back();
+  } else {
+    showToast("Already at start");
+  }
+};
+$("homeNav").onclick = () => {
+  if (window.Android && window.Android.goHome) {
+    window.Android.goHome();
+  } else {
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+};
 $("searchNav").onclick = () => { search.focus(); window.scrollTo({top:0,behavior:"smooth"}); };
 $("pdfNav").onclick = () => { search.value=""; state.query=""; render(); window.scrollTo({top:0,behavior:"smooth"}); };
 
