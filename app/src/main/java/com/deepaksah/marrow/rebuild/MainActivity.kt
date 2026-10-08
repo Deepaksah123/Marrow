@@ -100,20 +100,12 @@ class MainActivity : Activity() {
         (value * resources.displayMetrics.density).toInt()
 
     private fun loadMarrowContentThenHome() {
+        // The Edition 8 QBank asset bundle was intentionally removed. Keep
+        // startup deterministic and do not attempt to recreate/import deleted
+        // educational content. The native shell remains fully navigable.
         val splash = LayoutInflater.from(this).inflate(R.layout.screen_splash, content, false)
         replace(splash)
-        Thread {
-            val imported = runCatching {
-                MarrowJsonImporter(assets).loadEdition8QBank()
-            }.getOrElse { emptyMap() }
-            runOnUiThread {
-                if (imported.isNotEmpty()) {
-                    state.importContent(imported)
-                    state.rehydrateAfterContentImport()
-                }
-                Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 350L)
-            }
-        }.start()
+        Handler(Looper.getMainLooper()).postDelayed({ renderCurrent() }, 350L)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -508,6 +500,8 @@ class MainActivity : Activity() {
             .filter { it.isNotBlank() }
             .distinct()
             .toList()
+        // The subject catalogue is source-backed, but question/module payloads
+        // are intentionally not bundled in the current build.
         return if (fromSource.isNotEmpty()) fromSource else subjects
     }
 
