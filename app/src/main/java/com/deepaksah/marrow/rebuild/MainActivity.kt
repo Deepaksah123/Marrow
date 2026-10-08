@@ -511,11 +511,6 @@ class MainActivity : Activity() {
 
         val tracker = v.findViewById<TextView>(R.id.qbankTracker)
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
-        val emptyNotice = v.findViewById<TextView>(R.id.qbankEmptyNotice)
-        emptyNotice?.apply {
-            visibility = if (state.contentRegistry.allQuestions().isEmpty()) View.VISIBLE else View.GONE
-            text = "Question content is not bundled in this build. Native QBank navigation and UI remain available."
-        }
         tracker.text = if (metrics.total == 0) {
             "QBank tracker   ·   Select a subject to begin"
         } else {
