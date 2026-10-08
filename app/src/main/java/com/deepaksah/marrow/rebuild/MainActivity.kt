@@ -220,7 +220,7 @@ class MainActivity : Activity() {
         } ?: 0
         // Only render Home surfaces backed by verified local payloads. The recovered APK's\n        // remaining Home cards are server-configured; showing empty placeholders would create\n        // a fabricated/prototype UI, so their cards and section headers stay hidden offline.\n        listOf(\n            R.id.homeZenSectionTitle, R.id.layoutDynamicZenArea,\n            R.id.homeFeatureSectionTitle, R.id.homeFeatureCards,\n            R.id.homeTestSectionTitle, R.id.llTest,\n            R.id.homeVideoSectionTitle, R.id.llVideo,\n            R.id.homeRecentSectionTitle, R.id.cvRecentUpdate,\n            R.id.renewPlanBanner, R.id.cvMagicModule\n        ).forEach { id -> v.findViewById<View>(id).visibility = View.GONE }\n\n        v.findViewById<TextView>(R.id.homeQBankSummary).text =
             if (localModule.isNullOrBlank()) {
-                ""
+                "QBank shell ready · local question content is not bundled"
             } else {
                 val title = localModuleTitle.ifBlank { localModule }
                 val subject = localModuleSubject.ifBlank { "Edition 8" }
@@ -511,6 +511,11 @@ class MainActivity : Activity() {
 
         val tracker = v.findViewById<TextView>(R.id.qbankTracker)
         val metrics = QBankMetrics.from(state.session.mcqIds, state.session.answers)
+        val emptyNotice = v.findViewById<TextView>(R.id.qbankEmptyNotice)
+        emptyNotice?.apply {
+            visibility = if (state.contentRegistry.allQuestions().isEmpty()) View.VISIBLE else View.GONE
+            text = "Question content is not bundled in this build. Native QBank navigation and UI remain available."
+        }
         tracker.text = if (metrics.total == 0) {
             "QBank tracker   ·   Select a subject to begin"
         } else {
