@@ -40,3 +40,11 @@ Source-backed parity reconstruction. Existing working implementation must be pre
 - features.csv — measurable feature parity matrix
 - SOURCE_EVIDENCE.md — evidence mapping rules
 - QA_PROTOCOL.md — batch QA and diff protocol
+
+
+## ChatGPT-native orchestration
+
+- CHATGPT_ORCHESTRATOR.md — operating contract for autonomous ChatGPT-led batches.
+- CHATGPT_SESSION_STATE.md — persistent session constraints and continuation state.
+
+These files are for the ChatGPT workflow; no Claude/Cloud plugin installation is required.
